@@ -1,0 +1,9 @@
+{
+  "@@last_modified": "2019-01-08T06:48:30.661534",
+  "appName": "Quran App",
+  "@appName": {
+    "description": "appName",
+    "type": "text",
+    "placeholders": {}
+  }
+}
