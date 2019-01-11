@@ -9,6 +9,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var theme = ThemeData.dark();
+
     return MaterialApp(
       localizationsDelegates: [
         const AppLocalizationsDelegate(),
@@ -21,9 +23,7 @@ class MyApp extends StatelessWidget {
       ],
       locale: Locale('en', ''),
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: theme,
       routes: Routes.routes,
     );
   }

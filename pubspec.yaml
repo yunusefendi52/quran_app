@@ -21,13 +21,15 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  sqflite: ^0.13.0+1
   material_design_icons_flutter: ^3.0.3289
   scoped_model: ^1.0.1
   font_awesome_flutter: ^8.2.0
   xml2json: ^3.0.3
   queries: ^0.1.4
   bubble_tab_indicator: "^0.1.4"
+  sqflite: ^1.0.0
+  shimmer: ^1.0.0
+  after_layout: ^1.0.7
   
 dev_dependencies:
   flutter_test:
@@ -48,10 +50,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/quran-data/quran-uthmani.db
-   - assets/quran-data/quran-uthmani.xml
-   - assets/quran-data/translations/id.indonesian.xml
+   - assets/quran-data/quran-uthmani.json
+   - assets/quran-data/translations/id.indonesian.json
    - assets/quran-data/chapters.id.json
+   - assets/quran-data/juz.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

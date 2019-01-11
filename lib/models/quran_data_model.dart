@@ -3,16 +3,13 @@
 //     final quranDataModel = quranDataModelFromJson(jsonString);
 
 import 'dart:convert';
-import 'package:queries/collections.dart';
 
 class QuranDataModel {
-  String version;
-  String encoding;
+  Xml xml;
   Quran quran;
 
   QuranDataModel({
-    this.version,
-    this.encoding,
+    this.xml,
     this.quran,
   });
 
@@ -28,39 +25,36 @@ class QuranDataModel {
 
   factory QuranDataModel.fromJson(Map<String, dynamic> json) =>
       new QuranDataModel(
-        version: json["version"],
-        encoding: json["encoding"],
+        xml: Xml.fromJson(json["?xml"]),
         quran: Quran.fromJson(json["quran"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "version": version,
-        "encoding": encoding,
+        "?xml": xml.toJson(),
         "quran": quran.toJson(),
       };
 }
 
 class Quran {
-  Collection<Sura> sura;
+  List<Sura> sura;
 
   Quran({
     this.sura,
   });
 
   factory Quran.fromJson(Map<String, dynamic> json) => new Quran(
-        sura: Collection(
-            List<Sura>.from(json["sura"].map((x) => Sura.fromJson(x)))),
+        sura: new List<Sura>.from(json["sura"].map((x) => Sura.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "sura": new List<dynamic>.from(sura.toList().map((x) => x.toJson())),
+        "sura": new List<dynamic>.from(sura.map((x) => x.toJson())),
       };
 }
 
 class Sura {
   String index;
   String name;
-  Collection<Aya> aya;
+  List<Aya> aya;
 
   Sura({
     this.index,
@@ -69,16 +63,15 @@ class Sura {
   });
 
   factory Sura.fromJson(Map<String, dynamic> json) => new Sura(
-        index: json["index"],
-        name: json["name"],
-        aya:
-            Collection(List<Aya>.from(json["aya"].map((x) => Aya.fromJson(x)))),
+        index: json["@index"],
+        name: json["@name"],
+        aya: new List<Aya>.from(json["aya"].map((x) => Aya.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "index": index,
-        "name": name,
-        "aya": new List<dynamic>.from(aya.toList().map((x) => x.toJson())),
+        "@index": index,
+        "@name": name,
+        "aya": new List<dynamic>.from(aya.map((x) => x.toJson())),
       };
 }
 
@@ -94,14 +87,34 @@ class Aya {
   });
 
   factory Aya.fromJson(Map<String, dynamic> json) => new Aya(
-        index: json["index"],
-        text: json["text"],
-        bismillah: json["bismillah"] == null ? null : json["bismillah"],
+        index: json["@index"],
+        text: json["@text"],
+        bismillah: json["@bismillah"] == null ? null : json["@bismillah"],
       );
 
   Map<String, dynamic> toJson() => {
-        "index": index,
-        "text": text,
-        "bismillah": bismillah == null ? null : bismillah,
+        "@index": index,
+        "@text": text,
+        "@bismillah": bismillah == null ? null : bismillah,
+      };
+}
+
+class Xml {
+  String version;
+  String encoding;
+
+  Xml({
+    this.version,
+    this.encoding,
+  });
+
+  factory Xml.fromJson(Map<String, dynamic> json) => new Xml(
+        version: json["@version"],
+        encoding: json["@encoding"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "@version": version,
+        "@encoding": encoding,
       };
 }
