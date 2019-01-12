@@ -77,3 +77,29 @@ class QuranJuzScreenScopedModel extends Model {
 }
 
 class SettingsScreenScopedModel extends Model {}
+
+class QuranAyaScreenScopedModel extends Model {
+  QuranDataService _quranDataService = QuranDataService.instance;
+
+  QuranDataModel _quranDataModel;
+
+  bool isGettingAya = true;
+  List<Aya> listAya = [];
+
+  Future getAya(int sura) async {
+    try {
+      isGettingAya = true;
+      notifyListeners();
+
+      _quranDataModel = await _quranDataService.getQuranDataModel();
+      var listSura = _quranDataModel?.quran?.sura?.firstWhere(
+        (v) => v.index == sura.toString(),
+      );
+      listAya = listSura?.aya;
+      notifyListeners();
+    } finally {
+      isGettingAya = false;
+      notifyListeners();
+    }
+  }
+}

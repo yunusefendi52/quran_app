@@ -4,6 +4,7 @@ import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/quran_data_model.dart';
 import 'package:quran_app/scoped_model/app_model.dart';
+import 'package:quran_app/screens/quran_aya_screen.dart';
 import 'package:quran_app/services/quran_data_services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
@@ -72,7 +73,15 @@ class _QuranSuraScreenState extends State<QuranSuraScreen>
       return Container();
     }
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) {
+            return QuranAyaScreen(
+              chapter: chapter,
+            );
+          },
+        ));
+      },
       child: Container(
         padding: EdgeInsets.symmetric(
           vertical: 7.5,
