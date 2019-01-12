@@ -211,8 +211,9 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
               aya.text,
               textDirection: TextDirection.rtl,
               style: TextStyle(
-                fontSize: 25,
+                fontSize: 32,
                 height: 1.35,
+                fontFamily: 'noorehira',
               ),
             ),
           ]..addAll(listTranslationWidget),
