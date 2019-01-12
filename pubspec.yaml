@@ -32,7 +32,9 @@ dependencies:
   after_layout: ^1.0.7
   shared_preferences: ^0.4.3
   draggable_scrollbar: ^0.0.4
-
+  path: ^1.6.2
+  tuple: ^1.0.2
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -56,6 +58,7 @@ flutter:
    - assets/quran-data/translations/id.indonesian.json
    - assets/quran-data/chapters.id.json
    - assets/quran-data/juz.json
+   - assets/quran-data/translations/en.sahih.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
 import 'package:quran_app/models/quran_data_model.dart';
+import 'package:quran_app/models/translation_quran_model.dart';
 import 'package:quran_app/services/quran_data_services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:queries/collections.dart';
@@ -84,7 +87,10 @@ class QuranAyaScreenScopedModel extends Model {
   QuranDataModel _quranDataModel;
 
   bool isGettingAya = true;
+
   List<Aya> listAya = [];
+
+  Map<TranslationDataKey, List<TranslationAya>> translations = {};
 
   Future getAya(int sura) async {
     try {
@@ -96,6 +102,18 @@ class QuranAyaScreenScopedModel extends Model {
         (v) => v.index == sura.toString(),
       );
       listAya = listSura?.aya;
+      var translationsMap = await _quranDataService.getTranslations();
+      for (var t in translationsMap.entries) {
+        translations.addAll(
+          {
+            t.key: t.value?.quran?.sura
+                ?.firstWhere(
+                  (v) => v.index == sura.toString(),
+                )
+                ?.aya
+          },
+        );
+      }
       notifyListeners();
     } finally {
       isGettingAya = false;

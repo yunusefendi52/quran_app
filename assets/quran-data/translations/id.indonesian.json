@@ -3,6 +3,8 @@
     "@version": "1.0",
     "@encoding": "utf-8"
   },
+  "name": "Bahasa Indonesia",
+  "translator": "Indonesian Ministry of Religious Affairs",
   "quran": {
     "sura": [
       {
