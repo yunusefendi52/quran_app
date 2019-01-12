@@ -30,6 +30,7 @@ dependencies:
   sqflite: ^1.0.0
   shimmer: ^1.0.0
   after_layout: ^1.0.7
+  shared_preferences: ^0.4.3
   
 dev_dependencies:
   flutter_test:

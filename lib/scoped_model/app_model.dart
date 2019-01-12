@@ -20,6 +20,12 @@ class QuranScreenScopedModel extends Model {
             ),
       );
 
+  List<Aya> getAya(int sura) {
+    var listAya = quranDataModel?.quran?.sura
+        ?.firstWhere((v) => v.index == sura.toString());
+    return listAya.aya;
+  }
+
   QuranScreenScopedModel() {
     _quranDataService = QuranDataService.instance;
   }
@@ -69,3 +75,5 @@ class QuranJuzScreenScopedModel extends Model {
     chaptersModel = await _quranDataService.getChapters();
   }
 }
+
+class SettingsScreenScopedModel extends Model {}

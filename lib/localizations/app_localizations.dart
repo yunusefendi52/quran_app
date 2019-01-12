@@ -3,6 +3,11 @@ import 'package:intl/intl.dart';
 import 'package:quran_app/l10n/messages_all.dart';
 import 'package:quiver/strings.dart';
 
+// Run this flutter packages pub run intl_translation:extract_to_arb --output-dir=lib/l10n lib/localizations/app_localizations.dart
+// Copy base arb (intl_messages.arb) to each language
+// Run this flutter packages pub run intl_translation:generate_from_arb --output-dir=lib/l10n \ --no-use-deferred-loading lib/localizations/app_localizations.dart lib/l10n/intl_*.arb
+// Run above command every time we change arb file
+
 class AppLocalizations {
   static Future<AppLocalizations> load(Locale locale) {
     final String name =
@@ -26,17 +31,56 @@ class AppLocalizations {
       desc: 'appName',
     );
   }
+
+  String get juzText {
+    return Intl.message(
+      'Juz',
+      name: 'juzText',
+      desc: 'juzText',
+    );
+  }
+
+  String get suraText {
+    return Intl.message(
+      'Sura',
+      name: 'suraText',
+      desc: 'suraText',
+    );
+  }
+
+  String get settingsText {
+    return Intl.message(
+      'Settings',
+      name: 'settingsText',
+      desc: 'settingsText',
+    );
+  }
+
+  String get languageText {
+    return Intl.message(
+      'Language',
+      name: 'languageText',
+      desc: 'languageText',
+    );
+  }
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
-  const AppLocalizationsDelegate();
+  Locale locale;
+  List<Locale> supportedLocales;
+
+  AppLocalizationsDelegate({
+    this.locale,
+    this.supportedLocales,
+  });
 
   @override
-  bool isSupported(Locale locale) => ['en', 'id'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => supportedLocales.contains(locale.languageCode);
 
+// This does not change
   @override
   Future<AppLocalizations> load(Locale locale) => AppLocalizations.load(locale);
 
   @override
-  bool shouldReload(AppLocalizationsDelegate old) => false;
+  bool shouldReload(AppLocalizationsDelegate old) => true;
 }

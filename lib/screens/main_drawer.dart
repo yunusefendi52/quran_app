@@ -15,9 +15,25 @@ class _MainDrawerState extends State<MainDrawer> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).appName),
       ),
-      body: Container(
-        height: 100,
-        color: Colors.teal,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              height: 100,
+              color: Colors.teal,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).pushNamed('/settings');
+              },
+              child: ListTile(
+                title: Text('Settings'),
+                leading: Icon(Icons.settings),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,5 @@
 // DO NOT EDIT. This is code generated via package:intl/generate_localized.dart
-// This is a library that provides messages for a id locale. All the
+// This is a library that provides messages for a en locale. All the
 // messages from the main program should be duplicated here with the same
 // function name.
 
@@ -16,14 +16,14 @@ final _keepAnalysisHappy = Intl.defaultLocale;
 typedef MessageIfAbsent(String message_str, List args);
 
 class MessageLookup extends MessageLookupByLibrary {
-  get localeName => 'id';
+  get localeName => 'en';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
     "appName" : MessageLookupByLibrary.simpleMessage("Quran App"),
     "juzText" : MessageLookupByLibrary.simpleMessage("Juz"),
-    "languageText" : MessageLookupByLibrary.simpleMessage("Bahasa"),
-    "settingsText" : MessageLookupByLibrary.simpleMessage("Pengaturan"),
-    "suraText" : MessageLookupByLibrary.simpleMessage("Surat")
+    "languageText" : MessageLookupByLibrary.simpleMessage("Language"),
+    "settingsText" : MessageLookupByLibrary.simpleMessage("Settings"),
+    "suraText" : MessageLookupByLibrary.simpleMessage("Sura")
   };
 }

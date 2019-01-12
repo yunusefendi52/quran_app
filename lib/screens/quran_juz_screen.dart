@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
+import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/models/juz_model.dart';
 import 'package:quran_app/scoped_model/app_model.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -90,7 +91,7 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Text(
-                    'Juz ${juz.juzNumber}',
+                    '${AppLocalizations.of(context).juzText} ${juz.juzNumber}',
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -140,11 +141,14 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Container(
-                      height: 24,
+                      height: 20,
                       color: Colors.white,
                     ),
+                    SizedBox.fromSize(
+                      size: Size.fromHeight(5)
+                    ),
                     Container(
-                      height: 18,
+                      height: 16,
                       color: Colors.white,
                     ),
                   ],
@@ -156,6 +160,7 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
                 ),
                 child: Container(
                   height: 24,
+                  width: 75,
                   color: Colors.white,
                 ),
               ),

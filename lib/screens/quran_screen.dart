@@ -95,10 +95,10 @@ class _QuranQuranScreenState extends State<QuranScreen>
                       Theme.of(context).textTheme.display1.color,
                   tabs: <Widget>[
                     Tab(
-                      text: 'Sura',
+                      text: AppLocalizations.of(context).suraText,
                     ),
                     Tab(
-                      text: 'Juz',
+                      text: AppLocalizations.of(context).juzText,
                     ),
                   ],
                 ),
