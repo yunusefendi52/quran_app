@@ -75,7 +75,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   });
 
   @override
-  bool isSupported(Locale locale) => supportedLocales.contains(locale.languageCode);
+  bool isSupported(Locale locale) => supportedLocales.map((v) => v.languageCode).contains(locale.languageCode);
 
 // This does not change
   @override

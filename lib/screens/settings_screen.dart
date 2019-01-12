@@ -38,15 +38,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Text(
-                    AppLocalizations.of(context).languageText,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
                     'English',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 18,
                     ),
                   ),
                 ],
@@ -63,15 +57,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Text(
-                    AppLocalizations.of(context).languageText,
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
                     'Indonesia',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 18,
                     ),
                   ),
                 ],

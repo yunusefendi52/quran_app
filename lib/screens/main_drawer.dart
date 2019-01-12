@@ -28,7 +28,9 @@ class _MainDrawerState extends State<MainDrawer> {
                 Navigator.of(context).pushNamed('/settings');
               },
               child: ListTile(
-                title: Text('Settings'),
+                title: Text(
+                  AppLocalizations.of(context).settingsText,
+                ),
                 leading: Icon(Icons.settings),
               ),
             ),
