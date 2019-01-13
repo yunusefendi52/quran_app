@@ -3,8 +3,10 @@ import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/models/juz_model.dart';
 import 'package:quran_app/scoped_model/app_model.dart';
+import 'package:quran_app/screens/quran_aya_screen.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'dart:math' as math;
+
 class QuranJuzScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -71,12 +73,23 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
     int firstSura = int.parse(juz.verseMapping.keys.first);
     int firstAya = int.parse(juz.verseMapping.values.first.split("-")[0]);
 
-    var selectedChapter = quranJuzScreenScopedModel.chaptersModel.chapters.firstOrDefault((v) =>
-        v.chapterNumber == firstSura &&
-        firstAya <= v.versesCount);
+    var selectedChapter =
+        quranJuzScreenScopedModel.chaptersModel.chapters.firstOrDefault(
+      (v) => v.chapterNumber == firstSura && firstAya <= v.versesCount,
+    );
 
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return QuranAyaScreen(
+                chapter: selectedChapter,
+              );
+            },
+          ),
+        );
+      },
       child: Container(
         padding: EdgeInsets.symmetric(
           vertical: 7.5,
@@ -144,9 +157,7 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
                       height: 20,
                       color: Colors.white,
                     ),
-                    SizedBox.fromSize(
-                      size: Size.fromHeight(5)
-                    ),
+                    SizedBox.fromSize(size: Size.fromHeight(5)),
                     Container(
                       height: 16,
                       color: Colors.white,
