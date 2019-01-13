@@ -35,7 +35,7 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   static const double maxFontSizeArabic = 72;
   double fontSizeArabic = SettingsHelpers.minFontSizeArabic;
-  
+
   static const double maxFontSizeTranslation = 50;
   double fontSizeTranslation = SettingsHelpers.minFontSizeTranslation;
 
@@ -281,103 +281,96 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   Widget settingsDialog() {
     // I use Dialog because it has better padding
-    Dialog dialog = Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(
-          10,
+    var dialog = Container(
+      margin: EdgeInsets.all(40),
+      color: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(
+            10,
+          ),
+          color: Theme.of(context).dialogBackgroundColor,
         ),
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              setState(() {
-                settingsPageIsVisible = false;
-              });
-            },
-            icon: Icon(
-              Icons.keyboard_arrow_left,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              child: Text(
+                'Font Size',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
-        ),
-        body: Container(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Container(
-                child: Text(
-                  'Font Size',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+            // Arabic font size
+            SizedBox.fromSize(size: Size.fromHeight(5)),
+            Container(
+              child: Text(
+                'Arabic',
+                style: TextStyle(
+                  fontSize: 18,
                 ),
               ),
-              // Arabic font size
-              SizedBox.fromSize(size: Size.fromHeight(5)),
-              Container(
-                child: Text(
-                  'Arabic',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
+            ),
+            Slider(
+              min: SettingsHelpers.minFontSizeArabic,
+              max: maxFontSizeArabic,
+              value: fontSizeArabic,
+              activeColor: Theme.of(context).accentColor,
+              inactiveColor: Theme.of(context).dividerColor,
+              onChanged: (double value) async {
+                await SettingsHelpers.instance.fontSizeArabic(value);
+                setState(
+                  () {
+                    fontSizeArabic = value;
+                  },
+                );
+              },
+            ),
+            // Translation font size
+            SizedBox.fromSize(size: Size.fromHeight(5)),
+            Container(
+              child: Text(
+                'Translation',
+                style: TextStyle(
+                  fontSize: 18,
                 ),
               ),
-              Slider(
-                min: SettingsHelpers.minFontSizeArabic,
-                max: maxFontSizeArabic,
-                value: fontSizeArabic,
-                activeColor: Theme.of(context).accentColor,
-                inactiveColor: Theme.of(context).dividerColor,
-                onChanged: (double value) async {
-                  await SettingsHelpers.instance.fontSizeArabic(value);
-                  setState(
-                    () {
-                      fontSizeArabic = value;
-                    },
-                  );
-                },
-              ),
-              // Translation font size
-              SizedBox.fromSize(size: Size.fromHeight(5)),
-              Container(
-                child: Text(
-                  'Translation',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              Slider(
-                min: SettingsHelpers.minFontSizeTranslation,
-                max: maxFontSizeTranslation,
-                value: fontSizeTranslation,
-                activeColor: Theme.of(context).accentColor,
-                inactiveColor: Theme.of(context).dividerColor,
-                onChanged: (double value) async {
-                  await SettingsHelpers.instance.fontSizeTranslation(value);
-                  setState(
-                    () {
-                      fontSizeTranslation = value;
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
+            ),
+            Slider(
+              min: SettingsHelpers.minFontSizeTranslation,
+              max: maxFontSizeTranslation,
+              value: fontSizeTranslation,
+              activeColor: Theme.of(context).accentColor,
+              inactiveColor: Theme.of(context).dividerColor,
+              onChanged: (double value) async {
+                await SettingsHelpers.instance.fontSizeTranslation(value);
+                setState(
+                  () {
+                    fontSizeTranslation = value;
+                  },
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
-    return InkResponse(
-      onTap: () {
-        setState(() {
-          settingsPageIsVisible = false;
-        });
-      },
-      child: Container(
-        color: Theme.of(context).dialogBackgroundColor.withOpacity(0.4),
-        child: dialog,
-      ),
+    return Stack(
+      children: <Widget>[
+        InkResponse(
+          onTap: () {
+            setState(() {
+              settingsPageIsVisible = false;
+            });
+          },
+          child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.55),
+          ),
+        ),
+        dialog,
+      ],
     );
   }
 }
