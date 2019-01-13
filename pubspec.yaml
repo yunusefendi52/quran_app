@@ -74,7 +74,10 @@ flutter:
   fonts:
     - family: noorehira
       fonts:
-        - asset: fonts/noorehira.ttf
+        - asset: fonts/UthmanTN1-Ver10.otf
+    - family: KFGQPC Uthman Taha Naskh
+      fonts:
+        - asset: fonts/UthmanTN1-Ver10.otf
   
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages

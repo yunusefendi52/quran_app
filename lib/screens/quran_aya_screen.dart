@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quran_app/controls/my_draggable_scrollbar.dart';
 import 'package:quran_app/helpers/colors_settings.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
@@ -86,24 +87,10 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
             ScopedModelDescendant<QuranAyaScreenScopedModel>(
               builder: (BuildContext context, Widget child,
                   QuranAyaScreenScopedModel model) {
-                return DraggableScrollbar(
-                  controller: scrollController,
+                return MyDraggableScrollBar.create(
+                  context: context,
+                  scrollController: scrollController,
                   heightScrollThumb: model.isGettingAya ? 0 : 45,
-                  backgroundColor: Theme.of(context).accentColor,
-                  scrollThumbBuilder: (
-                    Color backgroundColor,
-                    Animation<double> thumbAnimation,
-                    Animation<double> labelAnimation,
-                    double height, {
-                    Text labelText,
-                    BoxConstraints labelConstraints,
-                  }) {
-                    return Container(
-                      height: height,
-                      width: 14,
-                      color: backgroundColor,
-                    );
-                  },
                   child: ListView.separated(
                     controller: scrollController,
                     itemCount:
@@ -247,7 +234,7 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
               textDirection: TextDirection.rtl,
               style: TextStyle(
                 fontSize: fontSizeArabic,
-                fontFamily: 'noorehira',
+                fontFamily: 'KFGQPC Uthman Taha Naskh',
               ),
             ),
           ]..addAll(listTranslationWidget),
