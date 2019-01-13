@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/routes/routes.dart';
 import 'package:quran_app/screens/main_drawer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
 
@@ -33,6 +35,10 @@ class _MyAppState extends State<MyApp> {
 
     Application.changeLocale = null;
     Application.changeLocale = changeLocale;
+
+    (() async {
+      SettingsHelpers.instance.prefs = await SharedPreferences.getInstance();
+    })();
 
     super.initState();
   }

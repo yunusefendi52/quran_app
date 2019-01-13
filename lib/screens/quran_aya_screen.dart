@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quran_app/helpers/colors_settings.dart';
+import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/quran_data_model.dart';
@@ -31,11 +32,28 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   ScrollController scrollController;
 
+  static const double minFontSizeArabic = 32;
+  static const double maxFontSizeArabic = 72;
+  double fontSizeArabic = minFontSizeArabic;
+
+  static const double minFontSizeTranslation = 16;
+  static const double maxFontSizeTranslation = 50;
+  double fontSizeTranslation = minFontSizeTranslation;
+
+  bool settingsPageIsVisible = false;
+
   @override
   void initState() {
     scrollController = ScrollController();
 
     super.initState();
+
+    setState(() {
+      fontSizeArabic = SettingsHelpers.instance.getFontSizeArabic;
+    });
+    setState(() {
+      fontSizeTranslation = SettingsHelpers.instance.getFontSizeTranslation;
+    });
   }
 
   @override
@@ -50,67 +68,83 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-              '${widget.chapter.chapterNumber}. ${widget.chapter.nameSimple}'),
+            '${widget.chapter.chapterNumber}. ${widget.chapter.nameSimple}',
+          ),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () async {
+                setState(() {
+                  settingsPageIsVisible = true;
+                });
+              },
+              icon: Icon(Icons.settings),
+            ),
+          ],
         ),
-        body: ScopedModelDescendant<QuranAyaScreenScopedModel>(
-          builder: (BuildContext context, Widget child,
-              QuranAyaScreenScopedModel model) {
-            return DraggableScrollbar(
-              controller: scrollController,
-              heightScrollThumb: model.isGettingAya ? 0 : 45,
-              backgroundColor: Theme.of(context).accentColor,
-              scrollThumbBuilder: (
-                Color backgroundColor,
-                Animation<double> thumbAnimation,
-                Animation<double> labelAnimation,
-                double height, {
-                Text labelText,
-                BoxConstraints labelConstraints,
-              }) {
-                return Container(
-                  height: height,
-                  width: 14,
-                  color: backgroundColor,
+        body: Stack(
+          children: <Widget>[
+            ScopedModelDescendant<QuranAyaScreenScopedModel>(
+              builder: (BuildContext context, Widget child,
+                  QuranAyaScreenScopedModel model) {
+                return DraggableScrollbar(
+                  controller: scrollController,
+                  heightScrollThumb: model.isGettingAya ? 0 : 45,
+                  backgroundColor: Theme.of(context).accentColor,
+                  scrollThumbBuilder: (
+                    Color backgroundColor,
+                    Animation<double> thumbAnimation,
+                    Animation<double> labelAnimation,
+                    double height, {
+                    Text labelText,
+                    BoxConstraints labelConstraints,
+                  }) {
+                    return Container(
+                      height: height,
+                      width: 14,
+                      color: backgroundColor,
+                    );
+                  },
+                  child: ListView.separated(
+                    controller: scrollController,
+                    itemCount:
+                        model.isGettingAya ? 5 : (model?.listAya?.length ?? 0),
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 1,
+                        color: Theme.of(context).dividerColor,
+                      );
+                    },
+                    itemBuilder: (BuildContext context, int index) {
+                      if (model.isGettingAya) {
+                        return createAyaItemCellShimmer();
+                      }
+
+                      Aya aya = quranAyaScreenScopedModel?.listAya?.elementAt(
+                        index,
+                      );
+                      var listTranslationAya = quranAyaScreenScopedModel
+                          ?.translations?.entries
+                          ?.toList();
+                      listTranslationAya
+                          .sort((a, b) => a.key.name.compareTo(b.key.name));
+                      return createAyaItemCell(
+                        aya,
+                        listTranslationAya.map(
+                          (v) {
+                            return Tuple2<TranslationDataKey, TranslationAya>(
+                              v.key,
+                              v.value.elementAt(index),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
-              child: ListView.separated(
-                controller: scrollController,
-                itemCount:
-                    model.isGettingAya ? 5 : (model?.listAya?.length ?? 0),
-                separatorBuilder: (BuildContext context, int index) {
-                  return Container(
-                    height: 1,
-                    color: Theme.of(context).dividerColor,
-                  );
-                },
-                itemBuilder: (BuildContext context, int index) {
-                  if (model.isGettingAya) {
-                    return createAyaItemCellShimmer();
-                  }
-
-                  Aya aya = quranAyaScreenScopedModel?.listAya?.elementAt(
-                    index,
-                  );
-                  var listTranslationAya = quranAyaScreenScopedModel
-                      ?.translations?.entries
-                      ?.toList();
-                  listTranslationAya
-                      .sort((a, b) => a.key.name.compareTo(b.key.name));
-                  return createAyaItemCell(
-                    aya,
-                    listTranslationAya.map(
-                      (v) {
-                        return Tuple2<TranslationDataKey, TranslationAya>(
-                          v.key,
-                          v.value.elementAt(index),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+            ),
+            settingsPageIsVisible ? settingsDialog() : Container(),
+          ],
         ),
       ),
     );
@@ -131,24 +165,25 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             SizedBox.fromSize(
-              size: Size.fromHeight(20),
+              size: Size.fromHeight(10),
             ),
             Container(
               child: Text(
                 '${translationAya.item1.name}',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
+                  fontSize: fontSizeTranslation,
                 ),
               ),
             ),
             SizedBox.fromSize(
-              size: Size.fromHeight(2),
+              size: Size.fromHeight(1),
             ),
             Container(
               child: Text(
                 translationAya.item2.text,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: fontSizeTranslation,
                 ),
               ),
             ),
@@ -211,8 +246,7 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
               aya.text,
               textDirection: TextDirection.rtl,
               style: TextStyle(
-                fontSize: 32,
-                height: 1.35,
+                fontSize: fontSizeArabic,
                 fontFamily: 'noorehira',
               ),
             ),
@@ -256,6 +290,108 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget settingsDialog() {
+    // I use Dialog because it has better padding
+    Dialog dialog = Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          10,
+        ),
+      ),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              setState(() {
+                settingsPageIsVisible = false;
+              });
+            },
+            icon: Icon(
+              Icons.keyboard_arrow_left,
+            ),
+          ),
+        ),
+        body: Container(
+          padding: EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Container(
+                child: Text(
+                  'Font Size',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              // Arabic font size
+              SizedBox.fromSize(size: Size.fromHeight(5)),
+              Container(
+                child: Text(
+                  'Arabic',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Slider(
+                min: minFontSizeArabic,
+                max: maxFontSizeArabic,
+                value: fontSizeArabic,
+                activeColor: Theme.of(context).accentColor,
+                inactiveColor: Theme.of(context).dividerColor,
+                onChanged: (double value) async {
+                  await SettingsHelpers.instance.fontSizeArabic(value);
+                  setState(
+                    () {
+                      fontSizeArabic = value;
+                    },
+                  );
+                },
+              ),
+              // Translation font size
+              SizedBox.fromSize(size: Size.fromHeight(5)),
+              Container(
+                child: Text(
+                  'Translation',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Slider(
+                min: minFontSizeTranslation,
+                max: maxFontSizeTranslation,
+                value: fontSizeTranslation,
+                activeColor: Theme.of(context).accentColor,
+                inactiveColor: Theme.of(context).dividerColor,
+                onChanged: (double value) async {
+                  await SettingsHelpers.instance.fontSizeTranslation(value);
+                  setState(
+                    () {
+                      fontSizeTranslation = value;
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    return InkResponse(
+      onTap: () {
+        setState(() {
+          settingsPageIsVisible = false;
+        });
+      },
+      child: Container(
+        color: Theme.of(context).dialogBackgroundColor.withOpacity(0.4),
+        child: dialog,
       ),
     );
   }

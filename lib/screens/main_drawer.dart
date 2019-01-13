@@ -19,10 +19,6 @@ class _MainDrawerState extends State<MainDrawer> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              height: 100,
-              color: Colors.teal,
-            ),
             InkWell(
               onTap: () {
                 Navigator.of(context).pushNamed('/settings');
