@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quran_app/events/change_language_event.dart';
+import 'package:quran_app/helpers/my_event_bus.dart';
+import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/main.dart';
 
@@ -29,8 +32,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           InkWell(
-            onTap: () {
-              Application.changeLocale(Locale('en'));
+            onTap: () async {
+              var locale = Locale('en');
+              await SettingsHelpers.instance.setLocale(locale);
+              Application.changeLocale(locale);
+              MyEventBus.instance.eventBus.fire(
+                ChangeLanguageEvent()..locale = locale,
+              );
             },
             child: ListTile(
               leading: Icon(Icons.language),
@@ -48,8 +56,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           InkWell(
-            onTap: () {
-              Application.changeLocale(Locale('id'));
+            onTap: () async {
+              var locale = Locale('id');
+              await SettingsHelpers.instance.setLocale(locale);
+              Application.changeLocale(locale);
+              MyEventBus.instance.eventBus.fire(
+                ChangeLanguageEvent()..locale = locale,
+              );
             },
             child: ListTile(
               leading: Icon(Icons.language),

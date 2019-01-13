@@ -43,13 +43,13 @@ class QuranDataService {
     return _quranDataModel;
   }
 
-  Future<ChaptersModel> getChapters() async {
-    if (_chaptersModel == null) {
-      String json = await rootBundle.loadString(
-        'assets/quran-data/chapters.id.json',
-      );
-      _chaptersModel = ChaptersModel.chaptersModelFromJson(json);
-    }
+  Future<ChaptersModel> getChapters(
+    Locale locale,
+  ) async {
+    String json = await rootBundle.loadString(
+      'assets/quran-data/chapters/chapters.${locale.languageCode}.json',
+    );
+    _chaptersModel = ChaptersModel.chaptersModelFromJson(json);
     return _chaptersModel;
   }
 

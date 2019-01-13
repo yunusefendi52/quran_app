@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:function_types/function_types.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:quran_app/events/change_language_event.dart';
+import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/screens/quran_bookmarks_screen.dart';
 import 'package:quran_app/screens/quran_list_screen.dart';
@@ -24,6 +28,9 @@ class _QuranQuranScreenState extends State<QuranScreen>
 
   TabController quranListTabController;
   int quranListCurrentTabIndex = 0;
+  bool loadedQuranListScreen = false;
+
+  StreamSubscription changeLocaleSubsciption;
 
   @override
   void initState() {
@@ -53,6 +60,20 @@ class _QuranQuranScreenState extends State<QuranScreen>
         });
       }
     });
+
+    changeLocaleSubsciption =
+        MyEventBus.instance.eventBus.on<ChangeLanguageEvent>().listen(
+      (v) async {
+        // Refresh current
+        setState(() {
+          loadedQuranListScreen = true;
+        });
+        await Future.delayed(Duration(milliseconds: 400));
+        setState(() {
+          loadedQuranListScreen = false;
+        });
+      },
+    );
 
     super.initState();
   }
@@ -147,9 +168,11 @@ class _QuranQuranScreenState extends State<QuranScreen>
         body: TabBarView(
           controller: tabController,
           children: <Widget>[
-            QuranListScreen(
-              currentTabIndex: quranListCurrentTabIndex,
-            ),
+            loadedQuranListScreen == false
+                ? QuranListScreen(
+                    currentTabIndex: quranListCurrentTabIndex,
+                  )
+                : Container(),
             QuranBookmarksScreen(),
           ],
         ),

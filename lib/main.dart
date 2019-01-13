@@ -40,6 +40,11 @@ class _MyAppState extends State<MyApp> {
     Application.changeLocale = null;
     Application.changeLocale = changeLocale;
 
+    SettingsHelpers.ensurePrefs(() async {
+      var locale = SettingsHelpers.instance.getLocale();
+      myAppModel.changeLocale(locale);
+    });
+
     (() async {
       // Make sure /database directory created
       var databasePath = await getDatabasesPath();
@@ -47,8 +52,6 @@ class _MyAppState extends State<MyApp> {
       if (!f.existsSync()) {
         f.createSync();
       }
-
-      SettingsHelpers.instance.prefs = await SharedPreferences.getInstance();
     })();
 
     super.initState();
@@ -59,26 +62,32 @@ class _MyAppState extends State<MyApp> {
     var theme = ThemeData.dark();
 
     return ScopedModel<MyAppModel>(
-      model: myAppModel,
-      child: MaterialApp(
-        localizationsDelegates: [
-          myAppModel.appLocalizationsDelegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: myAppModel.supportedLocales,
-        locale: myAppModel.locale,
-        onGenerateTitle: (context) => AppLocalizations.of(context).appName,
-        theme: theme,
-        routes: Routes.routes,
-      ),
-    );
+        model: myAppModel,
+        child: ScopedModelDescendant<MyAppModel>(
+          builder: (
+            BuildContext context,
+            Widget child,
+            MyAppModel model,
+          ) {
+            return MaterialApp(
+              localizationsDelegates: [
+                myAppModel.appLocalizationsDelegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: model.supportedLocales,
+              locale: model.locale,
+              onGenerateTitle: (context) =>
+                  AppLocalizations.of(context).appName,
+              theme: theme,
+              routes: Routes.routes,
+            );
+          },
+        ));
   }
 
   void changeLocale(Locale locale) {
-    setState(() {
-      myAppModel.locale = locale;
-    });
+    myAppModel.changeLocale(locale);
   }
 }
 
@@ -101,7 +110,7 @@ class MyAppModel extends Model {
   }
 
   void changeLocale(Locale locale) {
-    locale = locale;
+    this.locale = locale;
     notifyListeners();
   }
 }

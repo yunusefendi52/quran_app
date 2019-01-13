@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
 import 'package:quran_app/models/quran_data_model.dart';
@@ -10,43 +11,19 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:queries/collections.dart';
 
 class QuranScreenScopedModel extends Model {
-  QuranDataService _quranDataService;
+  QuranDataService _quranDataService = QuranDataService.instance;
 
   QuranDataModel quranDataModel = QuranDataModel();
   ChaptersModel chaptersModel = ChaptersModel();
 
-  List<Sura> get listSura => quranDataModel?.quran?.sura;
-
-  List<Sura> get listSuraOnly => listSura?.map(
-        (v) => Sura(
-              index: v.index,
-              name: v.name,
-            ),
-      );
-
-  List<Aya> getAya(int sura) {
-    var listAya = quranDataModel?.quran?.sura
-        ?.firstWhere((v) => v.index == sura.toString());
-    return listAya.aya;
-  }
-
-  QuranScreenScopedModel() {
-    _quranDataService = QuranDataService.instance;
-  }
-
   bool isGettingChapters = true;
-
-  // Future init() async {
-  //   quranDataModel = await _quranDataService.getQuranDataModel();
-  //   chaptersModel = await _quranDataService.getChapters();
-  //   notifyListeners();
-  // }
 
   Future getChapters() async {
     try {
       isGettingChapters = true;
 
-      chaptersModel = await _quranDataService.getChapters();
+      var locale = SettingsHelpers.instance.getLocale();
+      chaptersModel = await _quranDataService.getChapters(locale);
       notifyListeners();
     } finally {
       isGettingChapters = false;
@@ -61,7 +38,7 @@ class QuranJuzScreenScopedModel extends Model {
 
   JuzModel juzModel;
 
-  ChaptersModel chaptersModel;
+  ChaptersModel chaptersModel = ChaptersModel();
 
   Future getJuzs() async {
     try {
@@ -76,7 +53,11 @@ class QuranJuzScreenScopedModel extends Model {
   }
 
   Future getChapters() async {
-    chaptersModel = await _quranDataService.getChapters();
+    var locale = SettingsHelpers.instance.getLocale();
+    chaptersModel = await _quranDataService.getChapters(
+      locale,
+    );
+    notifyListeners();
   }
 }
 

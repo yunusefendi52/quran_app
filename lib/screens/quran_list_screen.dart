@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:quran_app/events/change_language_event.dart';
+import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/quran_data_model.dart';
@@ -26,6 +30,18 @@ class QuranListScreen extends StatefulWidget {
 class _QuranListScreenState extends State<QuranListScreen>
     with SingleTickerProviderStateMixin {
   List<Widget> listWidgets;
+
+  StreamSubscription changeLocaleSubsciption;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
