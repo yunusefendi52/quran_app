@@ -34,6 +34,7 @@ dependencies:
   draggable_scrollbar: ^0.0.4
   path: ^1.6.2
   tuple: ^1.0.2
+  event_bus: ^1.0.1
   
 dev_dependencies:
   flutter_test:
@@ -55,7 +56,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/quran-data/quran-uthmani.json
-   - assets/quran-data/chapters.id.json
+   - assets/quran-data/chapters/chapters.en.json
+   - assets/quran-data/chapters/chapters.id.json
    - assets/quran-data/juz.json
    - assets/quran-data/translation.json
    - assets/quran-data/translations/es.garcia.db
