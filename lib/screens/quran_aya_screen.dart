@@ -57,7 +57,14 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    await quranAyaScreenScopedModel.getAya(widget.chapter.chapterNumber);
+    await quranAyaScreenScopedModel.getAya(widget.chapter);
+  }
+
+  @override
+  void dispose() {
+    quranAyaScreenScopedModel.dispose();
+
+    super.dispose();
   }
 
   @override

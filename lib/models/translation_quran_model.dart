@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 
 class TranslationQuranModel {
   TranslationXml xml;
@@ -94,15 +95,15 @@ class TranslationAya {
 
   factory TranslationAya.fromJson(Map<String, dynamic> json) =>
       new TranslationAya(
-        index: json["@index"],
-        text: json["@text"],
-        bismillah: json["@bismillah"] == null ? null : json["@bismillah"],
+        index: json["index"],
+        text: json["text"],
+        bismillah: json["bismillah"] == null ? null : json["bismillah"],
       );
 
   Map<String, dynamic> toJson() => {
-        "@index": index,
-        "@text": text,
-        "@bismillah": bismillah == null ? null : bismillah,
+        "index": index,
+        "text": text,
+        "bismillah": bismillah == null ? null : bismillah,
       };
 }
 
@@ -128,6 +129,58 @@ class TranslationXml {
 }
 
 class TranslationDataKey {
+  String id;
   String name;
   String translator;
+  TranslationDataKeyType type;
+  String url;
+  TranslationDataKeyFileType fileType;
+
+  TranslationDataKey({
+    this.id,
+    this.name,
+    this.translator,
+    this.type,
+    this.url,
+    this.fileType,
+  });
+
+  static List<TranslationDataKey> translationDataKeyFromJson(String str) {
+    final jsonData = json.decode(str);
+    return new List<TranslationDataKey>.from(
+        jsonData.map((x) => TranslationDataKey.fromJson(x)));
+  }
+
+  static String translationDataKeyToJson(List<TranslationDataKey> data) {
+    final dyn = new List<dynamic>.from(data.map((x) => x.toJson()));
+    return json.encode(dyn);
+  }
+
+  factory TranslationDataKey.fromJson(Map<String, dynamic> json) =>
+      new TranslationDataKey(
+        id: json["id"],
+        name: json["name"],
+        translator: json["translator"],
+        type: TranslationDataKeyType.values[json["type"].toInt()],
+        url: json["url"],
+        fileType: TranslationDataKeyFileType.values[json["fileType"].toInt()],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "translator": translator,
+        "type": type.index,
+        "url": url,
+        "fileType": fileType.index,
+      };
+}
+
+enum TranslationDataKeyType {
+  Assets,
+  UrlDownload,
+}
+
+enum TranslationDataKeyFileType {
+  Sqlite,
 }

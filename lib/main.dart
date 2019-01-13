@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/routes/routes.dart';
@@ -6,6 +9,7 @@ import 'package:quran_app/screens/main_drawer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 void main() => runApp(MyApp());
 
@@ -37,6 +41,13 @@ class _MyAppState extends State<MyApp> {
     Application.changeLocale = changeLocale;
 
     (() async {
+      // Make sure /database directory created
+      var databasePath = await getDatabasesPath();
+      var f = Directory(databasePath);
+      if (!f.existsSync()) {
+        f.createSync();
+      }
+
       SettingsHelpers.instance.prefs = await SharedPreferences.getInstance();
     })();
 

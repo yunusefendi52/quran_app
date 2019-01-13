@@ -55,10 +55,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/quran-data/quran-uthmani.json
-   - assets/quran-data/translations/id.indonesian.json
    - assets/quran-data/chapters.id.json
    - assets/quran-data/juz.json
-   - assets/quran-data/translations/en.sahih.json
+   - assets/quran-data/translation.json
+   - assets/quran-data/translations/es.garcia.db
+   - assets/quran-data/translations/id.indonesian.db
+   - assets/quran-data/translations/en.sahih.db
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

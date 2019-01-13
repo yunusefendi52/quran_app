@@ -1,4 +1,5 @@
 import 'dart:async' show Future;
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
@@ -25,12 +26,12 @@ class QuranDataService {
 
   JuzModel _juzModel;
 
-  List<String> _builtInTranslations = [
-    'assets/quran-data/translations/id.indonesian.json',
-    'assets/quran-data/translations/en.sahih.json',
-  ];
+  Map<TranslationDataKey, Database> _translations = {};
+  Map<TranslationDataKey, Database> get translations => _translations;
 
-  Map<TranslationDataKey, TranslationQuranModel> _translations;
+  List<TranslationDataKey> _listTranslationDataKey = [];
+  List<TranslationDataKey> get listTranslationDataKey =>
+      _listTranslationDataKey;
 
   Future<QuranDataModel> getQuranDataModel() async {
     if (_quranDataModel == null) {
@@ -44,8 +45,9 @@ class QuranDataService {
 
   Future<ChaptersModel> getChapters() async {
     if (_chaptersModel == null) {
-      String json =
-          await rootBundle.loadString('assets/quran-data/chapters.id.json');
+      String json = await rootBundle.loadString(
+        'assets/quran-data/chapters.id.json',
+      );
       _chaptersModel = ChaptersModel.chaptersModelFromJson(json);
     }
     return _chaptersModel;
@@ -59,25 +61,64 @@ class QuranDataService {
     return _juzModel;
   }
 
-  Future<Map<TranslationDataKey, TranslationQuranModel>> getTranslations() async {
-    if (_translations == null) {
-      _translations = {};
-      for (String path in _builtInTranslations) {
-        String json = await rootBundle.loadString(
-          path,
+  Future<Map<TranslationDataKey, List<TranslationAya>>> getTranslations(
+    Chapter chapter,
+  ) async {
+    if (_listTranslationDataKey.length <= 0) {
+      var translationJson = await rootBundle.loadString(
+        'assets/quran-data/translation.json',
+      );
+      var listTranslationDataKey =
+          TranslationDataKey.translationDataKeyFromJson(
+        translationJson,
+      );
+      _listTranslationDataKey.addAll(listTranslationDataKey);
+    }
+
+    if (_translations.length <= 0) {
+      for (var translationDataKey in listTranslationDataKey) {
+        // Copy from project assets to device
+        var databasePath = await getDatabasesPath();
+        var path = join(databasePath, '${translationDataKey.id}.db');
+        await deleteDatabase(path);
+        // Move checking database dir
+        var byteData = await rootBundle.load(translationDataKey.url);
+        var bytes = byteData.buffer.asUint8List(0, byteData.lengthInBytes);
+        await File(path).writeAsBytes(bytes);
+        Database database = await openDatabase(path);
+        _translations.addAll(
+          {
+            translationDataKey: database,
+          },
         );
-        TranslationQuranModel translationQuranModel =
-            TranslationQuranModel.quranDataModelFromJson(
-          json,
-        );
-        TranslationDataKey translationDataKey = TranslationDataKey()
-          ..name = translationQuranModel.name
-          ..translator = translationQuranModel.translator;
-        _translations.addAll({
-          translationDataKey: translationQuranModel,
-        });
       }
     }
-    return _translations;
+    Map<TranslationDataKey, List<TranslationAya>> mapTranslation = {};
+    for (var t in translations.entries) {
+      var ayaTranslation = await t.value.query(
+        'translations',
+        columns: ['*'],
+        where: 'sura = "${chapter.chapterNumber}"',
+      );
+      mapTranslation.addAll(
+        {
+          t.key: ayaTranslation.map(
+            (v) {
+              return TranslationAya.fromJson(v);
+            },
+          ).toList(),
+        },
+      );
+    }
+    return mapTranslation;
+  }
+
+  /// Close previous opened Database
+  void dispose() {
+    for (int i = 0; i < _translations.entries.length; i++) {
+      var database = _translations.entries.elementAt(i);
+      database.value.close();
+    }
+    _translations.clear();
   }
 }

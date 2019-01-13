@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:quran_app/models/chapters_models.dart';
@@ -92,32 +93,37 @@ class QuranAyaScreenScopedModel extends Model {
 
   Map<TranslationDataKey, List<TranslationAya>> translations = {};
 
-  Future getAya(int sura) async {
+  Future getAya(Chapter chapter) async {
     try {
       isGettingAya = true;
       notifyListeners();
 
       _quranDataModel = await _quranDataService.getQuranDataModel();
       var listSura = _quranDataModel?.quran?.sura?.firstWhere(
-        (v) => v.index == sura.toString(),
+        (v) => v.index == chapter.chapterNumber.toString(),
       );
       listAya = listSura?.aya;
-      var translationsMap = await _quranDataService.getTranslations();
-      for (var t in translationsMap.entries) {
-        translations.addAll(
-          {
-            t.key: t.value?.quran?.sura
-                ?.firstWhere(
-                  (v) => v.index == sura.toString(),
-                )
-                ?.aya
-          },
-        );
-      }
+      // var translationsMap = await _quranDataService.getTranslations();
+      // for (var t in translationsMap.entries) {
+      //   translations.addAll(
+      //     {
+      //       t.key: t.value?.quran?.sura
+      //           ?.firstWhere(
+      //             (v) => v.index == sura.toString(),
+      //           )
+      //           ?.aya
+      //     },
+      //   );
+      // }
+      translations = await _quranDataService.getTranslations(chapter);
       notifyListeners();
     } finally {
       isGettingAya = false;
       notifyListeners();
     }
+  }
+
+  void dispose() {
+    _quranDataService.dispose();
   }
 }
