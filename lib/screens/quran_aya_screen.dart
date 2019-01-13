@@ -33,13 +33,11 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   ScrollController scrollController;
 
-  static const double minFontSizeArabic = 32;
   static const double maxFontSizeArabic = 72;
-  double fontSizeArabic = minFontSizeArabic;
-
-  static const double minFontSizeTranslation = 16;
+  double fontSizeArabic = SettingsHelpers.minFontSizeArabic;
+  
   static const double maxFontSizeTranslation = 50;
-  double fontSizeTranslation = minFontSizeTranslation;
+  double fontSizeTranslation = SettingsHelpers.minFontSizeTranslation;
 
   bool settingsPageIsVisible = false;
 
@@ -326,7 +324,7 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
                 ),
               ),
               Slider(
-                min: minFontSizeArabic,
+                min: SettingsHelpers.minFontSizeArabic,
                 max: maxFontSizeArabic,
                 value: fontSizeArabic,
                 activeColor: Theme.of(context).accentColor,
@@ -351,7 +349,7 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
                 ),
               ),
               Slider(
-                min: minFontSizeTranslation,
+                min: SettingsHelpers.minFontSizeTranslation,
                 max: maxFontSizeTranslation,
                 value: fontSizeTranslation,
                 activeColor: Theme.of(context).accentColor,

@@ -14,18 +14,20 @@ class SettingsHelpers {
   Future fontSizeArabic(double fontSize) async {
     await prefs.setString('fontSizeArabic', fontSize.toString());
   }
-
+  
+  static const double minFontSizeArabic = 26;
   double get getFontSizeArabic {
     String fontSizeString = prefs.getString('fontSizeArabic');
-    return double.tryParse(fontSizeString ?? "32");
+    return double.tryParse(fontSizeString ?? minFontSizeArabic.toString());
   }
 
   Future fontSizeTranslation(double fontSize) async {
     await prefs.setString('fontSizeTranslation', fontSize.toString());
   }
-
-  double get getFontSizeTranslation {
+  
+  static const double minFontSizeTranslation = 12;
+  double get getFontSizeTranslation { 
     String fontSizeString = prefs.getString('fontSizeTranslation');
-    return double.tryParse(fontSizeString ?? "16");
+    return double.tryParse(fontSizeString ?? minFontSizeTranslation.toString());
   }
 }
