@@ -66,8 +66,6 @@ class SettingsScreenScopedModel extends Model {}
 class QuranAyaScreenScopedModel extends Model {
   QuranDataService _quranDataService = QuranDataService.instance;
 
-  QuranDataModel _quranDataModel;
-
   bool isGettingAya = true;
 
   List<Aya> listAya = [];
@@ -78,12 +76,8 @@ class QuranAyaScreenScopedModel extends Model {
     try {
       isGettingAya = true;
       notifyListeners();
-
-      _quranDataModel = await _quranDataService.getQuranDataModel();
-      var listSura = _quranDataModel?.quran?.sura?.firstWhere(
-        (v) => v.index == chapter.chapterNumber.toString(),
-      );
-      listAya = listSura?.aya;
+      
+      listAya = await _quranDataService.getQuranListAya(chapter.chapterNumber);
       // var translationsMap = await _quranDataService.getTranslations();
       // for (var t in translationsMap.entries) {
       //   translations.addAll(

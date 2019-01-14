@@ -76,26 +76,26 @@ class Sura {
 }
 
 class Aya {
-  String index;
+  String aya;
   String text;
   String bismillah;
 
   Aya({
-    this.index,
+    this.aya,
     this.text,
     this.bismillah,
   });
 
   factory Aya.fromJson(Map<String, dynamic> json) => new Aya(
-        index: json["@index"],
-        text: json["@text"],
-        bismillah: json["@bismillah"] == null ? null : json["@bismillah"],
+        aya: json["aya"],
+        text: json["text"],
+        bismillah: json["bismillah"] == null ? null : json["bismillah"],
       );
 
   Map<String, dynamic> toJson() => {
-        "@index": index,
-        "@text": text,
-        "@bismillah": bismillah == null ? null : bismillah,
+        "aya": aya,
+        "text": text,
+        "bismillah": bismillah == null ? null : bismillah,
       };
 }
 

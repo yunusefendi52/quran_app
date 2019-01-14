@@ -217,7 +217,7 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    aya.index,
+                    aya.aya,
                     style: TextStyle(
                       fontSize: 18,
                     ),

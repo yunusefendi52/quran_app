@@ -20,8 +20,6 @@ class QuranDataService {
     return _instance;
   }
 
-  QuranDataModel _quranDataModel;
-
   ChaptersModel _chaptersModel;
 
   JuzModel _juzModel;
@@ -33,14 +31,24 @@ class QuranDataService {
   List<TranslationDataKey> get listTranslationDataKey =>
       _listTranslationDataKey;
 
-  Future<QuranDataModel> getQuranDataModel() async {
-    if (_quranDataModel == null) {
-      String jsons = await rootBundle.loadString(
-        'assets/quran-data/quran-uthmani.json',
-      );
-      _quranDataModel = QuranDataModel.quranDataModelFromJson(jsons);
-    }
-    return _quranDataModel;
+  Database quranDatabase;
+
+  Future<List<Aya>> getQuranListAya(int sura) async {
+    quranDatabase = await _openDatabase(
+      'quran-uthmani.db',
+      'assets/quran-data/quran-uthmani.db',
+    );
+    var listAyaMap = await quranDatabase.query(
+      'quran',
+      columns: ['*'],
+      where: 'sura = "$sura"',
+    );
+    var listAya = listAyaMap.map(
+      (v) {
+        return Aya.fromJson(v);
+      },
+    );
+    return listAya.toList();
   }
 
   Future<ChaptersModel> getChapters(
@@ -77,15 +85,10 @@ class QuranDataService {
 
     if (_translations.length <= 0) {
       for (var translationDataKey in listTranslationDataKey) {
-        // Copy from project assets to device
-        var databasePath = await getDatabasesPath();
-        var path = join(databasePath, '${translationDataKey.id}.db');
-        await deleteDatabase(path);
-        // Move checking database dir
-        var byteData = await rootBundle.load(translationDataKey.url);
-        var bytes = byteData.buffer.asUint8List(0, byteData.lengthInBytes);
-        await File(path).writeAsBytes(bytes);
-        Database database = await openDatabase(path);
+        Database database = await _openDatabase(
+          '${translationDataKey.id}.db',
+          translationDataKey.url,
+        );
         _translations.addAll(
           {
             translationDataKey: database,
@@ -113,12 +116,28 @@ class QuranDataService {
     return mapTranslation;
   }
 
+  Future<Database> _openDatabase(
+      String databaseName, String databasePathBundle) async {
+    // Copy from project assets to device
+    var databasePath = await getDatabasesPath();
+    var path = join(databasePath, databaseName);
+    await deleteDatabase(path);
+    // Move checking database dir
+    var byteData = await rootBundle.load(databasePathBundle);
+    var bytes = byteData.buffer.asUint8List(0, byteData.lengthInBytes);
+    await File(path).writeAsBytes(bytes);
+    Database database = await openDatabase(path);
+    return database;
+  }
+
   /// Close previous opened Database
   void dispose() {
     for (int i = 0; i < _translations.entries.length; i++) {
       var database = _translations.entries.elementAt(i);
       database.value.close();
     }
+    quranDatabase.close();
+    quranDatabase = null;
     _translations.clear();
   }
 }
