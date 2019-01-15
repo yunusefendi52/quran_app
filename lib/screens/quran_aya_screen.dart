@@ -80,8 +80,15 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
           title: InkWell(
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Text(
-                '${widget.chapter.chapterNumber}. ${widget.chapter.nameSimple}',
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    '${widget.chapter.chapterNumber}. ${widget.chapter.nameSimple}',
+                  ),
+                  Icon(
+                    Icons.arrow_drop_down,
+                  ),
+                ],
               ),
             ),
             onTap: () async {
