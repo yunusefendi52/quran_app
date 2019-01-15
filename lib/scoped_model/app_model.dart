@@ -72,25 +72,23 @@ class QuranAyaScreenScopedModel extends Model {
 
   Map<TranslationDataKey, List<TranslationAya>> translations = {};
 
+  Map<Chapter, List<Aya>> chapters = {};
+
   Future getAya(Chapter chapter) async {
     try {
       isGettingAya = true;
       notifyListeners();
-      
+
       listAya = await _quranDataService.getQuranListAya(chapter.chapterNumber);
-      // var translationsMap = await _quranDataService.getTranslations();
-      // for (var t in translationsMap.entries) {
-      //   translations.addAll(
-      //     {
-      //       t.key: t.value?.quran?.sura
-      //           ?.firstWhere(
-      //             (v) => v.index == sura.toString(),
-      //           )
-      //           ?.aya
-      //     },
-      //   );
-      // }
       translations = await _quranDataService.getTranslations(chapter);
+
+      var locale = SettingsHelpers.instance.getLocale();
+      _quranDataService.getChaptersNavigator(locale).then(
+        (v) {
+          chapters = v;
+        },
+      );
+
       notifyListeners();
     } finally {
       isGettingAya = false;

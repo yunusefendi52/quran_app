@@ -15,7 +15,7 @@ class QuranDataService {
   static QuranDataService _instance;
   static QuranDataService get instance {
     if (_instance == null) {
-      _instance = QuranDataService();
+      _instance = QuranDataService._();
     }
     return _instance;
   }
@@ -33,15 +33,23 @@ class QuranDataService {
 
   Database quranDatabase;
 
-  Future<List<Aya>> getQuranListAya(int sura) async {
+  QuranDataService._();
+
+  Map<Chapter, List<Aya>> _chaptersNavigator = {};
+
+  Future<List<Aya>> getQuranListAya(int sura, {List<String> columns}) async {
+    if (quranDatabase?.isOpen == true) {
+      quranDatabase.close();
+      quranDatabase = null;
+    }
     quranDatabase = await _openDatabase(
       'quran-uthmani.db',
       'assets/quran-data/quran-uthmani.db',
     );
     var listAyaMap = await quranDatabase.query(
       'quran',
-      columns: ['*'],
-      where: 'sura = "$sura"',
+      columns: columns == null ? ['*'] : columns,
+      where: 'sura == "$sura"',
     );
     var listAya = listAyaMap.map(
       (v) {
@@ -51,13 +59,37 @@ class QuranDataService {
     return listAya.toList();
   }
 
+  Future<Map<Chapter, List<Aya>>> getChaptersNavigator(Locale locale) async {
+    if (_chaptersNavigator.length <= 0) {
+      var chapterModel = await instance.getChapters(locale);
+      Map<Chapter, List<Aya>> l = {};
+      for (var c in chapterModel.chapters.items) {
+        var listAya = await instance.getQuranListAya(
+          c.chapterNumber,
+          columns: [
+            'aya',
+          ],
+        );
+        l.addAll(
+          {
+            c: listAya,
+          },
+        );
+      }
+      _chaptersNavigator = l;
+    }
+    return _chaptersNavigator;
+  }
+
   Future<ChaptersModel> getChapters(
     Locale locale,
   ) async {
-    String json = await rootBundle.loadString(
-      'assets/quran-data/chapters/chapters.${locale.languageCode}.json',
-    );
-    _chaptersModel = ChaptersModel.chaptersModelFromJson(json);
+    if (_chaptersModel == null) {
+      String json = await rootBundle.loadString(
+        'assets/quran-data/chapters/chapters.${locale.languageCode}.json',
+      );
+      _chaptersModel = ChaptersModel.chaptersModelFromJson(json);
+    }
     return _chaptersModel;
   }
 
@@ -126,7 +158,7 @@ class QuranDataService {
     var byteData = await rootBundle.load(databasePathBundle);
     var bytes = byteData.buffer.asUint8List(0, byteData.lengthInBytes);
     await File(path).writeAsBytes(bytes);
-    Database database = await openDatabase(path);
+    Database database = await openReadOnlyDatabase(path);
     return database;
   }
 
@@ -136,7 +168,7 @@ class QuranDataService {
       var database = _translations.entries.elementAt(i);
       database.value.close();
     }
-    quranDatabase.close();
+    quranDatabase?.close();
     quranDatabase = null;
     _translations.clear();
   }

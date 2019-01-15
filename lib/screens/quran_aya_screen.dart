@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:quran_app/controls/my_draggable_scrollbar.dart';
+import 'package:quran_app/dialogs/quran_navigator_dialog.dart';
 import 'package:quran_app/helpers/colors_settings.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
@@ -12,6 +15,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:quiver/strings.dart';
 import 'package:tuple/tuple.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 
 class QuranAyaScreen extends StatefulWidget {
   final Chapter chapter;
@@ -73,8 +77,16 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
       model: quranAyaScreenScopedModel,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            '${widget.chapter.chapterNumber}. ${widget.chapter.nameSimple}',
+          title: InkWell(
+            child: Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '${widget.chapter.chapterNumber}. ${widget.chapter.nameSimple}',
+              ),
+            ),
+            onTap: () async {
+              await showQuranDialogNavigator();
+            },
           ),
           actions: <Widget>[
             IconButton(
@@ -378,6 +390,23 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
         ),
         dialog,
       ],
+    );
+  }
+
+  Future showQuranDialogNavigator() async {
+    if (quranAyaScreenScopedModel.chapters.length <= 0) {
+      return;
+    }
+
+    var dialog = QuranNavigatorDialog(
+      chapters: quranAyaScreenScopedModel.chapters,
+      currentChapter: widget.chapter,
+    );
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return dialog;
+      },
     );
   }
 }
