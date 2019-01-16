@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:queries/queries.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
 import 'package:quran_app/models/quran_data_model.dart';
@@ -64,15 +65,16 @@ class QuranDataService {
       var chapterModel = await instance.getChapters(locale);
       Map<Chapter, List<Aya>> l = {};
       for (var c in chapterModel.chapters.items) {
-        var listAya = await instance.getQuranListAya(
-          c.chapterNumber,
-          columns: [
-            'aya',
-          ],
+        var listAya = Enumerable.range(1, c.versesCount).select(
+          (v) {
+            return Aya(
+              aya: v.toString(),
+            );
+          },
         );
         l.addAll(
           {
-            c: listAya,
+            c: listAya.toList(),
           },
         );
       }
