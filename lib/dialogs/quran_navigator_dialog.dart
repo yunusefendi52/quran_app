@@ -113,7 +113,7 @@ class _QuranNavigatorDialogState extends State<QuranNavigatorDialog> {
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(5),
                           ),
-                          autofocus: true,
+                          autofocus: false,
                           controller: suraTextController,
                           inputFormatters: [
                             WhitelistingTextInputFormatter.digitsOnly,
