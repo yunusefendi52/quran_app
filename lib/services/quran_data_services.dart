@@ -39,14 +39,18 @@ class QuranDataService {
   Map<Chapter, List<Aya>> _chaptersNavigator = {};
 
   Future<List<Aya>> getQuranListAya(int sura, {List<String> columns}) async {
-    if (quranDatabase?.isOpen == true) {
-      quranDatabase.close();
-      quranDatabase = null;
+    if (quranDatabase == null) {
+      quranDatabase = await _openDatabase(
+        'quran-uthmani.db',
+        'assets/quran-data/quran-uthmani.db',
+      );
     }
-    quranDatabase = await _openDatabase(
-      'quran-uthmani.db',
-      'assets/quran-data/quran-uthmani.db',
-    );
+    if (quranDatabase.isOpen == false) {
+      quranDatabase = await _openDatabase(
+        'quran-uthmani.db',
+        'assets/quran-data/quran-uthmani.db',
+      );
+    }
     var listAyaMap = await quranDatabase.query(
       'quran',
       columns: columns == null ? ['*'] : columns,
@@ -155,11 +159,13 @@ class QuranDataService {
     // Copy from project assets to device
     var databasePath = await getDatabasesPath();
     var path = join(databasePath, databaseName);
-    await deleteDatabase(path);
-    // Move checking database dir
-    var byteData = await rootBundle.load(databasePathBundle);
-    var bytes = byteData.buffer.asUint8List(0, byteData.lengthInBytes);
-    await File(path).writeAsBytes(bytes);
+    bool fileExists = File(path).existsSync();
+    if (!fileExists) {
+      // Move checking database dir
+      var byteData = await rootBundle.load(databasePathBundle);
+      var bytes = byteData.buffer.asUint8List(0, byteData.lengthInBytes);
+      await File(path).writeAsBytes(bytes);
+    }
     Database database = await openReadOnlyDatabase(path);
     return database;
   }

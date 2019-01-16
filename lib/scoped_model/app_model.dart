@@ -74,11 +74,14 @@ class QuranAyaScreenScopedModel extends Model {
 
   Map<Chapter, List<Aya>> chapters = {};
 
+  Chapter currentChapter;
+
   Future getAya(Chapter chapter) async {
     try {
       isGettingAya = true;
       notifyListeners();
 
+      currentChapter = chapter;
       listAya = await _quranDataService.getQuranListAya(chapter.chapterNumber);
       translations = await _quranDataService.getTranslations(chapter);
 

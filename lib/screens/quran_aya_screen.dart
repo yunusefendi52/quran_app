@@ -47,6 +47,8 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   @override
   void initState() {
+    quranAyaScreenScopedModel.currentChapter = widget.chapter;
+
     scrollController = ScrollController();
 
     super.initState();
@@ -61,7 +63,8 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    await quranAyaScreenScopedModel.getAya(widget.chapter);
+    await quranAyaScreenScopedModel
+        .getAya(quranAyaScreenScopedModel.currentChapter);
   }
 
   @override
@@ -80,15 +83,23 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
           title: InkWell(
             child: Container(
               alignment: Alignment.centerLeft,
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    '${widget.chapter.chapterNumber}. ${widget.chapter.nameSimple}',
-                  ),
-                  Icon(
-                    Icons.arrow_drop_down,
-                  ),
-                ],
+              child: ScopedModelDescendant<QuranAyaScreenScopedModel>(
+                builder: (
+                  BuildContext context,
+                  Widget child,
+                  QuranAyaScreenScopedModel model,
+                ) {
+                  return Row(
+                    children: <Widget>[
+                      Text(
+                        '${model.currentChapter.chapterNumber}. ${model.currentChapter.nameSimple}',
+                      ),
+                      Icon(
+                        Icons.arrow_drop_down,
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             onTap: () async {
@@ -407,13 +418,16 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
     var dialog = QuranNavigatorDialog(
       chapters: quranAyaScreenScopedModel.chapters,
-      currentChapter: widget.chapter,
+      currentChapter: quranAyaScreenScopedModel.currentChapter,
     );
-    await showDialog(
+    var chapter = await showDialog<Chapter>(
       context: context,
       builder: (context) {
         return dialog;
       },
     );
+    if (chapter != null) {
+      await quranAyaScreenScopedModel.getAya(chapter);
+    }
   }
 }

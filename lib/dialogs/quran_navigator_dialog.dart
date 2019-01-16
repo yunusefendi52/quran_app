@@ -159,7 +159,9 @@ class _QuranNavigatorDialogState extends State<QuranNavigatorDialog> {
                           ),
                         ),
                         FlatButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).pop(model.selectedChapter.key);
+                          },
                           child: Text(
                             'To Sura',
                           ),
