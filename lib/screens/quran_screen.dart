@@ -126,10 +126,7 @@ class _QuranQuranScreenState extends State<QuranScreen>
               ),
             ),
           ),
-          Container(
-            height: 20,
-            color: Colors.green,
-          ),
+          Container(),
         ];
       },
       tabBarHeight: <double>[

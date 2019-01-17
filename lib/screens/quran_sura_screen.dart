@@ -54,6 +54,8 @@ class _QuranSuraScreenState extends State<QuranSuraScreen>
                     if (model.isGettingChapters) {
                       return chapterDataCellShimmer();
                     }
+
+                    // TODO: Add load more
                     
                     var chapter =
                         model.chaptersModel?.chapters?.elementAt(index);
