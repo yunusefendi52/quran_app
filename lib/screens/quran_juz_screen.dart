@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loadmore/loadmore.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/models/juz_model.dart';

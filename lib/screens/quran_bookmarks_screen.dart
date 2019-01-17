@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:quran_app/helpers/colors_settings.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:quran_app/services/bookmarks_data_service.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class QuranBookmarksScreen extends StatefulWidget {
   @override
@@ -63,23 +66,13 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
     );
   }
 
-  Widget juzDataCell(BookmarksModel chapter) {
-    if (chapter == null) {
+  Widget juzDataCell(BookmarksModel bookmarksModel) {
+    if (bookmarksModel == null) {
       return Container();
     }
 
-    return InkWell(
-      onTap: () {
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (BuildContext context) {
-        //       return QuranAyaScreen(
-        //         chapter: selectedChapter,
-        //       );
-        //     },
-        //   ),
-        // );
-      },
+    return Slidable(
+      delegate: SlidableDrawerDelegate(),
       child: Container(
         padding: EdgeInsets.symmetric(
           vertical: 7.5,
@@ -87,14 +80,15 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
         child: Row(
           children: <Widget>[
             SizedBox(
-              width: 15,
+              width: 10,
             ),
+            Icon(MdiIcons.dragVertical),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Text(
-                    '${chapter.suraName} ${chapter.sura}:${chapter.aya}',
+                    '${bookmarksModel.suraName} ${bookmarksModel.sura}:${bookmarksModel.aya}',
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -111,7 +105,7 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
                   horizontal: 20,
                 ),
                 child: Text(
-                  intl.DateFormat.yMMMd().format(chapter.insertTime),
+                  intl.DateFormat.yMMMd().format(bookmarksModel.insertTime),
                   textDirection: TextDirection.rtl,
                   maxLines: 2,
                 ),
@@ -120,6 +114,14 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
           ],
         ),
       ),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () async {
+            await quranBookmarksScreenModel.deleteBookmarks(bookmarksModel);
+          },
+          icon: Icon(Icons.delete),
+        ),
+      ],
     );
   }
 
@@ -133,38 +135,33 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
           ),
           child: Row(
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  width: 18,
-                  height: 18,
-                  color: Colors.white,
-                ),
+              SizedBox(
+                width: 15,
               ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Container(
-                      height: 20,
-                      color: Colors.white,
-                    ),
-                    SizedBox.fromSize(size: Size.fromHeight(5)),
-                    Container(
-                      height: 16,
-                      color: Colors.white,
+                      height: 18,
+                      color: ColorsSettings.shimmerColor,
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20,
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 150,
                 ),
-                child: Container(
-                  height: 24,
-                  width: 75,
-                  color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: Container(
+                    height: 18,
+                    width: 80,
+                    color: ColorsSettings.shimmerColor,
+                  ),
                 ),
               ),
             ],
@@ -188,11 +185,21 @@ class QuranBookmarksScreenModel extends Model {
       notifyListeners();
 
       await bookmarksDataService.init();
-      listBookmarks = bookmarksDataService.listBookmarks;
+      listBookmarks = await bookmarksDataService.getListBookmarks();
       notifyListeners();
     } finally {
       isGettingBookmarks = false;
       notifyListeners();
+    }
+  }
+
+  Future deleteBookmarks(BookmarksModel bookmarksModel) async {
+    try {
+      int i = await bookmarksDataService.delete(bookmarksModel);
+      listBookmarks.removeWhere((v) => v.id == bookmarksModel.id);
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
     }
   }
 }

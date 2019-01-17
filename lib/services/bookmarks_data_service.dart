@@ -17,31 +17,49 @@ class BookmarksDataService {
 
   Database database;
 
-  List<BookmarksModel> listBookmarks = [];
+  String _table = 'bookmarks';
 
   Future init() async {
-    // var databasePath = await getDatabasesPath();
-    // var path = join(databasePath, 'bookmarks.db');
-    // database = await openDatabase(
-    //   path,
-    //   onConfigure: (d) {
-    //     d.execute(
-    //       'CREATE TABLE `bookmarks` (`id`	INTEGER PRIMARY KEY AUTOINCREMENT, `sura`	INTEGER, `sura_name`	TEXT, `aya`	INTEGER, `insert_time`	TEXT )',
-    //     );
-    //   },
-    // );
-    var l = List.generate(100, (v) {
-      return BookmarksModel()
-        ..id = v
-        ..aya = v
-        ..insertTime = DateTime.now()
-        ..sura = v
-        ..suraName = v.toString();
-    });
-    listBookmarks = l;
+    var databasePath = await getDatabasesPath();
+    var path = join(databasePath, 'bookmarks.db');
+    if (database == null) {
+      database = await openDatabase(
+        path,
+        onConfigure: (d) {
+          d.execute(
+            'CREATE TABLE `$_table` (`id`	INTEGER PRIMARY KEY AUTOINCREMENT, `sura`	INTEGER, `sura_name`	TEXT, `aya`	INTEGER, `insert_time`	TEXT )',
+          );
+        },
+      );
+    }
   }
 
-  void add() {}
+  Future<List<BookmarksModel>> getListBookmarks() async {
+    var listBookmarksMap = await database.query(
+      _table,
+      columns: ['*'],
+    );
+    List<BookmarksModel> listBookmarks = listBookmarksMap.map(
+      (v) {
+        return BookmarksModel.fromJson(v);
+      },
+    ).toList();
+    return listBookmarks;
+  }
 
-  void delete() {}
+  Future<int> add(BookmarksModel bookmarkModel) async {
+    int i = await database.insert(_table, bookmarkModel.toJson());
+    return i;
+  }
+
+  Future<int> delete(BookmarksModel bookmarksModel) async {
+    int i = await database.delete(
+      _table,
+      where: 'id = ?',
+      whereArgs: [
+        bookmarksModel.id,
+      ],
+    );
+    return i;
+  }
 }

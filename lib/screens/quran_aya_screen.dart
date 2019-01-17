@@ -215,7 +215,10 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
     }
 
     return InkWell(
-      onTap: () {},
+      onTap: () async {
+        await showDialogActionButtons(
+            aya, quranAyaScreenScopedModel.currentChapter);
+      },
       child: Container(
         padding: EdgeInsets.only(
           left: 15,
@@ -429,5 +432,30 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
     if (chapter != null) {
       await quranAyaScreenScopedModel.getAya(chapter);
     }
+  }
+
+  Future showDialogActionButtons(
+    Aya aya,
+    Chapter chapter,
+  ) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text('Choose'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () async {
+                await quranAyaScreenScopedModel.addBookmark(
+                  aya,
+                  chapter,
+                );
+              },
+              child: Text('Bookmarks'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

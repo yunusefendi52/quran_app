@@ -9,6 +9,7 @@ import 'package:quran_app/services/quran_data_services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'dart:math' as math;
+import 'package:loadmore/loadmore.dart';
 
 class QuranSuraScreen extends StatefulWidget {
   @override
@@ -54,8 +55,6 @@ class _QuranSuraScreenState extends State<QuranSuraScreen>
                     if (model.isGettingChapters) {
                       return chapterDataCellShimmer();
                     }
-
-                    // TODO: Add load more
                     
                     var chapter =
                         model.chaptersModel?.chapters?.elementAt(index);
