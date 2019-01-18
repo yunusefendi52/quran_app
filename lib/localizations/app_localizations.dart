@@ -73,8 +73,15 @@ class AppLocalizations {
 
   String get bookmarksText {
     return Intl.message(
-      'Bookmarks',
+      'Bookmark',
       name: 'bookmarksText',
+    );
+  }
+
+  String get removeBookmarksText {
+    return Intl.message(
+      'Remove Bookmark',
+      name: 'removeBookmarksText',
     );
   }
 }

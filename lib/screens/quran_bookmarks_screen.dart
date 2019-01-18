@@ -30,6 +30,13 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
   }
 
   @override
+    void dispose() {
+      quranBookmarksScreenModel.dispose();
+
+      super.dispose();
+    }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -213,5 +220,9 @@ class QuranBookmarksScreenModel extends Model {
     } catch (error) {
       print(error.toString());
     }
+  }
+
+  void dispose() {
+    bookmarksDataService.dispose();
   }
 }

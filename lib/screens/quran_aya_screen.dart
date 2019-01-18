@@ -6,6 +6,7 @@ import 'package:quran_app/dialogs/quran_navigator_dialog.dart';
 import 'package:quran_app/helpers/colors_settings.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
+import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/quran_data_model.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
@@ -63,8 +64,9 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    await quranAyaScreenScopedModel
-        .getAya(quranAyaScreenScopedModel.currentChapter);
+    await quranAyaScreenScopedModel.getAya(
+      quranAyaScreenScopedModel.currentChapter,
+    );
   }
 
   @override
@@ -176,112 +178,9 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
     Aya aya,
     Iterable<Tuple2<TranslationDataKey, TranslationAya>> listTranslationsAya,
   ) {
-    if (aya == null) {
-      return Container();
-    }
-
-    List<Widget> listTranslationWidget = [];
-    for (var translationAya in listTranslationsAya) {
-      listTranslationWidget.add(
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            SizedBox.fromSize(
-              size: Size.fromHeight(10),
-            ),
-            Container(
-              child: Text(
-                '${translationAya.item1.name}',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: fontSizeTranslation,
-                ),
-              ),
-            ),
-            SizedBox.fromSize(
-              size: Size.fromHeight(1),
-            ),
-            Container(
-              child: Text(
-                translationAya.item2.text,
-                style: TextStyle(
-                  fontSize: fontSizeTranslation,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return InkWell(
-      onTap: () async {
-        await showDialogActionButtons(
-            aya, quranAyaScreenScopedModel.currentChapter);
-      },
-      child: Container(
-        padding: EdgeInsets.only(
-          left: 15,
-          top: 15,
-          right: 20,
-          bottom: 25,
-        ),
-        child: Stack(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                // Bismillah
-                !isBlank(aya.bismillah)
-                    ? Container(
-                        padding: EdgeInsets.only(
-                          top: 10,
-                          bottom: 25,
-                        ),
-                        child: Text(
-                          'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 30,
-                          ),
-                        ),
-                      )
-                    : Container(),
-                // 1
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        aya.aya,
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Icon(Icons.more_vert),
-                    ),
-                  ],
-                ),
-                SizedBox.fromSize(
-                  size: Size.fromHeight(
-                    15,
-                  ),
-                ),
-                // 2
-                Text(
-                  aya.text,
-                  textDirection: TextDirection.rtl,
-                  style: TextStyle(
-                    fontSize: fontSizeArabic,
-                    fontFamily: 'KFGQPC Uthman Taha Naskh',
-                  ),
-                ),
-              ]..addAll(listTranslationWidget),
-            ),
-          ],
-        ),
-      ),
+    return AyaItemCell(
+      aya: aya,
+      listTranslationsAya: listTranslationsAya.toList(),
     );
   }
 
@@ -437,11 +336,177 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
       await quranAyaScreenScopedModel.getAya(chapter);
     }
   }
+}
+
+class AyaItemCell extends StatefulWidget {
+  final Aya aya;
+  final List<Tuple2<TranslationDataKey, TranslationAya>> listTranslationsAya;
+
+  AyaItemCell({
+    @required this.aya,
+    @required this.listTranslationsAya,
+  });
+
+  @override
+  State<StatefulWidget> createState() {
+    return AyaItemCellState();
+  }
+}
+
+class AyaItemCellState extends State<AyaItemCell> {
+  Aya aya = Aya();
+  List<Tuple2<TranslationDataKey, TranslationAya>> listTranslationsAya = [];
+
+  @override
+  void initState() {
+    setState(() {
+      aya = widget.aya;
+      listTranslationsAya = widget.listTranslationsAya;
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (aya == null) {
+      return Container();
+    }
+
+    List<Widget> listTranslationWidget = [];
+    for (var translationAya in listTranslationsAya) {
+      listTranslationWidget.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            SizedBox.fromSize(
+              size: Size.fromHeight(10),
+            ),
+            Container(
+              child: Text(
+                '${translationAya.item1.name}',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  //fontSize: fontSizeTranslation,
+                ),
+              ),
+            ),
+            SizedBox.fromSize(
+              size: Size.fromHeight(1),
+            ),
+            Container(
+              child: Text(
+                translationAya.item2.text,
+                style: TextStyle(
+                    //fontSize: fontSizeTranslation,
+                    ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ScopedModelDescendant<QuranAyaScreenScopedModel>(
+      builder: (
+        BuildContext context,
+        Widget child,
+        QuranAyaScreenScopedModel model,
+      ) {
+        return InkWell(
+          onTap: () async {
+            await showDialogActionButtons(aya, model.currentChapter);
+          },
+          child: Container(
+            padding: EdgeInsets.only(
+              left: 15,
+              top: 15,
+              right: 20,
+              bottom: 25,
+            ),
+            child: Stack(
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    // Bismillah
+                    !isBlank(aya.bismillah)
+                        ? Container(
+                            padding: EdgeInsets.only(
+                              top: 10,
+                              bottom: 25,
+                            ),
+                            child: Text(
+                              'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 30,
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    // 1
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                aya.aya,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                              // Icons (e.g bookmarks)
+                              Container(
+                                width: aya.isBookmarked ? 10 : 0,
+                              ),
+                              aya.isBookmarked
+                                  ? Icon(
+                                      Icons.bookmark,
+                                      color: Theme.of(context).accentColor,
+                                    )
+                                  : Container(),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          child: Icon(Icons.more_vert),
+                        ),
+                      ],
+                    ),
+                    SizedBox.fromSize(
+                      size: Size.fromHeight(
+                        15,
+                      ),
+                    ),
+                    // 2
+                    Text(
+                      aya.text,
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        //fontSize: fontSizeArabic,
+                        fontFamily: 'KFGQPC Uthman Taha Naskh',
+                      ),
+                    ),
+                  ]..addAll(listTranslationWidget),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Future showDialogActionButtons(
     Aya aya,
     Chapter chapter,
   ) async {
+    var quranAyaScreenScopedModel = ScopedModel.of<QuranAyaScreenScopedModel>(
+      context,
+    );
+
     await showDialog(
       context: context,
       builder: (context) {
@@ -450,17 +515,34 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
             horizontal: 10,
             vertical: 5,
           ),
-          title: Text('${chapter.nameSimple} ${chapter.chapterNumber}:${aya.aya}'),
+          title:
+              Text('${chapter.nameSimple} ${chapter.chapterNumber}:${aya.aya}'),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               FlatButton(
                 onPressed: () async {
-                  await quranAyaScreenScopedModel.addBookmark(aya, chapter);
+                  if (!aya.isBookmarked) {
+                    await quranAyaScreenScopedModel.addBookmark(aya, chapter);
+                    setState(() {
+                      aya.isBookmarked = true;
+                    });
+                  } else {
+                    await quranAyaScreenScopedModel.removeBookmark(
+                      aya.bookmarksModel,
+                    );
+                    setState(() {
+                      aya.isBookmarked = false;
+                    });
+                  }
                   Navigator.of(context).pop();
                 },
-                child: Text('Bookmark'),
+                child: Text(
+                  !aya.isBookmarked
+                      ? AppLocalizations.of(context).bookmarksText
+                      : AppLocalizations.of(context).removeBookmarksText,
+                ),
               ),
             ],
           ),

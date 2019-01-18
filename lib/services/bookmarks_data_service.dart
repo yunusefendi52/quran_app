@@ -33,7 +33,7 @@ class BookmarksDataService {
       );
     }
   }
-  
+
   Future<List<BookmarksModel>> getListBookmarks() async {
     var listBookmarksMap = await database.query(
       _table,
@@ -61,5 +61,10 @@ class BookmarksDataService {
       ],
     );
     return i;
+  }
+
+  void dispose() {
+    database.close();
+    database = null;
   }
 }

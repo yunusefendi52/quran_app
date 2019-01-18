@@ -86,6 +86,7 @@ class QuranAyaScreenScopedModel extends Model {
       notifyListeners();
 
       currentChapter = chapter;
+      await _bookmarksDataService.init();
       listAya = await _quranDataService.getQuranListAya(chapter.chapterNumber);
       translations = await _quranDataService.getTranslations(chapter);
 
@@ -105,6 +106,7 @@ class QuranAyaScreenScopedModel extends Model {
 
   void dispose() {
     _quranDataService.dispose();
+    _bookmarksDataService.dispose();
   }
 
   Future addBookmark(
@@ -117,5 +119,13 @@ class QuranAyaScreenScopedModel extends Model {
       ..sura = chapter.chapterNumber
       ..suraName = chapter.nameSimple;
     await _bookmarksDataService.add(bookmarkModel);
+    notifyListeners();
+  }
+
+  Future removeBookmark(
+    BookmarksModel bookmarksModel,
+  ) async {
+    await _bookmarksDataService.delete(bookmarksModel);
+    notifyListeners();
   }
 }

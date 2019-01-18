@@ -21,10 +21,11 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
     "appName" : MessageLookupByLibrary.simpleMessage("Quran App"),
-    "bookmarksText" : MessageLookupByLibrary.simpleMessage("Bookmarks"),
+    "bookmarksText" : MessageLookupByLibrary.simpleMessage("Bookmark"),
     "juzText" : MessageLookupByLibrary.simpleMessage("Juz"),
     "languageText" : MessageLookupByLibrary.simpleMessage("Language"),
     "noBookmarksText" : MessageLookupByLibrary.simpleMessage("No Bookmarks"),
+    "removeBookmarksText" : MessageLookupByLibrary.simpleMessage("Remove Bookmark"),
     "settingsText" : MessageLookupByLibrary.simpleMessage("Settings"),
     "suraText" : MessageLookupByLibrary.simpleMessage("Sura")
   };

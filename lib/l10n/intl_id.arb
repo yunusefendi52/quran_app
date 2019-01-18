@@ -30,8 +30,18 @@
     "type": "text",
     "placeholders": {}
   },
-  "noBookmarksText": "No Bookmarks",
+  "noBookmarksText": "Tidak ada penanda",
   "@noBookmarksText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "bookmarksText": "Penanda",
+  "@bookmarksText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "removeBookmarksText": "Hapus Penanda",
+  "@removeBookmarksText": {
     "type": "text",
     "placeholders": {}
   }

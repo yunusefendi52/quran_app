@@ -8,6 +8,7 @@ import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
 import 'package:quran_app/models/quran_data_model.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
+import 'package:quran_app/services/bookmarks_data_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:xml2json/xml2json.dart';
 import 'package:path/path.dart';
@@ -38,6 +39,8 @@ class QuranDataService {
 
   Map<Chapter, List<Aya>> _chaptersNavigator = {};
 
+  BookmarksDataService _bookmarksDataService = BookmarksDataService.instance;
+
   Future<List<Aya>> getQuranListAya(int sura, {List<String> columns}) async {
     if (quranDatabase == null) {
       quranDatabase = await _openDatabase(
@@ -56,9 +59,17 @@ class QuranDataService {
       columns: columns == null ? ['*'] : columns,
       where: 'sura == "$sura"',
     );
+    var bookmarks = await _bookmarksDataService.getListBookmarks();
     var listAya = listAyaMap.map(
       (v) {
-        return Aya.fromJson(v);
+        var aya = Aya.fromJson(v);
+        var bookmark = bookmarks?.firstWhere(
+          (b) => b.sura == sura && b.aya?.toString() == aya.aya,
+          orElse: () => null,
+        );
+        aya.bookmarksModel = bookmark;
+        aya.isBookmarked = bookmark != null;
+        return aya;
       },
     );
     return listAya.toList();

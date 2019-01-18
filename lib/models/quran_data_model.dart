@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:quran_app/models/bookmarks_model.dart';
+
 class QuranDataModel {
   Xml xml;
   Quran quran;
@@ -79,6 +81,9 @@ class Aya {
   String aya;
   String text;
   String bismillah;
+
+  BookmarksModel bookmarksModel;
+  bool isBookmarked;
 
   Aya({
     this.aya,

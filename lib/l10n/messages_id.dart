@@ -21,9 +21,11 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function> {
     "appName" : MessageLookupByLibrary.simpleMessage("Quran App"),
+    "bookmarksText" : MessageLookupByLibrary.simpleMessage("Penanda"),
     "juzText" : MessageLookupByLibrary.simpleMessage("Juz"),
     "languageText" : MessageLookupByLibrary.simpleMessage("Bahasa"),
-    "noBookmarksText" : MessageLookupByLibrary.simpleMessage("No Bookmarks"),
+    "noBookmarksText" : MessageLookupByLibrary.simpleMessage("Tidak ada penanda"),
+    "removeBookmarksText" : MessageLookupByLibrary.simpleMessage("Hapus Penanda"),
     "settingsText" : MessageLookupByLibrary.simpleMessage("Pengaturan"),
     "suraText" : MessageLookupByLibrary.simpleMessage("Surat")
   };
