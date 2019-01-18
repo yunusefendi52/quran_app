@@ -63,6 +63,20 @@ class AppLocalizations {
       desc: 'languageText',
     );
   }
+
+  String get noBookmarksText {
+    return Intl.message(
+      'No Bookmarks',
+      name: 'noBookmarksText',
+    );
+  }
+
+  String get bookmarksText {
+    return Intl.message(
+      'Bookmarks',
+      name: 'bookmarksText',
+    );
+  }
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
@@ -75,7 +89,8 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   });
 
   @override
-  bool isSupported(Locale locale) => supportedLocales.map((v) => v.languageCode).contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      supportedLocales.map((v) => v.languageCode).contains(locale.languageCode);
 
 // This does not change
   @override

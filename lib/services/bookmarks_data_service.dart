@@ -27,13 +27,13 @@ class BookmarksDataService {
         path,
         onConfigure: (d) {
           d.execute(
-            'CREATE TABLE `$_table` (`id`	INTEGER PRIMARY KEY AUTOINCREMENT, `sura`	INTEGER, `sura_name`	TEXT, `aya`	INTEGER, `insert_time`	TEXT )',
+            'CREATE TABLE if not exists `$_table` (`id`	INTEGER PRIMARY KEY AUTOINCREMENT, `sura`	INTEGER, `sura_name`	TEXT, `aya`	INTEGER, `insert_time`	TEXT )',
           );
         },
       );
     }
   }
-
+  
   Future<List<BookmarksModel>> getListBookmarks() async {
     var listBookmarksMap = await database.query(
       _table,

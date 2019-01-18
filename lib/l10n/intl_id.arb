@@ -29,5 +29,10 @@
     "description": "languageText",
     "type": "text",
     "placeholders": {}
+  },
+  "noBookmarksText": "No Bookmarks",
+  "@noBookmarksText": {
+    "type": "text",
+    "placeholders": {}
   }
 }

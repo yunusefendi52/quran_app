@@ -1,5 +1,5 @@
 {
-  "@@last_modified": "2019-01-12T14:47:24.564305",
+  "@@last_modified": "2019-01-18T19:31:22.870906",
   "appName": "Quran App",
   "@appName": {
     "description": "appName",
@@ -27,6 +27,16 @@
   "languageText": "Language",
   "@languageText": {
     "description": "languageText",
+    "type": "text",
+    "placeholders": {}
+  },
+  "noBookmarksText": "No Bookmarks",
+  "@noBookmarksText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "bookmarksText": "Bookmarks",
+  "@bookmarksText": {
     "type": "text",
     "placeholders": {}
   }

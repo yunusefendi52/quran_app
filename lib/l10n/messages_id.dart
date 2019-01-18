@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "appName" : MessageLookupByLibrary.simpleMessage("Quran App"),
     "juzText" : MessageLookupByLibrary.simpleMessage("Juz"),
     "languageText" : MessageLookupByLibrary.simpleMessage("Bahasa"),
+    "noBookmarksText" : MessageLookupByLibrary.simpleMessage("No Bookmarks"),
     "settingsText" : MessageLookupByLibrary.simpleMessage("Pengaturan"),
     "suraText" : MessageLookupByLibrary.simpleMessage("Surat")
   };

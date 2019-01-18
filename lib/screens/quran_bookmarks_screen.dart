@@ -43,21 +43,23 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
                 Widget child,
                 QuranBookmarksScreenModel model,
               ) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: model.isGettingBookmarks
-                      ? 5
-                      : (model.listBookmarks?.length ?? 0),
-                  itemBuilder: (BuildContext context, int index) {
-                    if (model.isGettingBookmarks) {
-                      return juzDataCellShimmer();
-                    }
+                return model.listBookmarks.length > 0
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: model.isGettingBookmarks
+                            ? 5
+                            : (model.listBookmarks?.length ?? 0),
+                        itemBuilder: (BuildContext context, int index) {
+                          if (model.isGettingBookmarks) {
+                            return juzDataCellShimmer();
+                          }
 
-                    var chapter = model?.listBookmarks?.elementAt(index);
-                    return juzDataCell(chapter);
-                  },
-                );
+                          var chapter = model?.listBookmarks?.elementAt(index);
+                          return juzDataCell(chapter);
+                        },
+                      )
+                    : buildEmptyListView();
               },
             ),
           ),
@@ -167,6 +169,16 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildEmptyListView() {
+    return Container(
+      margin: EdgeInsets.all(15),
+      child: Text(
+        AppLocalizations.of(context).noBookmarksText,
+        textAlign: TextAlign.center,
       ),
     );
   }

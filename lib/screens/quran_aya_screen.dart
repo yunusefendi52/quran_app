@@ -226,56 +226,60 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
           right: 20,
           bottom: 25,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: <Widget>[
-            // Bismillah
-            !isBlank(aya.bismillah)
-                ? Container(
-                    padding: EdgeInsets.only(
-                      top: 10,
-                      bottom: 25,
-                    ),
-                    child: Text(
-                      'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 30,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // Bismillah
+                !isBlank(aya.bismillah)
+                    ? Container(
+                        padding: EdgeInsets.only(
+                          top: 10,
+                          bottom: 25,
+                        ),
+                        child: Text(
+                          'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 30,
+                          ),
+                        ),
+                      )
+                    : Container(),
+                // 1
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        aya.aya,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
                       ),
                     ),
-                  )
-                : Container(),
-            // 1
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    aya.aya,
-                    style: TextStyle(
-                      fontSize: 18,
+                    Container(
+                      child: Icon(Icons.more_vert),
                     ),
+                  ],
+                ),
+                SizedBox.fromSize(
+                  size: Size.fromHeight(
+                    15,
                   ),
                 ),
-                Container(
-                  child: Icon(Icons.more_vert),
+                // 2
+                Text(
+                  aya.text,
+                  textDirection: TextDirection.rtl,
+                  style: TextStyle(
+                    fontSize: fontSizeArabic,
+                    fontFamily: 'KFGQPC Uthman Taha Naskh',
+                  ),
                 ),
-              ],
+              ]..addAll(listTranslationWidget),
             ),
-            SizedBox.fromSize(
-              size: Size.fromHeight(
-                15,
-              ),
-            ),
-            // 2
-            Text(
-              aya.text,
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontSize: fontSizeArabic,
-                fontFamily: 'KFGQPC Uthman Taha Naskh',
-              ),
-            ),
-          ]..addAll(listTranslationWidget),
+          ],
         ),
       ),
     );
@@ -442,18 +446,24 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
       context: context,
       builder: (context) {
         return AlertDialog(
-          content: Text('Choose'),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () async {
-                await quranAyaScreenScopedModel.addBookmark(
-                  aya,
-                  chapter,
-                );
-              },
-              child: Text('Bookmarks'),
-            ),
-          ],
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 5,
+          ),
+          title: Text('${chapter.nameSimple} ${chapter.chapterNumber}:${aya.aya}'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              FlatButton(
+                onPressed: () async {
+                  await quranAyaScreenScopedModel.addBookmark(aya, chapter);
+                  Navigator.of(context).pop();
+                },
+                child: Text('Bookmark'),
+              ),
+            ],
+          ),
         );
       },
     );
