@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:quran_app/controls/my_draggable_scrollbar.dart';
 import 'package:quran_app/dialogs/quran_navigator_dialog.dart';
+import 'package:quran_app/events/font_size_event.dart';
 import 'package:quran_app/helpers/colors_settings.dart';
+import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
@@ -45,6 +48,8 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
   double fontSizeTranslation = SettingsHelpers.minFontSizeTranslation;
 
   bool settingsPageIsVisible = false;
+
+  MyEventBus _myEventBus = MyEventBus.instance;
 
   @override
   void initState() {
@@ -223,7 +228,6 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
   }
 
   Widget settingsDialog() {
-    // I use Dialog because it has better padding
     var dialog = Container(
       margin: EdgeInsets.all(40),
       color: Colors.transparent,
@@ -269,6 +273,11 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
                     fontSizeArabic = value;
                   },
                 );
+                _myEventBus.eventBus.fire(
+                  FontSizeEvent()
+                    ..arabicFontSize = value
+                    ..translationFontSize = fontSizeTranslation,
+                );
               },
             ),
             // Translation font size
@@ -293,6 +302,11 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
                   () {
                     fontSizeTranslation = value;
                   },
+                );
+                _myEventBus.eventBus.fire(
+                  FontSizeEvent()
+                    ..arabicFontSize = fontSizeArabic
+                    ..translationFontSize = value,
                 );
               },
             ),
@@ -357,14 +371,39 @@ class AyaItemCellState extends State<AyaItemCell> {
   Aya aya = Aya();
   List<Tuple2<TranslationDataKey, TranslationAya>> listTranslationsAya = [];
 
+  MyEventBus _myEventBus = MyEventBus.instance;
+
+  StreamSubscription streamEvent;
+
+  static const double maxFontSizeArabic =
+      _QuranAyaScreenState.maxFontSizeArabic;
+  double fontSizeArabic = SettingsHelpers.instance.getFontSizeArabic;
+
+  static const double maxFontSizeTranslation =
+      _QuranAyaScreenState.maxFontSizeTranslation;
+  double fontSizeTranslation = SettingsHelpers.instance.getFontSizeTranslation;
+
   @override
   void initState() {
     setState(() {
       aya = widget.aya;
       listTranslationsAya = widget.listTranslationsAya;
     });
+    streamEvent = _myEventBus.eventBus.on<FontSizeEvent>().listen((onData) {
+      setState(() {
+        fontSizeArabic = onData.arabicFontSize;
+        fontSizeTranslation = onData.translationFontSize;
+      });
+    });
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    streamEvent?.cancel();
+    streamEvent = null;
+    super.dispose();
   }
 
   @override
@@ -387,7 +426,7 @@ class AyaItemCellState extends State<AyaItemCell> {
                 '${translationAya.item1.name}',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  //fontSize: fontSizeTranslation,
+                  fontSize: fontSizeTranslation,
                 ),
               ),
             ),
@@ -398,8 +437,8 @@ class AyaItemCellState extends State<AyaItemCell> {
               child: Text(
                 translationAya.item2.text,
                 style: TextStyle(
-                    //fontSize: fontSizeTranslation,
-                    ),
+                  fontSize: fontSizeTranslation,
+                ),
               ),
             ),
           ],
@@ -485,7 +524,7 @@ class AyaItemCellState extends State<AyaItemCell> {
                       aya.text,
                       textDirection: TextDirection.rtl,
                       style: TextStyle(
-                        //fontSize: fontSizeArabic,
+                        fontSize: fontSizeArabic,
                         fontFamily: 'KFGQPC Uthman Taha Naskh',
                       ),
                     ),
