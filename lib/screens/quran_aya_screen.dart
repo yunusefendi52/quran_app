@@ -390,10 +390,12 @@ class AyaItemCellState extends State<AyaItemCell> {
       listTranslationsAya = widget.listTranslationsAya;
     });
     streamEvent = _myEventBus.eventBus.on<FontSizeEvent>().listen((onData) {
-      setState(() {
-        fontSizeArabic = onData.arabicFontSize;
-        fontSizeTranslation = onData.translationFontSize;
-      });
+      if (streamEvent != null) {
+        setState(() {
+          fontSizeArabic = onData.arabicFontSize;
+          fontSizeTranslation = onData.translationFontSize;
+        });
+      }
     });
 
     super.initState();
