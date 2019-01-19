@@ -5,6 +5,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:flutter_list_drag_and_drop/drag_and_drop_list.dart';
 import 'package:flutter_list_drag_and_drop/my_draggable.dart';
+import 'package:dio/dio.dart' as dio;
 
 class DownloadTranslationsScreen extends StatefulWidget {
   @override
@@ -69,38 +70,46 @@ class _DownloadTranslationsScreenState
                       BuildContext context,
                       int index,
                     ) {
-                      var item = model.availableTranslations.elementAt(index);
-                      return createCellItem(item);
+                      var item = model.availableTranslations.elementAt(
+                        index,
+                      );
+                      return DownloadTranslationsCell(
+                        translationDataKey: item,
+                      );
                     },
                   ),
-                  // // Unavailable translations
-                  // Container(
-                  //   height: 32,
-                  //   alignment: Alignment.centerLeft,
-                  //   child: Padding(
-                  //     padding: EdgeInsets.symmetric(
-                  //       horizontal: 15,
-                  //     ),
-                  //     child: Text(
-                  //       'Unavailable Translations',
-                  //       style: TextStyle(
-                  //         color: Theme.of(context).accentColor,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // ListView.builder(
-                  //   itemCount: model.availableTranslations.length,
-                  //   shrinkWrap: true,
-                  //   physics: NeverScrollableScrollPhysics(),
-                  //   itemBuilder: (
-                  //     BuildContext context,
-                  //     int index,
-                  //   ) {
-                  //     var item = model.availableTranslations.elementAt(index);
-                  //     return createCellItem(item);
-                  //   },
-                  // ),
+                  // Unavailable translations
+                  Container(
+                    height: 32,
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 15,
+                      ),
+                      child: Text(
+                        'Unavailable Translations',
+                        style: TextStyle(
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  ListView.builder(
+                    itemCount: model.notDownloadedTranslations.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (
+                      BuildContext context,
+                      int index,
+                    ) {
+                      var item = model.notDownloadedTranslations.elementAt(
+                        index,
+                      );
+                      return DownloadTranslationsCell(
+                        translationDataKey: item,
+                      );
+                    },
+                  ),
                 ],
               );
             },
@@ -109,60 +118,6 @@ class _DownloadTranslationsScreenState
       ),
     );
   }
-
-  Widget createCellItem(TranslationDataKey item) {
-    var content = ListTile(
-      onTap: () {},
-      leading: Container(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Checkbox(
-              value: item.isVisible,
-              onChanged: (bool value) async {
-                item.isVisible = value;
-                await downloadTranslationsScreenModel.addAvailableTranslation(
-                  item,
-                );
-                setState(() {});
-              },
-            ),
-          ],
-        ),
-      ),
-      contentPadding: EdgeInsets.all(0),
-      title: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text(item.name ?? ''),
-            Text(
-              item.translator ?? '',
-              style: TextStyle(
-                fontWeight: FontWeight.w300,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          !item.isDownloaded
-              ? IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.file_download,
-                  ),
-                )
-              : Container(),
-        ],
-      ),
-    );
-    return content;
-  }
 }
 
 class DownloadTranslationsScreenModel extends Model {
@@ -170,11 +125,17 @@ class DownloadTranslationsScreenModel extends Model {
 
   List<TranslationDataKey> availableTranslations = [];
 
+  List<TranslationDataKey> notDownloadedTranslations = [];
+
   Future init() async {
     try {
       var allTranslations = await quranDataService.getListTranslationsData();
       availableTranslations = allTranslations
           .where((v) => v.type == TranslationDataKeyType.Assets)
+          .toList()
+            ..sort((a, b) => a.name.compareTo(b.name));
+      notDownloadedTranslations = allTranslations
+          .where((v) => v.type == TranslationDataKeyType.UrlDownload)
           .toList()
             ..sort((a, b) => a.name.compareTo(b.name));
       notifyListeners();
@@ -188,6 +149,150 @@ class DownloadTranslationsScreenModel extends Model {
       await quranDataService.addTranslationsData(translationDataKey);
     } catch (error) {
       print(error.toString());
+    }
+  }
+}
+
+class DownloadTranslationsCell extends StatefulWidget {
+  final TranslationDataKey translationDataKey;
+
+  DownloadTranslationsCell({
+    this.translationDataKey,
+  });
+
+  @override
+  State<StatefulWidget> createState() {
+    return _DownloadTranslationCellState();
+  }
+}
+
+class _DownloadTranslationCellState extends State<DownloadTranslationsCell> {
+  DownloadTranslationsCellModel downloadTranslationsCellModel =
+      DownloadTranslationsCellModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    downloadTranslationsCellModel.setTranslationDataKey(
+      widget.translationDataKey,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModel<DownloadTranslationsCellModel>(
+      model: downloadTranslationsCellModel,
+      child: ScopedModelDescendant<DownloadTranslationsCellModel>(
+        builder: (
+          BuildContext context,
+          Widget child,
+          DownloadTranslationsCellModel model,
+        ) {
+          return ListTile(
+            onTap: () {},
+            leading: Container(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Checkbox(
+                    value: model.translationDataKey.isVisible,
+                    onChanged: (bool value) async {
+                      if (!model.translationDataKey.isDownloaded) {
+                        return;
+                      }
+
+                      var downloadTranslationsScreenModel =
+                          ScopedModel.of<DownloadTranslationsScreenModel>(
+                        context,
+                      );
+
+                      model.translationDataKey.isVisible = value;
+                      await downloadTranslationsScreenModel
+                          .addAvailableTranslation(
+                        model.translationDataKey,
+                      );
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
+            ),
+            contentPadding: EdgeInsets.all(0),
+            title: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(model.translationDataKey.name ?? ''),
+                  Text(
+                    model.translationDataKey.translator ?? '',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 14,
+                    ),
+                  ),
+                  ScopedModelDescendant<DownloadTranslationsCellModel>(
+                    builder: (
+                      BuildContext context,
+                      Widget child,
+                      DownloadTranslationsCellModel model,
+                    ) {
+                      var downloadingWidget = Container(
+                        height: 18,
+                        color: Colors.teal,
+                      );
+                      return model.isDownloading
+                          ? downloadingWidget
+                          : Container();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                !model.translationDataKey.isDownloaded
+                    ? IconButton(
+                        onPressed: () async {
+                          await downloadTranslationsCellModel
+                              .downloadTranslation(
+                            model.translationDataKey,
+                          );
+                        },
+                        icon: Icon(
+                          Icons.file_download,
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class DownloadTranslationsCellModel extends Model {
+  bool isDownloading = false;
+  TranslationDataKey translationDataKey = TranslationDataKey();
+
+  void setTranslationDataKey(TranslationDataKey translationDataKey) {
+    this.translationDataKey = translationDataKey;
+    notifyListeners();
+  }
+
+  Future downloadTranslation(TranslationDataKey translationDataKey) async {
+    try {
+      isDownloading = true;
+      notifyListeners();
+    } catch (error) {
+      print(error.toString());
+    } finally {
+      isDownloading = false;
+      notifyListeners();
     }
   }
 }

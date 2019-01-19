@@ -124,7 +124,7 @@ class QuranDataService {
         await Future.delayed(Duration(microseconds: 50));
       }
       translationsDatabase = await _openDatabase(
-        'translations.db',
+        'translations1.db',
         'assets/quran-data/translations.db',
         isReadOnly: false,
       );
@@ -202,6 +202,8 @@ class QuranDataService {
     var databasePath = await getDatabasesPath();
     var path = join(databasePath, databaseName);
     bool fileExists = File(path).existsSync();
+    // // Try this and check the data url
+    // await deleteDatabase(path);
     if (!fileExists) {
       // Move checking database dir
       var byteData = await rootBundle.load(databasePathBundle);

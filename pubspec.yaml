@@ -40,6 +40,7 @@ dependencies:
   flutter_slidable: ^0.4.9
   sticky_headers: ^0.1.7
   flutter_list_drag_and_drop: ^0.1.6
+  dio: ^1.0.13
   
 dev_dependencies:
   flutter_test:
@@ -64,7 +65,6 @@ flutter:
    - assets/quran-data/chapters/chapters.id.json
    - assets/quran-data/juz.json
    - assets/quran-data/translation.json
-   - assets/quran-data/translations/es.garcia.db
    - assets/quran-data/translations/id.indonesian.db
    - assets/quran-data/translations/en.sahih.db
    - assets/quran-data/quran-uthmani.db
