@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quran_app/controls/my_draggable_scrollbar.dart';
 import 'package:quran_app/dialogs/quran_navigator_dialog.dart';
 import 'package:quran_app/events/font_size_event.dart';
@@ -579,10 +580,9 @@ class AyaItemCellState extends State<AyaItemCell> {
                   }
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  !aya.isBookmarked
-                      ? AppLocalizations.of(context).bookmarksText
-                      : AppLocalizations.of(context).removeBookmarksText,
+                child: Icon(
+                  !aya.isBookmarked ? Icons.bookmark : MdiIcons.bookmarkRemove,
+                  color: Theme.of(context).accentColor,
                 ),
               ),
             ],

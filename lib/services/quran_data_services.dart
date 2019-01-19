@@ -101,12 +101,10 @@ class QuranDataService {
   Future<ChaptersModel> getChapters(
     Locale locale,
   ) async {
-    if (_chaptersModel == null) {
-      String json = await rootBundle.loadString(
-        'assets/quran-data/chapters/chapters.${locale.languageCode}.json',
-      );
-      _chaptersModel = ChaptersModel.chaptersModelFromJson(json);
-    }
+    String json = await rootBundle.loadString(
+      'assets/quran-data/chapters/chapters.${locale.languageCode}.json',
+    );
+    _chaptersModel = ChaptersModel.chaptersModelFromJson(json);
     return _chaptersModel;
   }
 
