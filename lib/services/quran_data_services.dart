@@ -29,10 +29,6 @@ class QuranDataService {
   Map<TranslationDataKey, Database> _translations = {};
   Map<TranslationDataKey, Database> get translations => _translations;
 
-  List<TranslationDataKey> _listTranslationDataKey = [];
-  List<TranslationDataKey> get listTranslationDataKey =>
-      _listTranslationDataKey;
-
   Database quranDatabase;
 
   QuranDataService._();
@@ -116,32 +112,66 @@ class QuranDataService {
     return _juzModel;
   }
 
+  Database translationsDatabase;
+
+  Future<List<TranslationDataKey>> getListTranslationsData({
+    String where,
+  }) async {
+    if (translationsDatabase == null) {
+      if (translationsDatabase?.isOpen == true) {
+        translationsDatabase.close();
+        translationsDatabase = null;
+        await Future.delayed(Duration(microseconds: 50));
+      }
+      translationsDatabase = await _openDatabase(
+        'translations.db',
+        'assets/quran-data/translations.db',
+        isReadOnly: false,
+      );
+    }
+    var l = await translationsDatabase.query(
+      'translations',
+      columns: ['*'],
+      where: where,
+    );
+    var list = l.map((v) {
+      var t = TranslationDataKey.fromJson(v);
+      return t;
+    })?.toList();
+    return list;
+  }
+
+  Future<bool> addTranslationsData(
+    TranslationDataKey translationDataKey,
+  ) async {
+    var map = translationDataKey.toJson();
+    int i = await translationsDatabase.update(
+      'translations',
+      map,
+      where: 'id = ?',
+      whereArgs: [
+        translationDataKey.id,
+      ],
+    );
+    return i >= 1;
+  }
+
   Future<Map<TranslationDataKey, List<TranslationAya>>> getTranslations(
     Chapter chapter,
   ) async {
-    if (_listTranslationDataKey.length <= 0) {
-      var translationJson = await rootBundle.loadString(
-        'assets/quran-data/translation.json',
-      );
-      var listTranslationDataKey =
-          TranslationDataKey.translationDataKeyFromJson(
-        translationJson,
-      );
-      _listTranslationDataKey.addAll(listTranslationDataKey);
-    }
+    var listTranslationDataKey = await getListTranslationsData(where: 'is_visible = 1');
 
-    if (_translations.length <= 0) {
-      for (var translationDataKey in listTranslationDataKey) {
-        Database database = await _openDatabase(
-          '${translationDataKey.id}.db',
-          translationDataKey.url,
-        );
-        _translations.addAll(
-          {
-            translationDataKey: database,
-          },
-        );
-      }
+    _translations.clear();
+    for (var translationDataKey in listTranslationDataKey) {
+      Database database = await _openDatabase(
+        '${translationDataKey.id}.db',
+        translationDataKey.url,
+      );
+      _translations.addAll(
+        {
+          translationDataKey: database,
+        },
+      );
     }
     Map<TranslationDataKey, List<TranslationAya>> mapTranslation = {};
     for (var t in translations.entries) {
@@ -164,7 +194,10 @@ class QuranDataService {
   }
 
   Future<Database> _openDatabase(
-      String databaseName, String databasePathBundle) async {
+    String databaseName,
+    String databasePathBundle, {
+    bool isReadOnly = true,
+  }) async {
     // Copy from project assets to device
     var databasePath = await getDatabasesPath();
     var path = join(databasePath, databaseName);
@@ -175,7 +208,9 @@ class QuranDataService {
       var bytes = byteData.buffer.asUint8List(0, byteData.lengthInBytes);
       await File(path).writeAsBytes(bytes);
     }
-    Database database = await openReadOnlyDatabase(path);
+    Database database = isReadOnly
+        ? await openReadOnlyDatabase(path)
+        : await openDatabase(path);
     return database;
   }
 
@@ -187,6 +222,8 @@ class QuranDataService {
     }
     quranDatabase?.close();
     quranDatabase = null;
-    _translations.clear();
+    _translations?.clear();
+    translationsDatabase?.close();
+    translationsDatabase = null;
   }
 }

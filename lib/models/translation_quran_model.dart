@@ -135,6 +135,8 @@ class TranslationDataKey {
   TranslationDataKeyType type;
   String url;
   TranslationDataKeyFileType fileType;
+  bool isDownloaded = false;
+  bool isVisible = false;
 
   TranslationDataKey({
     this.id,
@@ -143,6 +145,8 @@ class TranslationDataKey {
     this.type,
     this.url,
     this.fileType,
+    this.isDownloaded,
+    this.isVisible,
   });
 
   static List<TranslationDataKey> translationDataKeyFromJson(String str) {
@@ -163,7 +167,9 @@ class TranslationDataKey {
         translator: json["translator"],
         type: TranslationDataKeyType.values[json["type"].toInt()],
         url: json["url"],
-        fileType: TranslationDataKeyFileType.values[json["fileType"].toInt()],
+        fileType: TranslationDataKeyFileType.values[json["file_type"].toInt()],
+        isDownloaded: json['is_downloaded'] != null ? json['is_downloaded'].toInt() >= 1 : false,
+        isVisible: json['is_visible'] != null ? json['is_visible'].toInt() >= 1 : false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -172,7 +178,9 @@ class TranslationDataKey {
         "translator": translator,
         "type": type.index,
         "url": url,
-        "fileType": fileType.index,
+        "file_type": fileType.index,
+        "is_downloaded": isDownloaded ? 1 : 0,
+        "is_visible": isVisible ? 1 : 0,
       };
 }
 

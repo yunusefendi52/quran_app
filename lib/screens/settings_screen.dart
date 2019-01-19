@@ -4,6 +4,7 @@ import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/main.dart';
+import 'package:quran_app/screens/download_translations_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -22,6 +23,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // Quran
+          Padding(
+            padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 15),
+            child: Text(
+              AppLocalizations.of(context).settingsText,
+              style: TextStyle(
+                color: Theme.of(context).accentColor,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () async {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (
+                    BuildContext context,
+                  ) {
+                    return DownloadTranslationsScreen();
+                  },
+                ),
+              );
+            },
+            child: ListTile(
+              leading: Icon(Icons.translate),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context).translationsText,
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Language
           Padding(
             padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 15),
             child: Text(

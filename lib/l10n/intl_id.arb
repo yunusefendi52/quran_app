@@ -44,5 +44,10 @@
   "@removeBookmarksText": {
     "type": "text",
     "placeholders": {}
+  },
+  "translationsText": "Terjemahan",
+  "@translationsText": {
+    "type": "text",
+    "placeholders": {}
   }
 }

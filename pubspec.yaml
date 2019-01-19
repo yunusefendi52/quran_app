@@ -38,6 +38,8 @@ dependencies:
   flutter_picker: ^1.0.6
   loadmore: ^1.0.2
   flutter_slidable: ^0.4.9
+  sticky_headers: ^0.1.7
+  flutter_list_drag_and_drop: ^0.1.6
   
 dev_dependencies:
   flutter_test:
@@ -66,6 +68,7 @@ flutter:
    - assets/quran-data/translations/id.indonesian.db
    - assets/quran-data/translations/en.sahih.db
    - assets/quran-data/quran-uthmani.db
+   - assets/quran-data/translations.db
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

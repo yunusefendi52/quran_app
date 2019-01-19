@@ -84,6 +84,13 @@ class AppLocalizations {
       name: 'removeBookmarksText',
     );
   }
+
+  String get translationsText {
+    return Intl.message(
+      'Translations',
+      name: 'translationsText',
+    );
+  }
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noBookmarksText" : MessageLookupByLibrary.simpleMessage("No Bookmarks"),
     "removeBookmarksText" : MessageLookupByLibrary.simpleMessage("Remove Bookmark"),
     "settingsText" : MessageLookupByLibrary.simpleMessage("Settings"),
-    "suraText" : MessageLookupByLibrary.simpleMessage("Sura")
+    "suraText" : MessageLookupByLibrary.simpleMessage("Sura"),
+    "translationsText" : MessageLookupByLibrary.simpleMessage("Translations")
   };
 }

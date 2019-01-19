@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noBookmarksText" : MessageLookupByLibrary.simpleMessage("Tidak ada penanda"),
     "removeBookmarksText" : MessageLookupByLibrary.simpleMessage("Hapus Penanda"),
     "settingsText" : MessageLookupByLibrary.simpleMessage("Pengaturan"),
-    "suraText" : MessageLookupByLibrary.simpleMessage("Surat")
+    "suraText" : MessageLookupByLibrary.simpleMessage("Surat"),
+    "translationsText" : MessageLookupByLibrary.simpleMessage("Terjemahan")
   };
 }
