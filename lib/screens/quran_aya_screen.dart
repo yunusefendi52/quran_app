@@ -42,14 +42,6 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
 
   ScrollController scrollController;
 
-  static const double maxFontSizeArabic = 72;
-  double fontSizeArabic = SettingsHelpers.minFontSizeArabic;
-
-  static const double maxFontSizeTranslation = 50;
-  double fontSizeTranslation = SettingsHelpers.minFontSizeTranslation;
-
-  bool settingsPageIsVisible = false;
-
   MyEventBus _myEventBus = MyEventBus.instance;
 
   @override
@@ -59,13 +51,6 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
     scrollController = ScrollController();
 
     super.initState();
-
-    setState(() {
-      fontSizeArabic = SettingsHelpers.instance.getFontSizeArabic;
-    });
-    setState(() {
-      fontSizeTranslation = SettingsHelpers.instance.getFontSizeTranslation;
-    });
   }
 
   @override
@@ -117,9 +102,7 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
           actions: <Widget>[
             IconButton(
               onPressed: () async {
-                setState(() {
-                  settingsPageIsVisible = true;
-                });
+                await showSettingsDialog();
               },
               icon: Icon(Icons.settings),
             ),
@@ -173,7 +156,6 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
                 );
               },
             ),
-            settingsPageIsVisible ? settingsDialog() : Container(),
           ],
         ),
       ),
@@ -228,110 +210,6 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
     );
   }
 
-  Widget settingsDialog() {
-    var dialog = Container(
-      margin: EdgeInsets.all(40),
-      color: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(
-            10,
-          ),
-          color: Theme.of(context).dialogBackgroundColor,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Container(
-              child: Text(
-                'Font Size',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            // Arabic font size
-            SizedBox.fromSize(size: Size.fromHeight(5)),
-            Container(
-              child: Text(
-                'Arabic',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            Slider(
-              min: SettingsHelpers.minFontSizeArabic,
-              max: maxFontSizeArabic,
-              value: fontSizeArabic,
-              activeColor: Theme.of(context).accentColor,
-              inactiveColor: Theme.of(context).dividerColor,
-              onChanged: (double value) async {
-                await SettingsHelpers.instance.fontSizeArabic(value);
-                setState(
-                  () {
-                    fontSizeArabic = value;
-                  },
-                );
-                _myEventBus.eventBus.fire(
-                  FontSizeEvent()
-                    ..arabicFontSize = value
-                    ..translationFontSize = fontSizeTranslation,
-                );
-              },
-            ),
-            // Translation font size
-            SizedBox.fromSize(size: Size.fromHeight(5)),
-            Container(
-              child: Text(
-                'Translation',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            Slider(
-              min: SettingsHelpers.minFontSizeTranslation,
-              max: maxFontSizeTranslation,
-              value: fontSizeTranslation,
-              activeColor: Theme.of(context).accentColor,
-              inactiveColor: Theme.of(context).dividerColor,
-              onChanged: (double value) async {
-                await SettingsHelpers.instance.fontSizeTranslation(value);
-                setState(
-                  () {
-                    fontSizeTranslation = value;
-                  },
-                );
-                _myEventBus.eventBus.fire(
-                  FontSizeEvent()
-                    ..arabicFontSize = fontSizeArabic
-                    ..translationFontSize = value,
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-    return Stack(
-      children: <Widget>[
-        InkResponse(
-          onTap: () {
-            setState(() {
-              settingsPageIsVisible = false;
-            });
-          },
-          child: Container(
-            color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.55),
-          ),
-        ),
-        dialog,
-      ],
-    );
-  }
-
   Future showQuranDialogNavigator() async {
     if (quranAyaScreenScopedModel.chapters.length <= 0) {
       return;
@@ -350,6 +228,132 @@ class _QuranAyaScreenState extends State<QuranAyaScreen>
     if (chapter != null) {
       await quranAyaScreenScopedModel.getAya(chapter);
     }
+  }
+
+  Future showSettingsDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return SettingsDialogWidget();
+      },
+    );
+  }
+}
+
+class SettingsDialogWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return SettingsDialogWidgetState();
+  }
+}
+
+class SettingsDialogWidgetState extends State<SettingsDialogWidget> {
+  static const double maxFontSizeArabic = 72;
+  double fontSizeArabic = SettingsHelpers.minFontSizeArabic;
+
+  static const double maxFontSizeTranslation = 50;
+  double fontSizeTranslation = SettingsHelpers.minFontSizeTranslation;
+
+  MyEventBus _myEventBus = MyEventBus.instance;
+
+  @override
+  void initState() {
+    setState(() {
+      fontSizeArabic = SettingsHelpers.instance.getFontSizeArabic;
+      fontSizeTranslation = SettingsHelpers.instance.getFontSizeTranslation;
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        child: Container(
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+              10,
+            ),
+            color: Theme.of(context).dialogBackgroundColor,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Container(
+                child: Text(
+                  'Font Size',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              // Arabic font size
+              SizedBox.fromSize(size: Size.fromHeight(5)),
+              Container(
+                child: Text(
+                  'Arabic',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Slider(
+                min: SettingsHelpers.minFontSizeArabic,
+                max: maxFontSizeArabic,
+                value: fontSizeArabic,
+                activeColor: Theme.of(context).accentColor,
+                inactiveColor: Theme.of(context).dividerColor,
+                onChanged: (double value) async {
+                  await SettingsHelpers.instance.fontSizeArabic(value);
+                  setState(
+                    () {
+                      fontSizeArabic = value;
+                    },
+                  );
+                  _myEventBus.eventBus.fire(
+                    FontSizeEvent()
+                      ..arabicFontSize = value
+                      ..translationFontSize = fontSizeTranslation,
+                  );
+                },
+              ),
+              // Translation font size
+              SizedBox.fromSize(size: Size.fromHeight(5)),
+              Container(
+                child: Text(
+                  'Translation',
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              Slider(
+                min: SettingsHelpers.minFontSizeTranslation,
+                max: maxFontSizeTranslation,
+                value: fontSizeTranslation,
+                activeColor: Theme.of(context).accentColor,
+                inactiveColor: Theme.of(context).dividerColor,
+                onChanged: (double value) async {
+                  await SettingsHelpers.instance.fontSizeTranslation(value);
+                  setState(
+                    () {
+                      fontSizeTranslation = value;
+                    },
+                  );
+                  _myEventBus.eventBus.fire(
+                    FontSizeEvent()
+                      ..arabicFontSize = fontSizeArabic
+                      ..translationFontSize = value,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -377,11 +381,11 @@ class AyaItemCellState extends State<AyaItemCell> {
   StreamSubscription streamEvent;
 
   static const double maxFontSizeArabic =
-      _QuranAyaScreenState.maxFontSizeArabic;
+      SettingsDialogWidgetState.maxFontSizeArabic;
   double fontSizeArabic = SettingsHelpers.instance.getFontSizeArabic;
 
   static const double maxFontSizeTranslation =
-      _QuranAyaScreenState.maxFontSizeTranslation;
+      SettingsDialogWidgetState.maxFontSizeTranslation;
   double fontSizeTranslation = SettingsHelpers.instance.getFontSizeTranslation;
 
   @override
