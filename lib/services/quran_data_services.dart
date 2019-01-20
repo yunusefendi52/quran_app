@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:queries/queries.dart';
+import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
 import 'package:quran_app/models/quran_data_model.dart';
@@ -37,7 +38,12 @@ class QuranDataService {
 
   BookmarksDataService _bookmarksDataService = BookmarksDataService.instance;
 
-  Future<List<Aya>> getQuranListAya(int sura, {List<String> columns}) async {
+  Future<List<Aya>> getQuranListAya(
+    int sura, {
+    List<String> columns,
+    String where,
+    bool includesBookmarks = true,
+  }) async {
     if (quranDatabase == null) {
       quranDatabase = await _openDatabase(
         'quran-uthmani.db',
@@ -53,18 +59,23 @@ class QuranDataService {
     var listAyaMap = await quranDatabase.query(
       'quran',
       columns: columns == null ? ['*'] : columns,
-      where: 'sura == "$sura"',
+      where: where ?? 'sura == "$sura"',
     );
-    var bookmarks = await _bookmarksDataService.getListBookmarks();
+    List<BookmarksModel> bookmarks = [];
+    if (includesBookmarks) {
+      bookmarks = await _bookmarksDataService.getListBookmarks();
+    }
     var listAya = listAyaMap.map(
       (v) {
         var aya = Aya.fromJson(v);
-        var bookmark = bookmarks?.firstWhere(
-          (b) => b.sura == sura && b.aya?.toString() == aya.aya,
-          orElse: () => null,
-        );
-        aya.bookmarksModel = bookmark;
-        aya.isBookmarked = bookmark != null;
+        if (includesBookmarks) {
+          var bookmark = bookmarks?.firstWhere(
+            (b) => b.sura == sura && b.aya?.toString() == aya.aya,
+            orElse: () => null,
+          );
+          aya.bookmarksModel = bookmark;
+          aya.isBookmarked = bookmark != null;
+        }
         return aya;
       },
     );
@@ -108,6 +119,16 @@ class QuranDataService {
     if (_juzModel == null) {
       var json = await rootBundle.loadString('assets/quran-data/juz.json');
       _juzModel = JuzModel.juzModelFromJson(json);
+      for (var juz in _juzModel.juzs) {
+        int firstSura = int.parse(juz.verseMapping.keys.first);
+        int firstAya = int.parse(juz.verseMapping.values.first.split("-")[0]);
+        var a = await getQuranListAya(
+          firstSura,
+          where: 'sura == "$firstSura" and aya == "$firstAya"',
+          includesBookmarks: false,
+        );
+        juz.aya = a.first?.text;
+      }
     }
     return _juzModel;
   }
@@ -159,7 +180,8 @@ class QuranDataService {
   Future<Map<TranslationDataKey, List<TranslationAya>>> getTranslations(
     Chapter chapter,
   ) async {
-    var listTranslationDataKey = await getListTranslationsData(where: 'is_visible = 1');
+    var listTranslationDataKey =
+        await getListTranslationsData(where: 'is_visible = 1');
 
     _translations.clear();
     for (var translationDataKey in listTranslationDataKey) {

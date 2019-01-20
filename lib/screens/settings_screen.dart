@@ -92,6 +92,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 },
               );
+              if (theme == null) {
+                return;
+              }
+
               await SettingsHelpers.instance.setTheme(theme);
               Application.changeThemeCallback(theme);
             },

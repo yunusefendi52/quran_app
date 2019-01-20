@@ -30,6 +30,12 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
   }
 
   @override
+  void dispose() {
+    quranJuzScreenScopedModel?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -79,7 +85,36 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
       (v) => v.chapterNumber == firstSura && firstAya <= v.versesCount,
     );
 
-    return InkWell(
+    // return InkWell(
+    //   onTap: () {
+    //     Navigator.of(context).push(
+    //       MaterialPageRoute(
+    //         builder: (BuildContext context) {
+    //           return QuranAyaScreen(
+    //             chapter: selectedChapter,
+    //           );
+    //         },
+    //       ),
+    //     );
+    //   },
+    //   child: Container(
+    //   padding: EdgeInsets.symmetric(
+    //     vertical: 7.5,
+    //   ),
+    //   child: Row(
+    //     children: <Widget>[
+    //       SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //         child:
+    //       ),
+    //
+    //     ],
+    //   ),
+    // ),
+    // );
+    return ListTile(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -91,42 +126,29 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
           ),
         );
       },
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 7.5,
-        ),
-        child: Row(
-          children: <Widget>[
-            SizedBox(
-              width: 15,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            '${AppLocalizations.of(context).juzText} ${juz.juzNumber}',
+            style: TextStyle(
+              fontSize: 18,
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    '${AppLocalizations.of(context).juzText} ${juz.juzNumber}',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text('${selectedChapter?.nameSimple} $firstSura:$firstAya'),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-              child: Text(
-                juz.aya ?? '',
-                textDirection: TextDirection.rtl,
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ],
+          ),
+          Text('${selectedChapter?.nameSimple} $firstSura:$firstAya'),
+        ],
+      ),
+      trailing: Container(
+        width: 175,
+        child: Text(
+          juz.aya ?? '',
+          textDirection: TextDirection.rtl,
+          textAlign: TextAlign.right,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 20,
+          ),
         ),
       ),
     );

@@ -61,6 +61,10 @@ class QuranJuzScreenScopedModel extends Model {
     );
     notifyListeners();
   }
+
+  void dispose() {
+    _quranDataService.dispose();
+  }
 }
 
 class SettingsScreenScopedModel extends Model {}
