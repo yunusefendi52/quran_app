@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quran_app/events/change_language_event.dart';
 import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/main.dart';
+import 'package:quran_app/models/theme_model.dart';
 import 'package:quran_app/screens/download_translations_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -59,6 +61,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
+          ),
+          ListTile(
+            onTap: () async {
+              var theme = await showDialog<ThemeModel>(
+                context: context,
+                builder: (
+                  context,
+                ) {
+                  return AlertDialog(
+                    content: Text('Choose theme'),
+                    actions: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(
+                            ThemeModel()..themeEnum = ThemeEnum.dark,
+                          );
+                        },
+                        child: Text('Dark'),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(
+                            ThemeModel()..themeEnum = ThemeEnum.light,
+                          );
+                        },
+                        child: Text('Light'),
+                      ),
+                    ],
+                  );
+                },
+              );
+              Application.changeThemeCallback(theme);
+            },
+            leading: Icon(Icons.palette),
+            title: Text('Choose theme'),
           ),
           // Language
           Padding(

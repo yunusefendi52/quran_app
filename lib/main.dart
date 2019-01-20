@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
+import 'package:quran_app/models/theme_model.dart';
 import 'package:quran_app/routes/routes.dart';
 import 'package:quran_app/screens/main_drawer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -14,9 +15,12 @@ import 'package:sqflite/sqflite.dart';
 void main() => runApp(MyApp());
 
 typedef void ChangeLocaleCallback(Locale locale);
+typedef void ChangeThemeCallback(ThemeModel themeMpdel);
 
 class Application {
   static ChangeLocaleCallback changeLocale;
+
+  static ChangeThemeCallback changeThemeCallback;
 }
 
 class MyApp extends StatefulWidget {
@@ -29,6 +33,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   MyAppModel myAppModel;
 
+  ThemeData currentTheme;
+
   @override
   void initState() {
     myAppModel = MyAppModel(
@@ -37,8 +43,13 @@ class _MyAppState extends State<MyApp> {
       ),
     );
 
+    currentTheme = ThemeData.light();
+
     Application.changeLocale = null;
     Application.changeLocale = changeLocale;
+
+    Application.changeThemeCallback = null;
+    Application.changeThemeCallback = changeTheme;
 
     SettingsHelpers.ensurePrefs(() async {
       var locale = SettingsHelpers.instance.getLocale();
@@ -59,8 +70,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = ThemeData.dark();
-
     return ScopedModel<MyAppModel>(
         model: myAppModel,
         child: ScopedModelDescendant<MyAppModel>(
@@ -79,7 +88,7 @@ class _MyAppState extends State<MyApp> {
               locale: model.locale,
               onGenerateTitle: (context) =>
                   AppLocalizations.of(context).appName,
-              theme: theme,
+              theme: currentTheme,
               routes: Routes.routes,
             );
           },
@@ -88,6 +97,15 @@ class _MyAppState extends State<MyApp> {
 
   void changeLocale(Locale locale) {
     myAppModel.changeLocale(locale);
+  }
+
+  void changeTheme(ThemeModel themeModel) {
+    if (themeModel.themeEnum == ThemeEnum.light) {
+      currentTheme = ThemeData.light();
+    } else if (themeModel.themeEnum == ThemeEnum.dark) {
+      currentTheme = ThemeData.dark();
+    }
+    setState(() {});
   }
 }
 
