@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
@@ -334,11 +335,13 @@ class _DownloadTranslationCellState extends State<DownloadTranslationsCell> {
                       Widget child,
                       DownloadTranslationsCellModel model,
                     ) {
+                      var percentPattern = NumberFormat.percentPattern('en');
+                      var percent = percentPattern.format(model.downloadProgress / model.downloadBytes);
                       var downloadingWidget = Container(
                         child: Row(
                           children: <Widget>[
                             Text(
-                                '${model.downloadProgress} / ${model.downloadBytes}'),
+                                '${model.downloadProgress} / ${model.downloadBytes} ($percent)'),
                           ],
                         ),
                       );
