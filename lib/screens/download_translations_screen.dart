@@ -1,11 +1,18 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
 import 'package:quran_app/services/quran_data_services.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 import 'package:flutter_list_drag_and_drop/drag_and_drop_list.dart';
 import 'package:flutter_list_drag_and_drop/my_draggable.dart';
-import 'package:dio/dio.dart' as dio;
+import 'package:dio/dio.dart';
+import 'package:tuple/tuple.dart';
 
 class DownloadTranslationsScreen extends StatefulWidget {
   @override
@@ -16,16 +23,29 @@ class DownloadTranslationsScreen extends StatefulWidget {
 
 class _DownloadTranslationsScreenState
     extends State<DownloadTranslationsScreen> {
-  DownloadTranslationsScreenModel downloadTranslationsScreenModel =
-      DownloadTranslationsScreenModel();
+  DownloadTranslationsScreenModel downloadTranslationsScreenModel;
+
+  Dio dio = Dio();
+
+  String eventKey = UniqueKey().toString();
 
   @override
   void initState() {
     super.initState();
 
+    downloadTranslationsScreenModel = DownloadTranslationsScreenModel(
+      eventKey: eventKey,
+    );
+
     (() async {
       await downloadTranslationsScreenModel.init();
     })();
+  }
+
+  @override
+  void dispose() {
+    downloadTranslationsScreenModel.dispose();
+    super.dispose();
   }
 
   @override
@@ -75,6 +95,8 @@ class _DownloadTranslationsScreenState
                       );
                       return DownloadTranslationsCell(
                         translationDataKey: item,
+                        dio: dio,
+                        eventKey: eventKey,
                       );
                     },
                   ),
@@ -107,6 +129,8 @@ class _DownloadTranslationsScreenState
                       );
                       return DownloadTranslationsCell(
                         translationDataKey: item,
+                        dio: dio,
+                        eventKey: eventKey,
                       );
                     },
                   ),
@@ -127,21 +151,53 @@ class DownloadTranslationsScreenModel extends Model {
 
   List<TranslationDataKey> notDownloadedTranslations = [];
 
+  MyEventBus myEventBus = MyEventBus.instance;
+  StreamSubscription streamSubscription;
+
+  final String eventKey;
+
+  DownloadTranslationsScreenModel({
+    @required this.eventKey,
+  });
+
   Future init() async {
     try {
+      streamSubscription =
+          myEventBus.eventBus.on<Tuple2<TranslationDataKey, String>>().listen(
+        (v) async {
+          if (v.item2 != eventKey) {
+            return;
+          }
+
+          if (v.item1.isDownloaded) {
+            await moveNotDownloadedToAvailableTranslations(v.item1);
+          } else {
+            await moveAvailableToNotDownloadedTranslations(v.item1);
+          }
+        },
+      );
+
       var allTranslations = await quranDataService.getListTranslationsData();
       availableTranslations = allTranslations
-          .where((v) => v.type == TranslationDataKeyType.Assets)
+          .where(
+            (v) => v.type == TranslationDataKeyType.Assets || v.isDownloaded,
+          )
           .toList()
             ..sort((a, b) => a.name.compareTo(b.name));
       notDownloadedTranslations = allTranslations
-          .where((v) => v.type == TranslationDataKeyType.UrlDownload)
+          .where((v) =>
+              v.type == TranslationDataKeyType.UrlDownload && !v.isDownloaded)
           .toList()
             ..sort((a, b) => a.name.compareTo(b.name));
       notifyListeners();
     } catch (error) {
       print(error.toString());
     }
+  }
+
+  void dispose() {
+    streamSubscription?.cancel();
+    streamSubscription = null;
   }
 
   Future addAvailableTranslation(TranslationDataKey translationDataKey) async {
@@ -151,12 +207,49 @@ class DownloadTranslationsScreenModel extends Model {
       print(error.toString());
     }
   }
+
+  Future moveNotDownloadedToAvailableTranslations(TranslationDataKey t) async {
+    var tList = notDownloadedTranslations.firstWhere((v) => v.id == t.id);
+    await addAvailableTranslation(tList);
+    availableTranslations = availableTranslations
+      ..add(tList)
+      ..toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+    notDownloadedTranslations.removeWhere((v) => v.id == tList.id);
+    notifyListeners();
+  }
+
+  Future moveAvailableToNotDownloadedTranslations(TranslationDataKey t) async {
+    // Remove file first
+    var databasePath = await getDatabasesPath();
+    var path = join(databasePath, '${t.id}.db');
+    var file = File(path);
+    if (file.existsSync()) {
+      await file.delete();
+    }
+
+    var tList = availableTranslations.firstWhere((v) => v.id == t.id);
+    tList.isVisible = false;
+    await addAvailableTranslation(tList);
+    notDownloadedTranslations = notDownloadedTranslations
+      ..add(tList)
+      ..toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+    availableTranslations.removeWhere((v) => v.id == tList.id);
+    notifyListeners();
+  }
 }
 
 class DownloadTranslationsCell extends StatefulWidget {
   final TranslationDataKey translationDataKey;
 
+  final Dio dio;
+
+  final String eventKey;
+
   DownloadTranslationsCell({
+    @required this.dio,
+    @required this.eventKey,
     this.translationDataKey,
   });
 
@@ -167,12 +260,16 @@ class DownloadTranslationsCell extends StatefulWidget {
 }
 
 class _DownloadTranslationCellState extends State<DownloadTranslationsCell> {
-  DownloadTranslationsCellModel downloadTranslationsCellModel =
-      DownloadTranslationsCellModel();
+  DownloadTranslationsCellModel downloadTranslationsCellModel;
 
   @override
   void initState() {
     super.initState();
+
+    downloadTranslationsCellModel = DownloadTranslationsCellModel(
+      dio: widget.dio,
+      eventKey: widget.eventKey,
+    );
 
     downloadTranslationsCellModel.setTranslationDataKey(
       widget.translationDataKey,
@@ -238,8 +335,12 @@ class _DownloadTranslationCellState extends State<DownloadTranslationsCell> {
                       DownloadTranslationsCellModel model,
                     ) {
                       var downloadingWidget = Container(
-                        height: 18,
-                        color: Colors.teal,
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                                '${model.downloadProgress} / ${model.downloadBytes}'),
+                          ],
+                        ),
                       );
                       return model.isDownloading
                           ? downloadingWidget
@@ -253,19 +354,42 @@ class _DownloadTranslationCellState extends State<DownloadTranslationsCell> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                !model.translationDataKey.isDownloaded
-                    ? IconButton(
-                        onPressed: () async {
-                          await downloadTranslationsCellModel
-                              .downloadTranslation(
-                            model.translationDataKey,
-                          );
-                        },
-                        icon: Icon(
-                          Icons.file_download,
-                        ),
-                      )
-                    : Container(),
+                model.translationDataKey.type ==
+                            TranslationDataKeyType.UrlDownload &&
+                        !model.translationDataKey.isDownloaded
+                    ? (!model.isDownloading
+                        ? IconButton(
+                            onPressed: () async {
+                              await downloadTranslationsCellModel
+                                  .downloadTranslation(
+                                model.translationDataKey,
+                              );
+                            },
+                            icon: Icon(
+                              Icons.file_download,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () async {
+                              await model.cancelDownloading();
+                            },
+                            icon: Icon(Icons.close),
+                          ))
+                    : (model.translationDataKey.type ==
+                            TranslationDataKeyType.UrlDownload)
+                        ? IconButton(
+                            onPressed: () async {
+                              model.translationDataKey.isDownloaded = false;
+                              model.myEventBus.eventBus.fire(
+                                Tuple2(
+                                  model.translationDataKey,
+                                  widget.eventKey,
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.close),
+                          )
+                        : Container(),
               ],
             ),
           );
@@ -279,20 +403,83 @@ class DownloadTranslationsCellModel extends Model {
   bool isDownloading = false;
   TranslationDataKey translationDataKey = TranslationDataKey();
 
+  int downloadProgress = 0;
+  int downloadBytes = 0;
+
+  bool downloadSucceded = false;
+
+  CancelToken cancelToken;
+
+  Dio dio;
+
+  MyEventBus myEventBus = MyEventBus.instance;
+
+  DownloadTranslationsCellModel({
+    @required this.dio,
+    @required this.eventKey,
+  });
+
+  /// This key is to prevent fire() and subscription to hit after dipose
+  final String eventKey;
+
   void setTranslationDataKey(TranslationDataKey translationDataKey) {
     this.translationDataKey = translationDataKey;
     notifyListeners();
   }
 
-  Future downloadTranslation(TranslationDataKey translationDataKey) async {
+  Future<bool> downloadTranslation(TranslationDataKey t) async {
     try {
       isDownloading = true;
       notifyListeners();
+
+      translationDataKey = t;
+      var databasePath = await getDatabasesPath();
+      var path = join(databasePath, '${t.id}.db');
+      cancelToken = CancelToken();
+      var response = await dio.download(
+        t.url,
+        path,
+        cancelToken: cancelToken,
+        onProgress: (
+          a,
+          b,
+        ) {
+          downloadProgress = a;
+          downloadBytes = b;
+          notifyListeners();
+        },
+      );
+      if (response.statusCode != 200) {
+        translationDataKey.isDownloaded = false;
+        throw FormatException('Download failed');
+      }
+
+      translationDataKey.isDownloaded = true;
+      myEventBus.eventBus.fire(
+        Tuple2(
+          translationDataKey,
+          eventKey,
+        ),
+      );
+
+      downloadSucceded = true;
+      notifyListeners();
     } catch (error) {
-      print(error.toString());
+      print(error);
+
+      downloadSucceded = false;
+      notifyListeners();
     } finally {
       isDownloading = false;
+      downloadProgress = 0;
+      downloadBytes = 0;
       notifyListeners();
     }
+    return downloadSucceded;
+  }
+
+  Future cancelDownloading() async {
+    cancelToken?.cancel('cancelled');
+    cancelToken = null;
   }
 }
