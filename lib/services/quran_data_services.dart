@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:queries/queries.dart';
+import 'package:quiver/strings.dart';
 import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
@@ -13,6 +14,9 @@ import 'package:quran_app/services/bookmarks_data_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:xml2json/xml2json.dart';
 import 'package:path/path.dart';
+import 'package:encrypt/encrypt.dart';
+import 'dart:convert' show utf8;
+import 'dart:convert';
 
 class QuranDataService {
   static QuranDataService _instance;
@@ -37,6 +41,8 @@ class QuranDataService {
   Map<Chapter, List<Aya>> _chaptersNavigator = {};
 
   BookmarksDataService _bookmarksDataService = BookmarksDataService.instance;
+
+  Encrypter _encrypter;
 
   Future<List<Aya>> getQuranListAya(
     int sura, {
@@ -145,7 +151,7 @@ class QuranDataService {
         await Future.delayed(Duration(microseconds: 50));
       }
       translationsDatabase = await _openDatabase(
-        'translations1.db',
+        'translations2.db',
         'assets/quran-data/translations.db',
         isReadOnly: false,
       );
@@ -155,8 +161,32 @@ class QuranDataService {
       columns: ['*'],
       where: where,
     );
+    if (_encrypter == null) {
+      try {
+        var json = await rootBundle.loadString('assets/app_settings.json');
+        if (!isBlank(json)) {
+          Map<String, dynamic> map = jsonDecode(json);
+          String key = map['key'];
+          final iv = 'Yf9g868k';
+          _encrypter = Encrypter(
+            Salsa20(
+              key,
+              iv,
+            ),
+          );
+        }
+      } catch (error) {
+        print(error?.toString());
+      }
+    }
     var list = l.map((v) {
       var t = TranslationDataKey.fromJson(v);
+      if (t.type == TranslationDataKeyType.UrlDownload) {
+        if (_encrypter != null) {
+          var decryptedUrl = _encrypter.decrypt(t.url);
+          t.url = decryptedUrl;
+        }
+      }
       return t;
     })?.toList();
     return list;
