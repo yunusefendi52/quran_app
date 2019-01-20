@@ -39,14 +39,18 @@ class _QuranQuranScreenState extends State<QuranScreen>
       length: 2,
     );
     tabController.addListener(() {
-      if (tabController.indexIsChanging) {
-        setState(() {
-          sliverAppBarChildrenHeight =
-              customTabBar.tabBarHeight[tabController.index];
-          currentTabBarChildren = tabController.index;
-          setState(() {});
-        });
+      void c() {
+        sliverAppBarChildrenHeight =
+            customTabBar.tabBarHeight[tabController.index];
+        currentTabBarChildren = tabController.index;
       }
+
+      if (tabController.indexIsChanging) {
+        c();
+      } else {
+        c();
+      }
+      setState(() {});
     });
 
     quranListTabController = TabController(
@@ -131,7 +135,7 @@ class _QuranQuranScreenState extends State<QuranScreen>
       },
       tabBarHeight: <double>[
         100,
-        70,
+        50,
       ],
     );
 

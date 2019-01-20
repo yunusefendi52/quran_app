@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:quiver/strings.dart';
+import 'package:quran_app/models/theme_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsHelpers {
@@ -56,5 +57,24 @@ class SettingsHelpers {
   static void ensurePrefs(Function prefsLoaded) async {
     SettingsHelpers.instance.prefs = await SharedPreferences.getInstance();
     prefsLoaded();
+  }
+
+  Future<bool> setTheme(ThemeModel themeModel) async {
+    if (themeModel == null) {
+      prefs.remove('AppThemeData');
+      return false;
+    }
+
+    var json = ThemeModel.themeModelToJson(themeModel);
+    bool t = await prefs.setString('AppThemeData', json);
+    return t;
+  }
+
+  ThemeModel getTheme() {
+    String json = prefs.getString('AppThemeData');
+    if (isBlank(json)) {
+      return ThemeModel()..themeEnum = ThemeEnum.light;
+    }
+    return ThemeModel.themeModelFromJson(json);
   }
 }

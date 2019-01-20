@@ -43,8 +43,6 @@ class _MyAppState extends State<MyApp> {
       ),
     );
 
-    currentTheme = ThemeData.light();
-
     Application.changeLocale = null;
     Application.changeLocale = changeLocale;
 
@@ -54,6 +52,7 @@ class _MyAppState extends State<MyApp> {
     SettingsHelpers.ensurePrefs(() async {
       var locale = SettingsHelpers.instance.getLocale();
       myAppModel.changeLocale(locale);
+      changeTheme(SettingsHelpers.instance.getTheme());
     });
 
     (() async {

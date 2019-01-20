@@ -92,6 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 },
               );
+              await SettingsHelpers.instance.setTheme(theme);
               Application.changeThemeCallback(theme);
             },
             leading: Icon(Icons.palette),
