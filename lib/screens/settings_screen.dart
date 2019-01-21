@@ -70,7 +70,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   context,
                 ) {
                   return AlertDialog(
-                    content: Text('Choose theme'),
+                    content: Text(
+                      AppLocalizations.of(context).chooseThemeText,
+                    ),
                     actions: <Widget>[
                       FlatButton(
                         onPressed: () {
@@ -100,7 +102,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Application.changeThemeCallback(theme);
             },
             leading: Icon(Icons.palette),
-            title: Text('Choose theme'),
+            title: Text(
+              AppLocalizations.of(context).chooseThemeText,
+            ),
           ),
           // Language
           Padding(

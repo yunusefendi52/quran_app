@@ -1,5 +1,5 @@
 {
-  "@@last_modified": "2019-01-19T07:53:36.524051",
+  "@@last_modified": "2019-01-21T21:50:38.424331",
   "appName": "Quran App",
   "@appName": {
     "description": "appName",
@@ -47,6 +47,26 @@
   },
   "translationsText": "Translations",
   "@translationsText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "chooseThemeText": "Choose Theme",
+  "@chooseThemeText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "fontSizeText": "Font Size",
+  "@fontSizeText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "arabicText": "Arabic Text",
+  "@arabicText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "translationText": "Translation",
+  "@translationText": {
     "type": "text",
     "placeholders": {}
   }

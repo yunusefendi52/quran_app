@@ -49,5 +49,25 @@
   "@translationsText": {
     "type": "text",
     "placeholders": {}
+  },
+  "chooseThemeText": "Pilih tema",
+  "@chooseThemeText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "fontSizeText": "Ukuran Tulisan",
+  "@fontSizeText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "arabicText": "Tulisan Arab",
+  "@arabicText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "translationText": "Terjemahan",
+  "@translationText": {
+    "type": "text",
+    "placeholders": {}
   }
 }

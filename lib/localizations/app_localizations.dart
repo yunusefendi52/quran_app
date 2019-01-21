@@ -91,6 +91,34 @@ class AppLocalizations {
       name: 'translationsText',
     );
   }
+
+  String get chooseThemeText {
+    return Intl.message(
+      'Choose Theme',
+      name: 'chooseThemeText',
+    );
+  }
+
+  String get fontSizeText {
+    return Intl.message(
+      'Font Size',
+      name: 'fontSizeText',
+    );
+  }
+
+  String get arabicText {
+    return Intl.message(
+      'Arabic Text',
+      name: 'arabicText',
+    );
+  }
+
+  String get translationText {
+    return Intl.message(
+      'Translation',
+      name: 'translationText',
+    );
+  }
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

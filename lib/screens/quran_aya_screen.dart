@@ -283,7 +283,7 @@ class SettingsDialogWidgetState extends State<SettingsDialogWidget> {
             children: <Widget>[
               Container(
                 child: Text(
-                  'Font Size',
+                  AppLocalizations.of(context).fontSizeText,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                   ),
@@ -293,7 +293,7 @@ class SettingsDialogWidgetState extends State<SettingsDialogWidget> {
               SizedBox.fromSize(size: Size.fromHeight(5)),
               Container(
                 child: Text(
-                  'Arabic',
+                  AppLocalizations.of(context).arabicText,
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -323,7 +323,7 @@ class SettingsDialogWidgetState extends State<SettingsDialogWidget> {
               SizedBox.fromSize(size: Size.fromHeight(5)),
               Container(
                 child: Text(
-                  'Translation',
+                  AppLocalizations.of(context).translationText,
                   style: TextStyle(
                     fontSize: 18,
                   ),
