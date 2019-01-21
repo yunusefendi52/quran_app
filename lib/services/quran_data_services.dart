@@ -42,8 +42,6 @@ class QuranDataService {
 
   BookmarksDataService _bookmarksDataService = BookmarksDataService.instance;
 
-  Encrypter _encrypter;
-
   Future<List<Aya>> getQuranListAya(
     int sura, {
     List<String> columns,
@@ -151,7 +149,7 @@ class QuranDataService {
         await Future.delayed(Duration(microseconds: 50));
       }
       translationsDatabase = await _openDatabase(
-        'translations2.db',
+        'translations5.db',
         'assets/quran-data/translations.db',
         isReadOnly: false,
       );
@@ -161,32 +159,8 @@ class QuranDataService {
       columns: ['*'],
       where: where,
     );
-    if (_encrypter == null) {
-      try {
-        var json = await rootBundle.loadString('assets/app_settings.json');
-        if (!isBlank(json)) {
-          Map<String, dynamic> map = jsonDecode(json);
-          String key = map['key'];
-          final iv = 'Yf9g868k';
-          _encrypter = Encrypter(
-            Salsa20(
-              key,
-              iv,
-            ),
-          );
-        }
-      } catch (error) {
-        print(error?.toString());
-      }
-    }
     var list = l.map((v) {
       var t = TranslationDataKey.fromJson(v);
-      if (t.type == TranslationDataKeyType.UrlDownload) {
-        if (_encrypter != null) {
-          var decryptedUrl = _encrypter.decrypt(t.url);
-          t.url = decryptedUrl;
-        }
-      }
       return t;
     })?.toList();
     return list;
@@ -210,8 +184,9 @@ class QuranDataService {
   Future<Map<TranslationDataKey, List<TranslationAya>>> getTranslations(
     Chapter chapter,
   ) async {
-    var listTranslationDataKey =
-        await getListTranslationsData(where: 'is_visible = 1');
+    var listTranslationDataKey = await getListTranslationsData(
+      where: 'is_visible = 1',
+    );
 
     _translations.clear();
     for (var translationDataKey in listTranslationDataKey) {
@@ -228,9 +203,9 @@ class QuranDataService {
     Map<TranslationDataKey, List<TranslationAya>> mapTranslation = {};
     for (var t in translations.entries) {
       var ayaTranslation = await t.value.query(
-        'translations',
+        'verses',
         columns: ['*'],
-        where: 'sura = "${chapter.chapterNumber}"',
+        where: 'sura = ${chapter.chapterNumber}',
       );
       mapTranslation.addAll(
         {

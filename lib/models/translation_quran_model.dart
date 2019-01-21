@@ -95,7 +95,7 @@ class TranslationAya {
 
   factory TranslationAya.fromJson(Map<String, dynamic> json) =>
       new TranslationAya(
-        index: json["index"],
+        index: json["index"] ?? '',
         text: json["text"],
         bismillah: json["bismillah"] == null ? null : json["bismillah"],
       );

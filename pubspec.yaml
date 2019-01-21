@@ -70,7 +70,6 @@ flutter:
    - assets/quran-data/translations/en.sahih.db
    - assets/quran-data/quran-uthmani.db
    - assets/quran-data/translations.db
-   - assets/app_settings.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

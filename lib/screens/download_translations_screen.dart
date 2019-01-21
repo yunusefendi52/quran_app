@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
+import 'package:quiver/strings.dart';
+import 'package:quran_app/app_settings.dart';
 import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
 import 'package:quran_app/services/quran_data_services.dart';
@@ -14,6 +18,7 @@ import 'package:flutter_list_drag_and_drop/drag_and_drop_list.dart';
 import 'package:flutter_list_drag_and_drop/my_draggable.dart';
 import 'package:dio/dio.dart';
 import 'package:tuple/tuple.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class DownloadTranslationsScreen extends StatefulWidget {
   @override
@@ -336,7 +341,8 @@ class _DownloadTranslationCellState extends State<DownloadTranslationsCell> {
                       DownloadTranslationsCellModel model,
                     ) {
                       var percentPattern = NumberFormat.percentPattern('en');
-                      var percent = percentPattern.format(model.downloadProgress / model.downloadBytes);
+                      var percent = percentPattern
+                          .format(model.downloadProgress / model.downloadBytes);
                       var downloadingWidget = Container(
                         child: Row(
                           children: <Widget>[
@@ -417,6 +423,8 @@ class DownloadTranslationsCellModel extends Model {
 
   MyEventBus myEventBus = MyEventBus.instance;
 
+  Encrypter _encrypter;
+
   DownloadTranslationsCellModel({
     @required this.dio,
     @required this.eventKey,
@@ -439,8 +447,32 @@ class DownloadTranslationsCellModel extends Model {
       var databasePath = await getDatabasesPath();
       var path = join(databasePath, '${t.id}.db');
       cancelToken = CancelToken();
+      if (_encrypter == null) {
+        try {
+          String key = AppSettings.key;
+          String iv = AppSettings.iv;
+          _encrypter = Encrypter(
+            Salsa20(
+              key,
+              iv,
+            ),
+          );
+        } catch (error) {
+          print(error?.toString());
+        }
+      }
+      String decryptedUrl = '';
+      if (t.url.startsWith('encrypted:')) {
+        decryptedUrl = _encrypter.decrypt(
+          t.url.substring(
+            'encrypted:'.length,
+          ),
+        );
+      } else {
+        decryptedUrl = t.url;
+      }
       var response = await dio.download(
-        t.url,
+        decryptedUrl,
         path,
         cancelToken: cancelToken,
         onProgress: (
