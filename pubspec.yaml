@@ -65,7 +65,6 @@ flutter:
    - assets/quran-data/chapters/chapters.en.json
    - assets/quran-data/chapters/chapters.id.json
    - assets/quran-data/juz.json
-   - assets/quran-data/translation.json
    - assets/quran-data/translations/id.indonesian.db
    - assets/quran-data/translations/en.sahih.db
    - assets/quran-data/quran-uthmani.db
