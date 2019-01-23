@@ -269,8 +269,16 @@ class SettingsDialogWidgetState extends State<SettingsDialogWidget> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Container(
-        child: Container(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(Icons.arrow_back_ios),
+          ),
+        ),
+        body: Container(
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(
