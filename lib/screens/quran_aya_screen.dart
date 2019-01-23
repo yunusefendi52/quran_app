@@ -570,13 +570,19 @@ class AyaItemCellState extends State<AyaItemCell> {
               FlatButton(
                 onPressed: () async {
                   if (!aya.isBookmarked) {
-                    await quranAyaScreenScopedModel.addBookmark(aya, chapter);
+                    var bookmarkModel =
+                        await quranAyaScreenScopedModel.addBookmark(
+                      aya,
+                      chapter,
+                    );
+
                     setState(() {
+                      aya.bookmarksModel = bookmarkModel;
                       aya.isBookmarked = true;
                     });
                   } else {
                     await quranAyaScreenScopedModel.removeBookmark(
-                      aya.bookmarksModel,
+                      aya.bookmarksModel.id,
                     );
                     setState(() {
                       aya.isBookmarked = false;

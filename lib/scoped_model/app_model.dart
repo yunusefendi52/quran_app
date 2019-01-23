@@ -113,7 +113,7 @@ class QuranAyaScreenScopedModel extends Model {
     _bookmarksDataService.dispose();
   }
 
-  Future addBookmark(
+  Future<BookmarksModel> addBookmark(
     Aya aya,
     Chapter chapter,
   ) async {
@@ -122,14 +122,16 @@ class QuranAyaScreenScopedModel extends Model {
       ..insertTime = DateTime.now()
       ..sura = chapter.chapterNumber
       ..suraName = chapter.nameSimple;
-    await _bookmarksDataService.add(bookmarkModel);
+    int id = await _bookmarksDataService.add(bookmarkModel);
     notifyListeners();
+    bookmarkModel.id = id;
+    return bookmarkModel;
   }
 
   Future removeBookmark(
-    BookmarksModel bookmarksModel,
+    int bookmarksModelId,
   ) async {
-    await _bookmarksDataService.delete(bookmarksModel);
+    await _bookmarksDataService.delete(bookmarksModelId);
     notifyListeners();
   }
 }

@@ -48,19 +48,19 @@ class BookmarksDataService {
   }
 
   Future<int> add(BookmarksModel bookmarkModel) async {
-    int i = await database.insert(_table, bookmarkModel.toJson());
-    return i;
+    int id = await database.insert(_table, bookmarkModel.toJson());
+    return id;
   }
 
-  Future<int> delete(BookmarksModel bookmarksModel) async {
+  Future<bool> delete(int bookmarksModelId) async {
     int i = await database.delete(
       _table,
       where: 'id = ?',
       whereArgs: [
-        bookmarksModel.id,
+        bookmarksModelId,
       ],
     );
-    return i;
+    return i == 1;
   }
 
   void dispose() {

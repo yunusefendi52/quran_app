@@ -69,5 +69,10 @@
   "@translationText": {
     "type": "text",
     "placeholders": {}
+  },
+  "jumpToVerseText": "Lompat ke ayat",
+  "@jumpToVerseText": {
+    "type": "text",
+    "placeholders": {}
   }
 }

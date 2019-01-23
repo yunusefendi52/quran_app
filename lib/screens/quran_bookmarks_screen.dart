@@ -126,7 +126,7 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
       actions: <Widget>[
         IconButton(
           onPressed: () async {
-            await quranBookmarksScreenModel.deleteBookmarks(bookmarksModel);
+            await quranBookmarksScreenModel.deleteBookmarks(bookmarksModel.id);
           },
           icon: Icon(Icons.delete),
         ),
@@ -212,10 +212,13 @@ class QuranBookmarksScreenModel extends Model {
     }
   }
 
-  Future deleteBookmarks(BookmarksModel bookmarksModel) async {
+  Future deleteBookmarks(int bookmarksModelId) async {
     try {
-      int i = await bookmarksDataService.delete(bookmarksModel);
-      listBookmarks.removeWhere((v) => v.id == bookmarksModel.id);
+      bool deleted = await bookmarksDataService.delete(bookmarksModelId);
+      if (!deleted) {
+        throw Exception('deleteBookmarks: Not deleted');
+      }
+      listBookmarks.removeWhere((v) => v.id == bookmarksModelId);
       notifyListeners();
     } catch (error) {
       print(error.toString());

@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "bookmarksText" : MessageLookupByLibrary.simpleMessage("Penanda"),
     "chooseThemeText" : MessageLookupByLibrary.simpleMessage("Pilih tema"),
     "fontSizeText" : MessageLookupByLibrary.simpleMessage("Ukuran Tulisan"),
+    "jumpToVerseText" : MessageLookupByLibrary.simpleMessage("Lompat ke ayat"),
     "juzText" : MessageLookupByLibrary.simpleMessage("Juz"),
     "languageText" : MessageLookupByLibrary.simpleMessage("Bahasa"),
     "noBookmarksText" : MessageLookupByLibrary.simpleMessage("Tidak ada penanda"),

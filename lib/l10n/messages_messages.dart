@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "bookmarksText" : MessageLookupByLibrary.simpleMessage("Bookmark"),
     "chooseThemeText" : MessageLookupByLibrary.simpleMessage("Choose Theme"),
     "fontSizeText" : MessageLookupByLibrary.simpleMessage("Font Size"),
+    "jumpToVerseText" : MessageLookupByLibrary.simpleMessage("Jump to Verse"),
     "juzText" : MessageLookupByLibrary.simpleMessage("Juz"),
     "languageText" : MessageLookupByLibrary.simpleMessage("Language"),
     "noBookmarksText" : MessageLookupByLibrary.simpleMessage("No Bookmarks"),

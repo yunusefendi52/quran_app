@@ -54,8 +54,10 @@ class SettingsHelpers {
     return locale;
   }
 
-  static void ensurePrefs(Function prefsLoaded) async {
-    SettingsHelpers.instance.prefs = await SharedPreferences.getInstance();
+  static Future ensurePrefs(Function prefsLoaded) async {
+    if (SettingsHelpers.instance.prefs == null) {
+      SettingsHelpers.instance.prefs = await SharedPreferences.getInstance();
+    }
     prefsLoaded();
   }
 

@@ -1,5 +1,5 @@
 {
-  "@@last_modified": "2019-01-21T21:50:38.424331",
+  "@@last_modified": "2019-01-22T22:18:08.198256",
   "appName": "Quran App",
   "@appName": {
     "description": "appName",
@@ -67,6 +67,11 @@
   },
   "translationText": "Translation",
   "@translationText": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "jumpToVerseText": "Jump to Verse",
+  "@jumpToVerseText": {
     "type": "text",
     "placeholders": {}
   }
