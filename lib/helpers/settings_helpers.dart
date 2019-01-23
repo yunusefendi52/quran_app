@@ -54,11 +54,8 @@ class SettingsHelpers {
     return locale;
   }
 
-  static Future ensurePrefs(Function prefsLoaded) async {
-    if (SettingsHelpers.instance.prefs == null) {
-      SettingsHelpers.instance.prefs = await SharedPreferences.getInstance();
-    }
-    prefsLoaded();
+  Future init() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   Future<bool> setTheme(ThemeModel themeModel) async {

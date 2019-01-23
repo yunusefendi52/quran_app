@@ -12,7 +12,20 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
-void main() => runApp(MyApp());
+void main() => start();
+
+void start() async {
+  await SettingsHelpers.instance.init();
+
+  // Make sure /database directory created
+  var databasePath = await getDatabasesPath();
+  var f = Directory(databasePath);
+  if (!f.existsSync()) {
+    f.createSync();
+  }
+
+  runApp(MyApp());  
+}
 
 typedef void ChangeLocaleCallback(Locale locale);
 typedef void ChangeThemeCallback(ThemeModel themeMpdel);
@@ -49,20 +62,9 @@ class _MyAppState extends State<MyApp> {
     Application.changeThemeCallback = null;
     Application.changeThemeCallback = changeTheme;
 
-    SettingsHelpers.ensurePrefs(() async {
-      var locale = SettingsHelpers.instance.getLocale();
-      myAppModel.changeLocale(locale);
-      changeTheme(SettingsHelpers.instance.getTheme());
-    });
-
-    (() async {
-      // Make sure /database directory created
-      var databasePath = await getDatabasesPath();
-      var f = Directory(databasePath);
-      if (!f.existsSync()) {
-        f.createSync();
-      }
-    })();
+    var locale = SettingsHelpers.instance.getLocale();
+    myAppModel.changeLocale(locale);
+    changeTheme(SettingsHelpers.instance.getTheme());
 
     super.initState();
   }
