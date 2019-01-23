@@ -149,9 +149,10 @@ class QuranDataService {
         await Future.delayed(Duration(microseconds: 50));
       }
       translationsDatabase = await _openDatabase(
-        'translations5.db',
+        'translations.db',
         'assets/quran-data/translations.db',
         isReadOnly: false,
+        deleteFirst: true,
       );
     }
     var l = await translationsDatabase.query(
@@ -224,13 +225,15 @@ class QuranDataService {
     String databaseName,
     String databasePathBundle, {
     bool isReadOnly = true,
+    bool deleteFirst = false,
   }) async {
     // Copy from project assets to device
     var databasePath = await getDatabasesPath();
     var path = join(databasePath, databaseName);
+    if (deleteFirst) {
+      await deleteDatabase(path);
+    }
     bool fileExists = File(path).existsSync();
-    // // Try this and check the data url
-    // await deleteDatabase(path);
     if (!fileExists) {
       // Move checking database dir
       var byteData = await rootBundle.load(databasePathBundle);

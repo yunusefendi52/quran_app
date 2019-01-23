@@ -18,7 +18,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
+  # The following adds the Cupertino  s font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   material_design_icons_flutter: ^3.0.3289
@@ -48,6 +48,7 @@ dev_dependencies:
     sdk: flutter
   intl_translation: ^0.17.1
   intl: ^0.15.7
+  flutter_launcher_icons: ^0.7.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
@@ -91,3 +92,8 @@ flutter:
   
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/quran-solid.png"

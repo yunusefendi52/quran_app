@@ -461,6 +461,7 @@ class DownloadTranslationsCellModel extends Model {
           print(error?.toString());
         }
       }
+      
       String decryptedUrl = '';
       if (t.url.startsWith('encrypted:')) {
         decryptedUrl = _encrypter.decrypt(
