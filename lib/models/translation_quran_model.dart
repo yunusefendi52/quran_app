@@ -162,7 +162,7 @@ class TranslationDataKey {
 
   factory TranslationDataKey.fromJson(Map<String, dynamic> json) =>
       new TranslationDataKey(
-        id: json["id"],
+        id: json["id"].toString(),
         name: json["name"],
         translator: json["translator"],
         type: TranslationDataKeyType.values[json["type"].toInt()],

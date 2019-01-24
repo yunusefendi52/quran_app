@@ -5,6 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:queries/queries.dart';
 import 'package:quiver/strings.dart';
+import 'package:quran_app/app_settings.dart';
 import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
@@ -13,10 +14,14 @@ import 'package:quran_app/models/translation_quran_model.dart';
 import 'package:quran_app/services/bookmarks_data_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:xml2json/xml2json.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as Path;
 import 'package:encrypt/encrypt.dart';
-import 'dart:convert' show utf8;
-import 'dart:convert';
+import 'dart:convert' show jsonDecode, utf8;
+import 'package:path_provider/path_provider.dart' as pathProvider;
+import 'package:simple_permissions/simple_permissions.dart';
+import 'package:uuid/uuid.dart';
+import 'package:queries/collections.dart';
+import 'package:queries/queries.dart';
 
 class QuranDataService {
   static QuranDataService _instance;
@@ -139,7 +144,7 @@ class QuranDataService {
 
   Database translationsDatabase;
 
-  Future<List<TranslationDataKey>> getListTranslationsData({
+  Future<Collection<TranslationDataKey>> getListTranslationsData({
     String where,
   }) async {
     if (translationsDatabase == null) {
@@ -160,11 +165,27 @@ class QuranDataService {
       columns: ['*'],
       where: where,
     );
-    var list = l.map((v) {
-      var t = TranslationDataKey.fromJson(v);
-      return t;
-    })?.toList();
-    return list;
+    var list = l.map(
+      (v) {
+        var t = TranslationDataKey.fromJson(v);
+        return t;
+      },
+    )?.toList();
+    return Collection(list);
+  }
+
+  Future<Directory> getDownloadFolder() async {
+    var externalDirectory = await pathProvider.getExternalStorageDirectory();
+    var downloadFolder = Directory(
+      Path.join(
+        externalDirectory.path,
+        "Download",
+      ),
+    );
+    if (await downloadFolder.exists() == false) {
+      downloadFolder = await downloadFolder.create();
+    }
+    return downloadFolder;
   }
 
   Future<bool> addTranslationsData(
@@ -190,7 +211,7 @@ class QuranDataService {
     );
 
     _translations.clear();
-    for (var translationDataKey in listTranslationDataKey) {
+    for (var translationDataKey in listTranslationDataKey.items) {
       Database database = await _openDatabase(
         '${translationDataKey.id}.db',
         translationDataKey.url,
@@ -229,7 +250,7 @@ class QuranDataService {
   }) async {
     // Copy from project assets to device
     var databasePath = await getDatabasesPath();
-    var path = join(databasePath, databaseName);
+    var path = Path.join(databasePath, databaseName);
     if (deleteFirst) {
       await deleteDatabase(path);
     }

@@ -6,6 +6,7 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
+import 'package:queries/collections.dart';
 import 'package:quiver/strings.dart';
 import 'package:quran_app/app_settings.dart';
 import 'package:quran_app/helpers/my_event_bus.dart';
@@ -153,9 +154,9 @@ class _DownloadTranslationsScreenState
 class DownloadTranslationsScreenModel extends Model {
   QuranDataService quranDataService = QuranDataService.instance;
 
-  List<TranslationDataKey> availableTranslations = [];
+  Collection<TranslationDataKey> availableTranslations = Collection();
 
-  List<TranslationDataKey> notDownloadedTranslations = [];
+  Collection<TranslationDataKey> notDownloadedTranslations = Collection();
 
   MyEventBus myEventBus = MyEventBus.instance;
   StreamSubscription streamSubscription;
@@ -188,13 +189,15 @@ class DownloadTranslationsScreenModel extends Model {
           .where(
             (v) => v.type == TranslationDataKeyType.Assets || v.isDownloaded,
           )
-          .toList()
-            ..sort((a, b) => a.name.compareTo(b.name));
+          .orderBy((v) => v.name)
+          .thenBy((v) => v.translator)
+          .toCollection();
       notDownloadedTranslations = allTranslations
           .where((v) =>
               v.type == TranslationDataKeyType.UrlDownload && !v.isDownloaded)
-          .toList()
-            ..sort((a, b) => a.name.compareTo(b.name));
+          .orderBy((v) => v.name)
+          .thenBy((v) => v.translator)
+          .toCollection();
       notifyListeners();
     } catch (error) {
       print(error.toString());
@@ -216,13 +219,13 @@ class DownloadTranslationsScreenModel extends Model {
   }
 
   Future moveNotDownloadedToAvailableTranslations(TranslationDataKey t) async {
-    var tList = notDownloadedTranslations.firstWhere((v) => v.id == t.id);
+    var tList = notDownloadedTranslations.firstOrDefault((v) => v.id == t.id);
     await addAvailableTranslation(tList);
     availableTranslations = availableTranslations
       ..add(tList)
-      ..toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
-    notDownloadedTranslations.removeWhere((v) => v.id == tList.id);
+      ..orderBy((v) => v.name);
+    notDownloadedTranslations.remove(
+        notDownloadedTranslations.firstOrDefault((v) => v.id == tList.id));
     notifyListeners();
   }
 
@@ -235,14 +238,17 @@ class DownloadTranslationsScreenModel extends Model {
       await file.delete();
     }
 
-    var tList = availableTranslations.firstWhere((v) => v.id == t.id);
+    var tList = availableTranslations.firstOrDefault((v) => v.id == t.id);
     tList.isVisible = false;
     await addAvailableTranslation(tList);
     notDownloadedTranslations = notDownloadedTranslations
       ..add(tList)
-      ..toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
-    availableTranslations.removeWhere((v) => v.id == tList.id);
+      ..orderBy((v) => v.name);
+    availableTranslations.remove(
+      availableTranslations.firstOrDefault(
+        (v) => v.id == tList.id,
+      ),
+    );
     notifyListeners();
   }
 }
