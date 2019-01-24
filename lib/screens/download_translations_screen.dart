@@ -202,6 +202,7 @@ class DownloadTranslationsScreenModel extends Model {
   }
 
   void dispose() {
+    myEventBus.eventBus.fire(CancelDownloadingEvent());
     streamSubscription?.cancel();
     streamSubscription = null;
   }
@@ -280,6 +281,11 @@ class _DownloadTranslationCellState extends State<DownloadTranslationsCell> {
     downloadTranslationsCellModel.setTranslationDataKey(
       widget.translationDataKey,
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -425,10 +431,23 @@ class DownloadTranslationsCellModel extends Model {
 
   Encrypter _encrypter;
 
+  StreamSubscription _streamSubscriptionPageDisposed;
+
   DownloadTranslationsCellModel({
     @required this.dio,
     @required this.eventKey,
-  });
+  }) {
+    _streamSubscriptionPageDisposed =
+        myEventBus.eventBus.on<CancelDownloadingEvent>().listen(
+      (
+        v,
+      ) async {
+        _streamSubscriptionPageDisposed?.cancel();
+        _streamSubscriptionPageDisposed = null;
+        await cancelDownloading();
+      },
+    );
+  }
 
   /// This key is to prevent fire() and subscription to hit after dipose
   final String eventKey;
@@ -461,7 +480,7 @@ class DownloadTranslationsCellModel extends Model {
           print(error?.toString());
         }
       }
-      
+
       String decryptedUrl = '';
       if (t.url.startsWith('encrypted:')) {
         decryptedUrl = _encrypter.decrypt(
@@ -519,3 +538,5 @@ class DownloadTranslationsCellModel extends Model {
     cancelToken = null;
   }
 }
+
+class CancelDownloadingEvent {}
