@@ -544,6 +544,7 @@ class DownloadTranslationsCellModel extends Model {
       }
 
       translationDataKey.isDownloaded = true;
+      translationDataKey.isVisible = true;
       myEventBus.eventBus.fire(
         Tuple2(
           translationDataKey,
