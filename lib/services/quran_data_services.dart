@@ -144,7 +144,7 @@ class QuranDataService {
 
   Database translationsDatabase;
 
-  Future<Collection<TranslationDataKey>> getListTranslationsData({
+  Future<List<TranslationDataKey>> getListTranslationsData({
     String where,
   }) async {
     if (translationsDatabase == null) {
@@ -154,10 +154,9 @@ class QuranDataService {
         await Future.delayed(Duration(microseconds: 50));
       }
       translationsDatabase = await _openDatabase(
-        'translations.db',
+        'translations11.db',
         'assets/quran-data/translations.db',
         isReadOnly: false,
-        deleteFirst: true,
       );
     }
     var l = await translationsDatabase.query(
@@ -171,7 +170,7 @@ class QuranDataService {
         return t;
       },
     )?.toList();
-    return Collection(list);
+    return list;
   }
 
   Future<Directory> getDownloadFolder() async {
@@ -195,7 +194,7 @@ class QuranDataService {
     int i = await translationsDatabase.update(
       'translations',
       map,
-      where: 'id = ?',
+      where: 'id=?',
       whereArgs: [
         translationDataKey.id,
       ],
@@ -211,7 +210,7 @@ class QuranDataService {
     );
 
     _translations.clear();
-    for (var translationDataKey in listTranslationDataKey.items) {
+    for (var translationDataKey in listTranslationDataKey) {
       Database database = await _openDatabase(
         '${translationDataKey.id}.db',
         translationDataKey.url,

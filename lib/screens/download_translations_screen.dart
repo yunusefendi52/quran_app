@@ -20,6 +20,7 @@ import 'package:flutter_list_drag_and_drop/my_draggable.dart';
 import 'package:dio/dio.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:uuid/uuid.dart';
 
 class DownloadTranslationsScreen extends StatefulWidget {
   @override
@@ -101,6 +102,7 @@ class _DownloadTranslationsScreenState
                         index,
                       );
                       return DownloadTranslationsCell(
+                        key: ObjectKey('${item.id}available'),
                         translationDataKey: item,
                         dio: dio,
                         eventKey: eventKey,
@@ -135,6 +137,7 @@ class _DownloadTranslationsScreenState
                         index,
                       );
                       return DownloadTranslationsCell(
+                        key: ObjectKey('${item.id}unavailable'),
                         translationDataKey: item,
                         dio: dio,
                         eventKey: eventKey,
@@ -154,9 +157,9 @@ class _DownloadTranslationsScreenState
 class DownloadTranslationsScreenModel extends Model {
   QuranDataService quranDataService = QuranDataService.instance;
 
-  Collection<TranslationDataKey> availableTranslations = Collection();
+  List<TranslationDataKey> availableTranslations = [];
 
-  Collection<TranslationDataKey> notDownloadedTranslations = Collection();
+  List<TranslationDataKey> notDownloadedTranslations = [];
 
   MyEventBus myEventBus = MyEventBus.instance;
   StreamSubscription streamSubscription;
@@ -189,15 +192,29 @@ class DownloadTranslationsScreenModel extends Model {
           .where(
             (v) => v.type == TranslationDataKeyType.Assets || v.isDownloaded,
           )
-          .orderBy((v) => v.name)
-          .thenBy((v) => v.translator)
-          .toCollection();
+          .toList()
+            ..sort(
+              (
+                a,
+                b,
+              ) {
+                return TranslationDataKey.sort(a, b);
+              },
+            );
       notDownloadedTranslations = allTranslations
-          .where((v) =>
-              v.type == TranslationDataKeyType.UrlDownload && !v.isDownloaded)
-          .orderBy((v) => v.name)
-          .thenBy((v) => v.translator)
-          .toCollection();
+          .where(
+            (v) =>
+                v.type == TranslationDataKeyType.UrlDownload && !v.isDownloaded,
+          )
+          .toList()
+            ..sort(
+              (
+                a,
+                b,
+              ) {
+                return TranslationDataKey.sort(a, b);
+              },
+            );
       notifyListeners();
     } catch (error) {
       print(error.toString());
@@ -219,13 +236,18 @@ class DownloadTranslationsScreenModel extends Model {
   }
 
   Future moveNotDownloadedToAvailableTranslations(TranslationDataKey t) async {
-    var tList = notDownloadedTranslations.firstOrDefault((v) => v.id == t.id);
+    var tList = notDownloadedTranslations.firstWhere(
+      (v) => v.id == t.id,
+      orElse: () => null,
+    );
     await addAvailableTranslation(tList);
     availableTranslations = availableTranslations
       ..add(tList)
-      ..orderBy((v) => v.name);
-    notDownloadedTranslations.remove(
-        notDownloadedTranslations.firstOrDefault((v) => v.id == tList.id));
+      ..toList()
+      ..sort((a, b) => TranslationDataKey.sort(a, b));
+    notDownloadedTranslations.removeWhere(
+      (v) => v.id == tList.id,
+    );
     notifyListeners();
   }
 
@@ -238,16 +260,19 @@ class DownloadTranslationsScreenModel extends Model {
       await file.delete();
     }
 
-    var tList = availableTranslations.firstOrDefault((v) => v.id == t.id);
+    var tList = availableTranslations.firstWhere(
+      (v) => v.id == t.id,
+      orElse: () => null,
+    );
     tList.isVisible = false;
     await addAvailableTranslation(tList);
     notDownloadedTranslations = notDownloadedTranslations
       ..add(tList)
-      ..orderBy((v) => v.name);
-    availableTranslations.remove(
-      availableTranslations.firstOrDefault(
-        (v) => v.id == tList.id,
-      ),
+      ..toList()
+      ..sort((a, b) => TranslationDataKey.sort(a, b));
+    notifyListeners();
+    availableTranslations.removeWhere(
+      (v) => v.id == tList.id,
     );
     notifyListeners();
   }
@@ -261,10 +286,13 @@ class DownloadTranslationsCell extends StatefulWidget {
   final String eventKey;
 
   DownloadTranslationsCell({
+    @required Key key,
     @required this.dio,
     @required this.eventKey,
     this.translationDataKey,
-  });
+  }) : super(
+          key: key,
+        );
 
   @override
   State<StatefulWidget> createState() {

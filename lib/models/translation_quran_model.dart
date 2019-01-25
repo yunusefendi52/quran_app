@@ -168,8 +168,12 @@ class TranslationDataKey {
         type: TranslationDataKeyType.values[json["type"].toInt()],
         url: json["url"],
         fileType: TranslationDataKeyFileType.values[json["file_type"].toInt()],
-        isDownloaded: json['is_downloaded'] != null ? json['is_downloaded'].toInt() >= 1 : false,
-        isVisible: json['is_visible'] != null ? json['is_visible'].toInt() >= 1 : false,
+        isDownloaded: json['is_downloaded'] != null
+            ? json['is_downloaded'].toInt() >= 1
+            : false,
+        isVisible: json['is_visible'] != null
+            ? json['is_visible'].toInt() >= 1
+            : false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -181,7 +185,14 @@ class TranslationDataKey {
         "file_type": fileType.index,
         "is_downloaded": isDownloaded ? 1 : 0,
         "is_visible": isVisible ? 1 : 0,
-      };
+      }; 
+
+  static int sort(
+    TranslationDataKey a,
+    TranslationDataKey b,
+  ) {
+    return a.name.compareTo(b.name);
+  }
 }
 
 enum TranslationDataKeyType {
