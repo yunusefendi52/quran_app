@@ -43,7 +43,6 @@ dependencies:
   dio: ^1.0.13
   encrypt: ^1.0.1
   path_provider: ^0.4.1
-  simple_permissions: ^0.1.9
   uuid: ^1.0.3
   
 dev_dependencies:

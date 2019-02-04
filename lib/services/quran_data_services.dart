@@ -18,7 +18,6 @@ import 'package:path/path.dart' as Path;
 import 'package:encrypt/encrypt.dart';
 import 'dart:convert' show jsonDecode, utf8;
 import 'package:path_provider/path_provider.dart' as pathProvider;
-import 'package:simple_permissions/simple_permissions.dart';
 import 'package:uuid/uuid.dart';
 import 'package:queries/collections.dart';
 import 'package:queries/queries.dart';
