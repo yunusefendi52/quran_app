@@ -92,7 +92,7 @@ class Aya {
   });
 
   factory Aya.fromJson(Map<String, dynamic> json) => new Aya(
-        aya: json["aya"],
+        aya: json["aya"] ?? json['index'],
         text: json["text"],
         bismillah: json["bismillah"] == null ? null : json["bismillah"],
       );

@@ -4,21 +4,19 @@ import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-class BookmarksDataService {
-  static BookmarksDataService _instance;
-  static BookmarksDataService get instance {
-    if (_instance == null) {
-      _instance = BookmarksDataService._();
-    }
-    return _instance;
-  }
+abstract class IBookmarksDataService {
+  Future init();
+  Future<List<BookmarksModel>> getListBookmarks();
+  Future<int> add(BookmarksModel bookmarksModel);
+  Future<bool> delete(int bookmarksModelId);
+  void dispose();
+}
 
-  BookmarksDataService._();
-
+class BookmarksDataService implements IBookmarksDataService {
   Database database;
 
   String _table = 'bookmarks';
-
+  
   Future init() async {
     var databasePath = await getDatabasesPath();
     var path = join(databasePath, 'bookmarks.db');

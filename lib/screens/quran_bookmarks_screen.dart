@@ -3,6 +3,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:quran_app/helpers/colors_settings.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
+import 'package:quran_app/main.dart';
 import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:quran_app/services/bookmarks_data_service.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -30,11 +31,11 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
   }
 
   @override
-    void dispose() {
-      quranBookmarksScreenModel.dispose();
+  void dispose() {
+    quranBookmarksScreenModel.dispose();
 
-      super.dispose();
-    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,11 +193,18 @@ class _QuranBookmarksScreenState extends State<QuranBookmarksScreen> {
 }
 
 class QuranBookmarksScreenModel extends Model {
-  BookmarksDataService bookmarksDataService = BookmarksDataService.instance;
+  IBookmarksDataService bookmarksDataService;
 
   List<BookmarksModel> listBookmarks = [];
 
   bool isGettingBookmarks = true;
+
+  QuranBookmarksScreenModel({
+    IBookmarksDataService bookmarksDataService,
+  }) {
+    this.bookmarksDataService = bookmarksDataService ??
+        Application.container.resolve<IBookmarksDataService>();
+  }
 
   Future init() async {
     try {

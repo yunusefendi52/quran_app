@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:quran_app/helpers/settings_helpers.dart';
+import 'package:quran_app/main.dart';
 import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
@@ -82,7 +83,13 @@ class QuranAyaScreenScopedModel extends Model {
 
   Chapter currentChapter;
 
-  BookmarksDataService _bookmarksDataService = BookmarksDataService.instance;
+  IBookmarksDataService _bookmarksDataService;
+
+  QuranAyaScreenScopedModel({
+    IBookmarksDataService bookmarksDataService,
+  }) {
+    _bookmarksDataService = bookmarksDataService ?? Application.container.resolve<IBookmarksDataService>();
+  }
 
   Future getAya(Chapter chapter) async {
     try {

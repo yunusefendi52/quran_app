@@ -96,7 +96,7 @@ final revelationPlaceValues = new EnumValues(
     {"madinah": RevelationPlace.MADINAH, "makkah": RevelationPlace.MAKKAH});
 
 class TranslatedName {
-  LanguageName languageName;
+  String languageName;
   String name;
 
   TranslatedName({
@@ -106,19 +106,15 @@ class TranslatedName {
 
   factory TranslatedName.fromJson(Map<String, dynamic> json) =>
       new TranslatedName(
-        languageName: languageNameValues.map[json["language_name"]],
+        languageName: json["language_name"],
         name: json["name"],
       );
 
   Map<String, dynamic> toJson() => {
-        "language_name": languageNameValues.reverse[languageName],
+        "language_name": languageName,
         "name": name,
       };
 }
-
-enum LanguageName { ENGLISH }
-
-final languageNameValues = new EnumValues({"english": LanguageName.ENGLISH});
 
 class EnumValues<T> {
   Map<String, T> map;

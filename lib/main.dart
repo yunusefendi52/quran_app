@@ -8,9 +8,11 @@ import 'package:quran_app/models/theme_model.dart';
 import 'package:quran_app/routes/routes.dart';
 import 'package:quran_app/screens/main_drawer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:quran_app/services/bookmarks_data_service.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:kiwi/kiwi.dart' as kiwi;
 
 void main() => start();
 
@@ -24,7 +26,16 @@ void start() async {
     f.createSync();
   }
 
-  runApp(MyApp());  
+  registerDependencies();
+
+  runApp(MyApp());
+}
+
+void registerDependencies() {
+  Application.container
+      .registerSingleton<IBookmarksDataService, BookmarksDataService>(
+    (c) => BookmarksDataService(),
+  );
 }
 
 typedef void ChangeLocaleCallback(Locale locale);
@@ -34,6 +45,8 @@ class Application {
   static ChangeLocaleCallback changeLocale;
 
   static ChangeThemeCallback changeThemeCallback;
+
+  static kiwi.Container container = kiwi.Container();
 }
 
 class MyApp extends StatefulWidget {

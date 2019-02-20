@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:queries/queries.dart';
 import 'package:quiver/strings.dart';
 import 'package:quran_app/app_settings.dart';
+import 'package:quran_app/main.dart';
 import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
@@ -31,20 +32,40 @@ class QuranDataService {
     return _instance;
   }
 
-  ChaptersModel _chaptersModel;
+  bool useMocks = false;
 
   JuzModel _juzModel;
 
-  Map<TranslationDataKey, Database> _translations = {};
-  Map<TranslationDataKey, Database> get translations => _translations;
+  // Map<TranslationDataKey, Database> _translations = {};
+  // Map<TranslationDataKey, Database> get translations => _translations;
 
   Database quranDatabase;
 
-  QuranDataService._();
+  QuranDataService._() {
+    _bookmarksDataService =
+        Application.container.resolve<IBookmarksDataService>();
+  }
 
   Map<Chapter, List<Aya>> _chaptersNavigator = {};
 
-  BookmarksDataService _bookmarksDataService = BookmarksDataService.instance;
+  IBookmarksDataService _bookmarksDataService;
+
+  Future<List<Aya>> getQuranListAya2(
+    int firstSura,
+    int firstAya,
+  ) async {
+    List<Aya> listAya = await instance.getQuranListAya(
+      firstSura,
+      where: 'sura == "$firstSura" and aya == "$firstAya"',
+      includesBookmarks: false,
+    );
+    listAya = listAya
+        .where(
+          (v) => v.aya == firstAya.toString(),
+        )
+        .toList();
+    return listAya;
+  }
 
   Future<List<Aya>> getQuranListAya(
     int sura, {
@@ -52,23 +73,34 @@ class QuranDataService {
     String where,
     bool includesBookmarks = true,
   }) async {
-    if (quranDatabase == null) {
-      quranDatabase = await _openDatabase(
-        'quran-uthmani.db',
-        'assets/quran-data/quran-uthmani.db',
+    List<Map<String, dynamic>> listAyaMap;
+    if (useMocks) {
+      var file = File('test_assets/quran-uthmani.json');
+      var json = await file.readAsString();
+      List<dynamic> map = jsonDecode(json);
+      var l = map.firstWhere((v) => v['index'] == sura.toString());
+      List<dynamic> listAya = l['aya'];
+      var a = listAya.map((v) => Aya.fromJson(v)).toList();
+      listAyaMap = a.map((v) => v.toJson()).toList();
+    } else {
+      if (quranDatabase == null) {
+        quranDatabase = await _openDatabase(
+          'quran-uthmani.db',
+          'assets/quran-data/quran-uthmani.db',
+        );
+      }
+      if (quranDatabase.isOpen == false) {
+        quranDatabase = await _openDatabase(
+          'quran-uthmani.db',
+          'assets/quran-data/quran-uthmani.db',
+        );
+      }
+      listAyaMap = await quranDatabase.query(
+        'quran',
+        columns: columns == null ? ['*'] : columns,
+        where: where ?? 'sura == "$sura"',
       );
     }
-    if (quranDatabase.isOpen == false) {
-      quranDatabase = await _openDatabase(
-        'quran-uthmani.db',
-        'assets/quran-data/quran-uthmani.db',
-      );
-    }
-    var listAyaMap = await quranDatabase.query(
-      'quran',
-      columns: columns == null ? ['*'] : columns,
-      where: where ?? 'sura == "$sura"',
-    );
     List<BookmarksModel> bookmarks = [];
     if (includesBookmarks) {
       bookmarks = await _bookmarksDataService.getListBookmarks();
@@ -116,24 +148,23 @@ class QuranDataService {
   Future<ChaptersModel> getChapters(
     Locale locale,
   ) async {
-    String json = await rootBundle.loadString(
+    String json = await _loadString(
       'assets/quran-data/chapters/chapters.${locale.languageCode}.json',
     );
-    _chaptersModel = ChaptersModel.chaptersModelFromJson(json);
-    return _chaptersModel;
+    var chaptersModel = ChaptersModel.chaptersModelFromJson(json);
+    return chaptersModel;
   }
 
   Future<JuzModel> getJuzs() async {
     if (_juzModel == null) {
-      var json = await rootBundle.loadString('assets/quran-data/juz.json');
+      var json = await _loadString('assets/quran-data/juz.json');
       _juzModel = JuzModel.juzModelFromJson(json);
       for (var juz in _juzModel.juzs) {
         int firstSura = int.parse(juz.verseMapping.keys.first);
         int firstAya = int.parse(juz.verseMapping.values.first.split("-")[0]);
-        var a = await getQuranListAya(
+        var a = await instance.getQuranListAya2(
           firstSura,
-          where: 'sura == "$firstSura" and aya == "$firstAya"',
-          includesBookmarks: false,
+          firstAya,
         );
         juz.aya = a.first?.text;
       }
@@ -146,23 +177,35 @@ class QuranDataService {
   Future<List<TranslationDataKey>> getListTranslationsData({
     String where,
   }) async {
-    if (translationsDatabase == null) {
-      if (translationsDatabase?.isOpen == true) {
-        translationsDatabase.close();
-        translationsDatabase = null;
-        await Future.delayed(Duration(microseconds: 50));
+    List<Map<String, dynamic>> l;
+    if (useMocks) {
+      var file = File('test_assets/translations.json');
+      var json = await file.readAsString();
+      List<dynamic> map = jsonDecode(json);
+      var a = map.map((v) => TranslationDataKey.fromJson(v)).toList();
+      if (where == 'is_visible = 1') {
+        a = a.where((v) => v.isVisible).toList();
       }
-      translationsDatabase = await _openDatabase(
-        'translations11.db',
-        'assets/quran-data/translations.db',
-        isReadOnly: false,
+      l = a.map((v) => v.toJson()).toList();
+    } else {
+      if (translationsDatabase == null) {
+        if (translationsDatabase?.isOpen == true) {
+          translationsDatabase.close();
+          translationsDatabase = null;
+          await Future.delayed(Duration(microseconds: 50));
+        }
+        translationsDatabase = await _openDatabase(
+          'translations11.db',
+          'assets/quran-data/translations.db',
+          isReadOnly: false,
+        );
+      }
+      l = await translationsDatabase.query(
+        'translations',
+        columns: ['*'],
+        where: where,
       );
     }
-    var l = await translationsDatabase.query(
-      'translations',
-      columns: ['*'],
-      where: where,
-    );
     var list = l.map(
       (v) {
         var t = TranslationDataKey.fromJson(v);
@@ -170,6 +213,14 @@ class QuranDataService {
       },
     )?.toList();
     return list;
+  }
+
+  Future<List<TranslationDataKey>>
+      getListTranslationsDataIsVisibleOnly() async {
+    var isVisibleTranslationsDataKey = await instance.getListTranslationsData(
+      where: 'is_visible = 1',
+    );
+    return isVisibleTranslationsDataKey;
   }
 
   Future<Directory> getDownloadFolder() async {
@@ -204,40 +255,82 @@ class QuranDataService {
   Future<Map<TranslationDataKey, List<TranslationAya>>> getTranslations(
     Chapter chapter,
   ) async {
-    var listTranslationDataKey = await getListTranslationsData(
-      where: 'is_visible = 1',
-    );
-
-    _translations.clear();
-    for (var translationDataKey in listTranslationDataKey) {
-      Database database = await _openDatabase(
-        '${translationDataKey.id}.db',
-        translationDataKey.url,
-      );
-      _translations.addAll(
-        {
-          translationDataKey: database,
-        },
-      );
-    }
     Map<TranslationDataKey, List<TranslationAya>> mapTranslation = {};
-    for (var t in translations.entries) {
-      var ayaTranslation = await t.value.query(
-        'verses',
-        columns: ['*'],
-        where: 'sura = ${chapter.chapterNumber}',
-      );
-      mapTranslation.addAll(
-        {
-          t.key: ayaTranslation.map(
-            (v) {
-              return TranslationAya.fromJson(v);
+    var listTranslationDataKey =
+        await instance.getListTranslationsDataIsVisibleOnly();
+    if (useMocks) {
+      var isVisibleTranslation = (await getListTranslationsData())
+          .where((v) => v.isVisible && !v.url.startsWith('encrypted:'))
+          .toList();
+      for (TranslationDataKey i in isVisibleTranslation) {
+        var f = Path.basename(i.url);
+        f = f.replaceAll('.db', '.json');
+        String path = 'test_assets/translations/$f';
+        List<dynamic> l = jsonDecode(
+          File(path).readAsStringSync(),
+        );
+        var t = l
+            .map(
+              (v) => TranslationAya.fromJson(v),
+            )
+            .where(
+              (v) => v.sura == chapter.chapterNumber.toString(),
+            )
+            .toList();
+        mapTranslation.addAll({
+          i: t,
+        });
+      }
+    } else {
+      // Create database connection from translation data key
+      Map<TranslationDataKey, Database> translations = {};
+      try {
+        for (var translationDataKey in listTranslationDataKey) {
+          Database database = await _openDatabase(
+            '${translationDataKey.id}.db',
+            translationDataKey.url,
+          );
+          translations.addAll(
+            {
+              translationDataKey: database,
             },
-          ).toList(),
-        },
-      );
+          );
+        }
+        for (var t in translations.entries) {
+          var ayaTranslation = await t.value.query(
+            'verses',
+            columns: ['*'],
+            where: 'sura = ${chapter.chapterNumber}',
+          );
+          mapTranslation.addAll(
+            {
+              t.key: ayaTranslation.map(
+                (v) {
+                  // Check this fromJson
+                  return TranslationAya.fromJson(v);
+                },
+              ).toList(),
+            },
+          );
+        }
+      } finally {
+        // Dispose database connection
+        translations.entries.forEach((v) {
+          v.value.close();
+        });
+        translations.clear();
+      }
     }
     return mapTranslation;
+  }
+
+  Future<String> _loadString(String key) async {
+    if (useMocks) {
+      var file = File(key);
+      return await file.readAsString();
+    } else {
+      return await rootBundle.loadString(key);
+    }
   }
 
   Future<Database> _openDatabase(
@@ -267,13 +360,12 @@ class QuranDataService {
 
   /// Close previous opened Database
   void dispose() {
-    for (int i = 0; i < _translations.entries.length; i++) {
-      var database = _translations.entries.elementAt(i);
-      database.value.close();
-    }
+    // for (int i = 0; i < _translations.entries.length; i++) {
+    //   var database = _translations.entries.elementAt(i);
+    //   database.value.close();
+    // }
     quranDatabase?.close();
     quranDatabase = null;
-    _translations?.clear();
     translationsDatabase?.close();
     translationsDatabase = null;
   }

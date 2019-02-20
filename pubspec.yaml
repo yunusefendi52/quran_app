@@ -44,6 +44,7 @@ dependencies:
   encrypt: ^1.0.1
   path_provider: ^0.4.1
   uuid: ^1.0.3
+  kiwi: ^0.1.0
   
 dev_dependencies:
   flutter_test:

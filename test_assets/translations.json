@@ -1,0 +1,272 @@
+[
+    {
+        "file_type": "0",
+        "id": "df453aae-9a31-42f3-9c19-97297e830a05",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Spanish - Garcia",
+        "translator": "Muhammad Isa García",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbdfe"
+    },
+    {
+        "file_type": "0",
+        "id": "74d17d03-132c-437a-b858-5cd6869e8ca6",
+        "is_downloaded": "1",
+        "is_visible": "1",
+        "name": "Bahasa Indonesia",
+        "translator": "Indonesian Ministry of Religious Affairs",
+        "type": "0",
+        "url": "assets/quran-data/translations/id.indonesian.db"
+    },
+    {
+        "file_type": "0",
+        "id": "dae02ff5-d8b7-4bbf-b7d2-c6e2e708dceb",
+        "is_downloaded": "1",
+        "is_visible": "1",
+        "name": "English - Saheeh International",
+        "translator": "Saheeh International",
+        "type": "0",
+        "url": "assets/quran-data/translations/en.sahih.db"
+    },
+    {
+        "file_type": "0",
+        "id": "b1474e15-6153-46eb-9548-47ae755e35e9",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Malay Translation",
+        "translator": "Abdullah Muhammad Basmeih",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbb0"
+    },
+    {
+        "file_type": "0",
+        "id": "10ce0954-9719-4671-8119-72f3724cef17",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Farsi Translation",
+        "translator": "Hussein Taji Kal Dari",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbbf5"
+    },
+    {
+        "file_type": "0",
+        "id": "2796cff0-6235-47c6-bb50-d831fde84d21",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "French Translation",
+        "translator": "Muhammad Hamidullah",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbba"
+    },
+    {
+        "file_type": "0",
+        "id": "866a4272-a8b8-4b56-b1de-8885a0b288ef",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "German Translation",
+        "translator": "A. S. F. Bubenheim and N. Elyas",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbb"
+    },
+    {
+        "file_type": "0",
+        "id": "abd034bd-71cf-483b-9732-13a11fc76244",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Hausa Translation",
+        "translator": "Abubakar Mahmoud Gumi",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbbf1"
+    },
+    {
+        "file_type": "0",
+        "id": "0483e802-2f5d-4500-93f7-eaea87db6a92",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Hindi Translation",
+        "translator": "Suhel Farooq Khan and Saifur Rahman Nadwi",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbcf7fe9ce514c897b4c5"
+    },
+    {
+        "file_type": "0",
+        "id": "1bbb44fb-3122-444a-a894-1211b2e09af3",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Italian Translation",
+        "translator": "Hamza Roberto Piccardo",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbbfe"
+    },
+    {
+        "file_type": "0",
+        "id": "e8d20a42-3fab-4894-a052-9e0e382c8636",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Kurdish Translation",
+        "translator": "Burhan Muhammad-Amin",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbb8f0"
+    },
+    {
+        "file_type": "0",
+        "id": "f37daaf0-d79b-408e-934c-2a77ffcf8ac8",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Malayalam Translation",
+        "translator": "Muhammad Karakunnu and Vanidas Elayavoor",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbbf6"
+    },
+    {
+        "file_type": "0",
+        "id": "e7d5db87-11c6-4760-ba83-07858ec151ff",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Malayalam Translation",
+        "translator": "Cheriyamundam Abdul Hameed and Kunhi Mohammed Parappoor",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbdf6"
+    },
+    {
+        "file_type": "0",
+        "id": "70d07565-5ddb-40b8-9a8f-4be3562c182e",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Portuguese Translation",
+        "translator": "Samir El Hayek",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbbff"
+    },
+    {
+        "file_type": "0",
+        "id": "009a4c5b-42ca-4e24-914e-efa05d5ed6c3",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Russian Translation",
+        "translator": "Elmir Kuliev",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbaf6"
+    },
+    {
+        "file_type": "0",
+        "id": "28eed709-c6b8-4d1f-a314-452df14936cf",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Russian Translation",
+        "translator": "Abu Adel",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbcf6fe9ce514c897b4c5"
+    },
+    {
+        "file_type": "0",
+        "id": "781cc2d4-9015-4f05-9629-ae44a0740085",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Somali Translation",
+        "translator": "Mahmud Muhammad Abduh",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbb8f1"
+    },
+    {
+        "file_type": "0",
+        "id": "198f84b5-edc5-431b-9d33-d512c21dc41d",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Swahili Translation",
+        "translator": "Ali Muhsin Al-Barwani",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbb8ff"
+    },
+    {
+        "file_type": "0",
+        "id": "c1da1df1-d571-43c7-83c3-58211876486d",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Swedish Translation",
+        "translator": "Mohammed Knut Bernström",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbafe"
+    },
+    {
+        "file_type": "0",
+        "id": "cd4043ac-7716-4dac-b68b-9cf871545186",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Tamil Translation",
+        "translator": "Jan Trust Foundation",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbbf4"
+    },
+    {
+        "file_type": "0",
+        "id": "6cf8aa37-0b4d-4bee-b6f2-1e22ebc05df4",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Thai Translation",
+        "translator": "King Fahad Quran Complex",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbaf3"
+    },
+    {
+        "file_type": "0",
+        "id": "e7240cdd-0ba1-495f-b789-c29923111761",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Turkish Translation",
+        "translator": "Elmalili Hamdi Yazîr",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbb8f6"
+    },
+    {
+        "file_type": "0",
+        "id": "6e356cbd-3c50-4e1d-95f6-fee11d8b9021",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Turkish Translation",
+        "translator": "Diyanet Isleri",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbaf4"
+    },
+    {
+        "file_type": "0",
+        "id": "0765e977-f10a-41d2-b677-db09881060cd",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Urdu Translation",
+        "translator": "Muhammad Junagarhi",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbb8f7"
+    },
+    {
+        "file_type": "0",
+        "id": "8f6fb43d-292d-4e2c-8d06-408868e388f8",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Urdu Translation",
+        "translator": "Abul A'ala Maududi",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbcf4fe9ce514c897b4c5"
+    },
+    {
+        "file_type": "0",
+        "id": "ec264a90-6e8e-4477-8bd8-c38bd426b1b7",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Uyghur Translation",
+        "translator": "Muhammad Saleh",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbaff"
+    },
+    {
+        "file_type": "0",
+        "id": "6584d2ac-2af8-470c-985c-40a67dd03241",
+        "is_downloaded": "0",
+        "is_visible": "0",
+        "name": "Uzbek Translation",
+        "translator": "Muhammad Sodik Muhammad Yusuf",
+        "type": "1",
+        "url": "encrypted:5cb105892a2dbac863b534456e396adc518391c211da0ebc693eac06adbd4da27ed7f3816a7b93b22ceb837ae43c9f57132074bbbaf2"
+    }
+]
