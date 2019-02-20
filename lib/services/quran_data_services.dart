@@ -46,8 +46,6 @@ class QuranDataService {
         Application.container.resolve<IBookmarksDataService>();
   }
 
-  Map<Chapter, List<Aya>> _chaptersNavigator = {};
-
   IBookmarksDataService _bookmarksDataService;
 
   Future<List<Aya>> getQuranListAya2(
@@ -123,26 +121,24 @@ class QuranDataService {
   }
 
   Future<Map<Chapter, List<Aya>>> getChaptersNavigator(Locale locale) async {
-    if (_chaptersNavigator.length <= 0) {
-      var chapterModel = await instance.getChapters(locale);
-      Map<Chapter, List<Aya>> l = {};
-      for (var c in chapterModel.chapters.items) {
-        var listAya = Enumerable.range(1, c.versesCount).select(
-          (v) {
-            return Aya(
-              aya: v.toString(),
-            );
-          },
-        );
-        l.addAll(
-          {
-            c: listAya.toList(),
-          },
-        );
-      }
-      _chaptersNavigator = l;
+    var chapterModel = await instance.getChapters(locale);
+    Map<Chapter, List<Aya>> chaptersNavigator = {};
+    for (var c in chapterModel.chapters.items) {
+      var listAya = Enumerable.range(1, c.versesCount).select(
+        (v) {
+          return Aya(
+            aya: v.toString(),
+          );
+        },
+      );
+      chaptersNavigator.addAll(
+        {
+          c: listAya.toList(),
+        },
+      );
+      
     }
-    return _chaptersNavigator;
+    return chaptersNavigator;
   }
 
   Future<ChaptersModel> getChapters(
