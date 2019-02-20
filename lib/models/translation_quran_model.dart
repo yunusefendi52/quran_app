@@ -86,7 +86,7 @@ class TranslationAya {
   String index;
   String text;
   String bismillah;
-  String sura;
+  int sura;
 
   TranslationAya({
     this.index,
@@ -169,14 +169,14 @@ class TranslationDataKey {
         id: json["id"].toString(),
         name: json["name"],
         translator: json["translator"],
-        type: TranslationDataKeyType.values[int.tryParse(json["type"])],
+        type: TranslationDataKeyType.values[json["type"]],
         url: json["url"],
-        fileType: TranslationDataKeyFileType.values[int.tryParse(json["file_type"])],
+        fileType: TranslationDataKeyFileType.values[json["file_type"]],
         isDownloaded: json['is_downloaded'] != null
-            ? int.tryParse(json['is_downloaded']) >= 1
+            ? json['is_downloaded'] >= 1
             : false,
         isVisible: json['is_visible'] != null
-            ? int.tryParse(json['is_visible']) >= 1
+            ? json['is_visible'] >= 1
             : false,
       );
 
@@ -184,11 +184,11 @@ class TranslationDataKey {
         "id": id,
         "name": name,
         "translator": translator,
-        "type": type.index.toString(),
+        "type": type.index,
         "url": url,
-        "file_type": fileType.index.toString(),
-        "is_downloaded": isDownloaded ? '1' : '0',
-        "is_visible": isVisible ? '1' : '0',
+        "file_type": fileType.index,
+        "is_downloaded": isDownloaded ? 1 : 0,
+        "is_visible": isVisible ? 1 : 0,
       }; 
 
   static int sort(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:quran_app/helpers/colors_settings.dart';
+import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/quran_data_model.dart';
-import 'package:quran_app/scoped_model/app_model.dart';
 import 'package:quran_app/screens/quran_aya_screen.dart';
 import 'package:quran_app/services/quran_data_services.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -181,5 +181,27 @@ class _QuranSuraScreenState extends State<QuranSuraScreen>
         ),
       ),
     );
+  }
+}
+
+class QuranScreenScopedModel extends Model {
+  QuranDataService _quranDataService = QuranDataService.instance;
+
+  QuranDataModel quranDataModel = QuranDataModel();
+  ChaptersModel chaptersModel = ChaptersModel();
+
+  bool isGettingChapters = true;
+
+  Future getChapters() async {
+    try {
+      isGettingChapters = true;
+
+      var locale = SettingsHelpers.instance.getLocale();
+      chaptersModel = await _quranDataService.getChapters(locale);
+      notifyListeners();
+    } finally {
+      isGettingChapters = false;
+      notifyListeners();
+    }
   }
 }

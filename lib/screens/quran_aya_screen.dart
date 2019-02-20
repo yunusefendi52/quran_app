@@ -11,10 +11,13 @@ import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
+import 'package:quran_app/main.dart';
+import 'package:quran_app/models/bookmarks_model.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/quran_data_model.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
-import 'package:quran_app/scoped_model/app_model.dart';
+import 'package:quran_app/services/bookmarks_data_service.dart';
+import 'package:quran_app/services/quran_data_services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
@@ -608,5 +611,78 @@ class AyaItemCellState extends State<AyaItemCell> {
         );
       },
     );
+  }
+}
+
+class QuranAyaScreenScopedModel extends Model {
+  QuranDataService _quranDataService = QuranDataService.instance;
+
+  bool isGettingAya = true;
+
+  List<Aya> listAya = [];
+
+  Map<TranslationDataKey, List<TranslationAya>> translations = {};
+
+  Map<Chapter, List<Aya>> chapters = {};
+
+  Chapter currentChapter;
+
+  IBookmarksDataService _bookmarksDataService;
+
+  QuranAyaScreenScopedModel({
+    IBookmarksDataService bookmarksDataService,
+  }) {
+    _bookmarksDataService = bookmarksDataService ?? Application.container.resolve<IBookmarksDataService>();
+  }
+
+  Future getAya(Chapter chapter) async {
+    try {
+      isGettingAya = true;
+      notifyListeners();
+
+      currentChapter = chapter;
+      await _bookmarksDataService.init();
+      listAya = await _quranDataService.getQuranListAya(chapter.chapterNumber);
+      translations = await _quranDataService.getTranslations(chapter);
+
+      var locale = SettingsHelpers.instance.getLocale();
+      _quranDataService.getChaptersNavigator(locale).then(
+        (v) {
+          chapters = v;
+        },
+      );
+
+      notifyListeners();
+    } finally {
+      isGettingAya = false;
+      notifyListeners();
+    }
+  }
+
+  void dispose() {
+    _quranDataService.dispose();
+    _bookmarksDataService.dispose();
+  }
+
+  Future<BookmarksModel> addBookmark(
+    Aya aya,
+    Chapter chapter,
+  ) async {
+    var bookmarkModel = BookmarksModel()
+      ..aya = int.tryParse(aya.aya)
+      ..insertTime = DateTime.now()
+      ..sura = chapter.chapterNumber
+      ..suraName = chapter.nameSimple;
+    int id = await _bookmarksDataService.add(bookmarkModel);
+    notifyListeners();
+    bookmarkModel.id = id;
+    return bookmarkModel;
+  }
+
+  Future removeBookmark(
+    int bookmarksModelId,
+  ) async {
+    await _bookmarksDataService.delete(bookmarksModelId);
+    notifyListeners();
   }
 }

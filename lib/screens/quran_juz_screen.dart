@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:loadmore/loadmore.dart';
+import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
+import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/juz_model.dart';
-import 'package:quran_app/scoped_model/app_model.dart';
 import 'package:quran_app/screens/quran_aya_screen.dart';
+import 'package:quran_app/services/quran_data_services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'dart:math' as math;
 
@@ -203,5 +205,38 @@ class _QuranJuzScreenState extends State<QuranJuzScreen> {
         ),
       ),
     );
+  }
+}
+
+class QuranJuzScreenScopedModel extends Model {
+  QuranDataService _quranDataService = QuranDataService.instance;
+  bool isGettingJuzs = true;
+
+  JuzModel juzModel;
+
+  ChaptersModel chaptersModel = ChaptersModel();
+
+  Future getJuzs() async {
+    try {
+      isGettingJuzs = true;
+
+      juzModel = await _quranDataService.getJuzs();
+      notifyListeners();
+    } finally {
+      isGettingJuzs = false;
+      notifyListeners();
+    }
+  }
+
+  Future getChapters() async {
+    var locale = SettingsHelpers.instance.getLocale();
+    chaptersModel = await _quranDataService.getChapters(
+      locale,
+    );
+    notifyListeners();
+  }
+
+  void dispose() {
+    _quranDataService.dispose();
   }
 }

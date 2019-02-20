@@ -270,7 +270,7 @@ class QuranDataService {
               (v) => TranslationAya.fromJson(v),
             )
             .where(
-              (v) => v.sura == chapter.chapterNumber.toString(),
+              (v) => v.sura == chapter.chapterNumber,
             )
             .toList();
         mapTranslation.addAll({

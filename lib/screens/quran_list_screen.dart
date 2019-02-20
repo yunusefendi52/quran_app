@@ -6,7 +6,6 @@ import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/helpers/shimmer_helpers.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/quran_data_model.dart';
-import 'package:quran_app/scoped_model/app_model.dart';
 import 'package:quran_app/screens/quran_juz_screen.dart';
 import 'package:quran_app/screens/quran_sura_screen.dart';
 import 'package:quran_app/services/quran_data_services.dart';
