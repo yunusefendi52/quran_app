@@ -10,8 +10,10 @@ import 'package:queries/collections.dart';
 import 'package:quiver/strings.dart';
 import 'package:quran_app/app_settings.dart';
 import 'package:quran_app/helpers/my_event_bus.dart';
+import 'package:quran_app/main.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
 import 'package:quran_app/services/quran_data_services.dart';
+import 'package:quran_app/services/translations_list_service.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sticky_headers/sticky_headers.dart';
@@ -166,9 +168,15 @@ class DownloadTranslationsScreenModel extends Model {
 
   final String eventKey;
 
+  ITranslationsListService _translationsListService;
+
   DownloadTranslationsScreenModel({
     @required this.eventKey,
-  });
+    ITranslationsListService translationsListService,
+  }) {
+    _translationsListService = translationsListService ??
+        Application.container.resolve<ITranslationsListService>();
+  }
 
   Future init() async {
     try {
@@ -187,7 +195,7 @@ class DownloadTranslationsScreenModel extends Model {
         },
       );
 
-      var allTranslations = await quranDataService.getListTranslationsData();
+      var allTranslations = await _translationsListService.getListTranslationsData();
       availableTranslations = allTranslations
           .where(
             (v) => v.type == TranslationDataKeyType.Assets || v.isDownloaded,
@@ -227,11 +235,12 @@ class DownloadTranslationsScreenModel extends Model {
     streamSubscription = null;
   }
 
-  Future addAvailableTranslation(TranslationDataKey translationDataKey) async {
+  Future<bool> addAvailableTranslation(TranslationDataKey translationDataKey) async {
     try {
-      await quranDataService.addTranslationsData(translationDataKey);
+      return await _translationsListService.addTranslationsData(translationDataKey);
     } catch (error) {
       print(error.toString());
+      return false;
     }
   }
 

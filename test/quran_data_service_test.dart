@@ -7,18 +7,13 @@ import 'package:quran_app/main.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/services/bookmarks_data_service.dart';
 import 'package:quran_app/services/quran_data_services.dart';
+import 'package:quran_app/services/translations_list_service.dart';
 
 import 'services/bookmarks_data_service_mock.dart';
-
-void registerDependencies() {
-  Application.container
-      .registerSingleton<IBookmarksDataService, BookmarksDataServiceMock>(
-    (c) => BookmarksDataServiceMock(),
-  );
-}
+import 'test_start.dart';
 
 void main() {
-  registerDependencies();
+  TestStart.registerDependencies();
 
   group('QuranDataService', () {
     test('getQuranListAya test', () async {
@@ -105,10 +100,11 @@ void main() {
 
     test('getListTranslationsData test', () async {
       try {
-        var quranDataService = QuranDataService.instance;
-        quranDataService.useMocks = true;
+        var translationsListService =
+            Application.container.resolve<ITranslationsListService>();
 
-        var translationsData = await quranDataService.getListTranslationsData();
+        var translationsData =
+            await translationsListService.getListTranslationsData();
         expect(
           translationsData
               .any((v) => v.name == 'Bahasa Indonesia' && v.isVisible),
@@ -119,18 +115,16 @@ void main() {
               (v) => v.name == 'English - Saheeh International' && v.isVisible),
           true,
         );
-      } finally {
-        QuranDataService.instance.useMocks = false;
-      }
+      } finally {}
     });
 
     test('getListTranslationsDataIsVisibleOnly test', () async {
       try {
-        var quranDataService = QuranDataService.instance;
-        quranDataService.useMocks = true;
+        var translationsListService =
+            Application.container.resolve<ITranslationsListService>();
 
-        var translationsData =
-            await quranDataService.getListTranslationsDataIsVisibleOnly();
+        var translationsData = await translationsListService
+            .getListTranslationsDataIsVisibleOnly();
         expect(
           translationsData
               .any((v) => v.name == 'Bahasa Indonesia' && v.isVisible),
@@ -148,9 +142,7 @@ void main() {
                 ) ==
                 null,
             true);
-      } finally {
-        QuranDataService.instance.useMocks = false;
-      }
+      } finally {}
     });
 
     test('getTranslations test', () async {

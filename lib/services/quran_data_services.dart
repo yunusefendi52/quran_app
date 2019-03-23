@@ -13,6 +13,7 @@ import 'package:quran_app/models/juz_model.dart';
 import 'package:quran_app/models/quran_data_model.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
 import 'package:quran_app/services/bookmarks_data_service.dart';
+import 'package:quran_app/services/translations_list_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:xml2json/xml2json.dart';
 import 'package:path/path.dart' as Path;
@@ -41,12 +42,15 @@ class QuranDataService {
 
   Database quranDatabase;
 
+  IBookmarksDataService _bookmarksDataService;
+  ITranslationsListService _translationsListService;
+
   QuranDataService._() {
     _bookmarksDataService =
         Application.container.resolve<IBookmarksDataService>();
+    _translationsListService =
+        Application.container.resolve<ITranslationsListService>();
   }
-
-  IBookmarksDataService _bookmarksDataService;
 
   Future<List<Aya>> getQuranListAya2(
     int firstSura,
@@ -136,7 +140,6 @@ class QuranDataService {
           c: listAya.toList(),
         },
       );
-      
     }
     return chaptersNavigator;
   }
@@ -168,57 +171,6 @@ class QuranDataService {
     return _juzModel;
   }
 
-  Database translationsDatabase;
-
-  Future<List<TranslationDataKey>> getListTranslationsData({
-    String where,
-  }) async {
-    List<Map<String, dynamic>> l;
-    if (useMocks) {
-      var file = File('test_assets/translations.json');
-      var json = await file.readAsString();
-      List<dynamic> map = jsonDecode(json);
-      var a = map.map((v) => TranslationDataKey.fromJson(v)).toList();
-      if (where == 'is_visible = 1') {
-        a = a.where((v) => v.isVisible).toList();
-      }
-      l = a.map((v) => v.toJson()).toList();
-    } else {
-      if (translationsDatabase == null) {
-        if (translationsDatabase?.isOpen == true) {
-          translationsDatabase.close();
-          translationsDatabase = null;
-          await Future.delayed(Duration(microseconds: 50));
-        }
-        translationsDatabase = await _openDatabase(
-          'translations11.db',
-          'assets/quran-data/translations.db',
-          isReadOnly: false,
-        );
-      }
-      l = await translationsDatabase.query(
-        'translations',
-        columns: ['*'],
-        where: where,
-      );
-    }
-    var list = l.map(
-      (v) {
-        var t = TranslationDataKey.fromJson(v);
-        return t;
-      },
-    )?.toList();
-    return list;
-  }
-
-  Future<List<TranslationDataKey>>
-      getListTranslationsDataIsVisibleOnly() async {
-    var isVisibleTranslationsDataKey = await instance.getListTranslationsData(
-      where: 'is_visible = 1',
-    );
-    return isVisibleTranslationsDataKey;
-  }
-
   Future<Directory> getDownloadFolder() async {
     var externalDirectory = await pathProvider.getExternalStorageDirectory();
     var downloadFolder = Directory(
@@ -233,29 +185,14 @@ class QuranDataService {
     return downloadFolder;
   }
 
-  Future<bool> addTranslationsData(
-    TranslationDataKey translationDataKey,
-  ) async {
-    var map = translationDataKey.toJson();
-    int i = await translationsDatabase.update(
-      'translations',
-      map,
-      where: 'id=?',
-      whereArgs: [
-        translationDataKey.id,
-      ],
-    );
-    return i >= 1;
-  }
-
   Future<Map<TranslationDataKey, List<TranslationAya>>> getTranslations(
     Chapter chapter,
   ) async {
     Map<TranslationDataKey, List<TranslationAya>> mapTranslation = {};
     var listTranslationDataKey =
-        await instance.getListTranslationsDataIsVisibleOnly();
+        await _translationsListService.getListTranslationsDataIsVisibleOnly();
     if (useMocks) {
-      var isVisibleTranslation = (await getListTranslationsData())
+      var isVisibleTranslation = (await _translationsListService.getListTranslationsData())
           .where((v) => v.isVisible && !v.url.startsWith('encrypted:'))
           .toList();
       for (TranslationDataKey i in isVisibleTranslation) {
@@ -362,7 +299,6 @@ class QuranDataService {
     // }
     quranDatabase?.close();
     quranDatabase = null;
-    translationsDatabase?.close();
-    translationsDatabase = null;
+    _translationsListService?.dispose();
   }
 }
