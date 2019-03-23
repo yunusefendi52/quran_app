@@ -78,7 +78,8 @@ class QuranDataService {
     List<Map<String, dynamic>> listAyaMap;
     if (useMocks) {
       var file = File('./test_assets/quran-uthmani.json');
-      var json = await file.readAsString();
+      var relativeFilePath = file.resolveSymbolicLinksSync();
+      var json = await File(relativeFilePath).readAsString();
       List<dynamic> map = jsonDecode(json);
       var l = map.firstWhere((v) => v['index'] == sura.toString());
       List<dynamic> listAya = l['aya'];
@@ -199,8 +200,9 @@ class QuranDataService {
         var f = Path.basename(i.url);
         f = f.replaceAll('.db', '.json');
         String path = './test_assets/translations/$f';
+        String relativePath = File(path).resolveSymbolicLinksSync();
         List<dynamic> l = jsonDecode(
-          File(path).readAsStringSync(),
+          File(relativePath).readAsStringSync(),
         );
         var t = l
             .map(

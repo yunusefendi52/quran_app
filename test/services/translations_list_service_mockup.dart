@@ -12,7 +12,8 @@ class TranslationsListServiceMockup implements ITranslationsListService {
     String where,
   }) async {
     var file = File('./test_assets/translations.json');
-    var json = await file.readAsString();
+    var relativeFilePath = file.resolveSymbolicLinksSync();
+    var json = await File(relativeFilePath).readAsString();
     List<dynamic> map = jsonDecode(json);
     var list = map.map((v) => TranslationDataKey.fromJson(v)).toList();
     if (where == 'is_visible = 1') {
