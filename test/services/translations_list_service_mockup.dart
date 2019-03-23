@@ -11,7 +11,7 @@ class TranslationsListServiceMockup implements ITranslationsListService {
   Future<List<TranslationDataKey>> getListTranslationsData({
     String where,
   }) async {
-    var file = File('test_assets/translations.json');
+    var file = File('./test_assets/translations.json');
     var json = await file.readAsString();
     List<dynamic> map = jsonDecode(json);
     var list = map.map((v) => TranslationDataKey.fromJson(v)).toList();

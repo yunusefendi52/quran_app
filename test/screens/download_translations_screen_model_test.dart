@@ -24,7 +24,7 @@ void main() {
 
       try {
         await model.init();
-        // This data based on test_assets/translations.json
+        // This data based on ./test_assets/translations.json
         expect(model.availableTranslations.length == 2, true);
         expect(model.notDownloadedTranslations.length > 0, true);
       } finally {

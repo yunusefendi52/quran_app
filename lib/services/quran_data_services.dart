@@ -77,7 +77,7 @@ class QuranDataService {
   }) async {
     List<Map<String, dynamic>> listAyaMap;
     if (useMocks) {
-      var file = File('test_assets/quran-uthmani.json');
+      var file = File('./test_assets/quran-uthmani.json');
       var json = await file.readAsString();
       List<dynamic> map = jsonDecode(json);
       var l = map.firstWhere((v) => v['index'] == sura.toString());
@@ -198,7 +198,7 @@ class QuranDataService {
       for (TranslationDataKey i in isVisibleTranslation) {
         var f = Path.basename(i.url);
         f = f.replaceAll('.db', '.json');
-        String path = 'test_assets/translations/$f';
+        String path = './test_assets/translations/$f';
         List<dynamic> l = jsonDecode(
           File(path).readAsStringSync(),
         );
