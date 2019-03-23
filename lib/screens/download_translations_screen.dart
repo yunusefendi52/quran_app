@@ -12,6 +12,7 @@ import 'package:quran_app/app_settings.dart';
 import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/main.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
+import 'package:quran_app/services/database_file_service.dart';
 import 'package:quran_app/services/quran_data_services.dart';
 import 'package:quran_app/services/translations_list_service.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -157,7 +158,7 @@ class _DownloadTranslationsScreenState
 }
 
 class DownloadTranslationsScreenModel extends Model {
-  QuranDataService quranDataService = QuranDataService.instance;
+  IQuranDataService _quranDataService;
 
   List<TranslationDataKey> availableTranslations = [];
 
@@ -169,13 +170,20 @@ class DownloadTranslationsScreenModel extends Model {
   final String eventKey;
 
   ITranslationsListService _translationsListService;
+  IDatabaseFileService _databaseFileService;
 
   DownloadTranslationsScreenModel({
     @required this.eventKey,
-    ITranslationsListService translationsListService,
+    @required IQuranDataService quranDataService,
+    @required ITranslationsListService translationsListService,
+    @required IDatabaseFileService databaseFileService,
   }) {
+    _quranDataService =
+        quranDataService ?? Application.container.resolve<IQuranDataService>();
     _translationsListService = translationsListService ??
         Application.container.resolve<ITranslationsListService>();
+    _databaseFileService = databaseFileService ??
+        Application.container.resolve<IDatabaseFileService>();
   }
 
   Future init() async {
@@ -195,7 +203,8 @@ class DownloadTranslationsScreenModel extends Model {
         },
       );
 
-      var allTranslations = await _translationsListService.getListTranslationsData();
+      var allTranslations =
+          await _translationsListService.getListTranslationsData();
       availableTranslations = allTranslations
           .where(
             (v) => v.type == TranslationDataKeyType.Assets || v.isDownloaded,
@@ -235,9 +244,11 @@ class DownloadTranslationsScreenModel extends Model {
     streamSubscription = null;
   }
 
-  Future<bool> addAvailableTranslation(TranslationDataKey translationDataKey) async {
+  Future<bool> addAvailableTranslation(
+      TranslationDataKey translationDataKey) async {
     try {
-      return await _translationsListService.addTranslationsData(translationDataKey);
+      return await _translationsListService
+          .addTranslationsData(translationDataKey);
     } catch (error) {
       print(error.toString());
       return false;
@@ -262,13 +273,8 @@ class DownloadTranslationsScreenModel extends Model {
 
   Future moveAvailableToNotDownloadedTranslations(TranslationDataKey t) async {
     // Remove file first
-    var databasePath = await getDatabasesPath();
-    var path = join(databasePath, '${t.id}.db');
-    var file = File(path);
-    if (file.existsSync()) {
-      await file.delete();
-    }
-
+    await _databaseFileService.deleteDatabase('${t.id}.db');
+    
     var tList = availableTranslations.firstWhere(
       (v) => v.id == t.id,
       orElse: () => null,
