@@ -45,7 +45,9 @@ dependencies:
   path_provider: ^0.4.1
   uuid: ^1.0.3
   kiwi: ^0.1.0
-  
+  provider: ^1.6.1
+  pub_semver: ^1.4.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

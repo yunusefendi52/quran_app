@@ -126,6 +126,13 @@ class AppLocalizations {
       name: 'jumpToVerseText',
     );
   }
+
+  String get aboutAppText {
+    return Intl.message(
+      'About this app',
+      name: 'aboutAppText',
+    );
+  }
 }
 
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -74,5 +74,10 @@
   "@jumpToVerseText": {
     "type": "text",
     "placeholders": {}
+  },
+  "aboutAppText": "Tentang aplikasi ini",
+  "@aboutAppText": {
+    "type": "text",
+    "placeholders": {}
   }
 }

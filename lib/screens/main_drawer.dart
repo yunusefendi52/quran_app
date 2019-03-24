@@ -35,64 +35,79 @@ class _MainDrawerState extends State<MainDrawer> {
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).appName),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            ScopedModel<MainDrawerModel>(
-              model: mainDrawerModel,
-              child: ScopedModelDescendant<MainDrawerModel>(
-                builder: (
-                  BuildContext context,
-                  Widget child,
-                  MainDrawerModel model,
-                ) {
-                  return ListTile(
-                    onTap: () async {
-                      var dialog = QuranNavigatorDialog(
-                        chapters: model.chapters,
-                        currentChapter: model.chapters.keys.first,
-                      );
-                      var chapter = await showDialog<Chapter>(
-                        context: context,
-                        builder: (context) {
-                          return dialog;
-                        },
-                      );
-                      if (chapter == null) {
-                        return;
-                      }
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (
-                            BuildContext context,
-                          ) {
-                            return QuranAyaScreen(
-                              chapter: chapter,
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  ScopedModel<MainDrawerModel>(
+                    model: mainDrawerModel,
+                    child: ScopedModelDescendant<MainDrawerModel>(
+                      builder: (
+                        BuildContext context,
+                        Widget child,
+                        MainDrawerModel model,
+                      ) {
+                        return ListTile(
+                          onTap: () async {
+                            var dialog = QuranNavigatorDialog(
+                              chapters: model.chapters,
+                              currentChapter: model.chapters.keys.first,
+                            );
+                            var chapter = await showDialog<Chapter>(
+                              context: context,
+                              builder: (context) {
+                                return dialog;
+                              },
+                            );
+                            if (chapter == null) {
+                              return;
+                            }
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (
+                                  BuildContext context,
+                                ) {
+                                  return QuranAyaScreen(
+                                    chapter: chapter,
+                                  );
+                                },
+                              ),
                             );
                           },
-                        ),
-                      );
+                          title: Text(
+                            AppLocalizations.of(context).jumpToVerseText,
+                          ),
+                          leading: Icon(MdiIcons.arrowRight),
+                        );
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/settings');
                     },
                     title: Text(
-                      AppLocalizations.of(context).jumpToVerseText,
+                      AppLocalizations.of(context).settingsText,
                     ),
-                    leading: Icon(MdiIcons.arrowRight),
-                  );
-                },
+                    leading: Icon(Icons.settings),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/about');
+                    },
+                    title: Text(
+                      AppLocalizations.of(context).aboutAppText,
+                    ),
+                    leading: Icon(Icons.info),
+                  ),
+                ],
               ),
             ),
-            ListTile(
-              onTap: () {
-                Navigator.of(context).pushNamed('/settings');
-              },
-              title: Text(
-                AppLocalizations.of(context).settingsText,
-              ),
-              leading: Icon(Icons.settings),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
