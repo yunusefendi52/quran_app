@@ -1,5 +1,7 @@
 # quran_app
 
+[![Build Status](https://app.bitrise.io/app/85c5ce079791b4c6/status.svg?token=tMnN2zzwOuKgTxZvtrbiZw)](https://app.bitrise.io/app/85c5ce079791b4c6)
+
 This app is an Al-Quran app written with Flutter (Android and iOS).
 
 Quran text is using quran-uthmani from [Tanzil](http://tanzil.net)
