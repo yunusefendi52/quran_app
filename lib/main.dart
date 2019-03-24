@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:quran_app/app_settings.dart';
 import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/models/theme_model.dart';
@@ -20,6 +23,19 @@ import 'package:kiwi/kiwi.dart' as kiwi;
 void main() => start();
 
 void start() async {
+  // Load secrets file, ignore if the secrets.json is not exists
+  // This is meant to use in development only
+  try {
+    var json = await rootBundle.loadString('assets/secrets.json');
+    var a = jsonDecode(json);
+    AppSettings.secrets = a;
+    
+    AppSettings.key = AppSettings.secrets['key'];
+    AppSettings.iv = AppSettings.secrets['iv'];
+  } catch (error) {
+    print('No secrets.json file');
+  }
+  
   await SettingsHelpers.instance.init();
 
   // Make sure /database directory created

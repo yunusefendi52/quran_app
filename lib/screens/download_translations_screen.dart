@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
@@ -478,7 +478,7 @@ class DownloadTranslationsCellModel extends Model {
 
   MyEventBus myEventBus = MyEventBus.instance;
 
-  Encrypter _encrypter;
+  encrypt.Encrypter _encrypter;
 
   StreamSubscription _streamSubscriptionPageDisposed;
 
@@ -519,10 +519,10 @@ class DownloadTranslationsCellModel extends Model {
         try {
           String key = AppSettings.key;
           String iv = AppSettings.iv;
-          _encrypter = Encrypter(
-            Salsa20(
-              key,
-              iv,
+          _encrypter = encrypt.Encrypter(
+            encrypt.Salsa20(
+              encrypt.Key.fromUtf8(key),
+              encrypt.IV.fromUtf8(iv),
             ),
           );
         } catch (error) {
@@ -532,10 +532,11 @@ class DownloadTranslationsCellModel extends Model {
 
       String decryptedUrl = '';
       if (t.url.startsWith('encrypted:')) {
+        var encryptedUrl = t.url.substring(
+          'encrypted:'.length,
+        );
         decryptedUrl = _encrypter.decrypt(
-          t.url.substring(
-            'encrypted:'.length,
-          ),
+          encrypt.Encrypted.fromBase64(encryptedUrl),
         );
       } else {
         decryptedUrl = t.url;

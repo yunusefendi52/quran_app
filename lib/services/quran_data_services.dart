@@ -131,10 +131,11 @@ class QuranDataService implements IQuranDataService {
       columns: columns == null ? ['*'] : columns,
       where: where ?? 'sura == "$sura"',
     );
-    return listAyaMap.map((v) {
+    var listAya = listAyaMap.map((v) {
       var aya = Aya.fromJson(v);
       return aya;
     });
+    return listAya.toList();
   }
 
   Future<List<Aya>> getQuranListAya(

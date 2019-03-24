@@ -1,5 +1,7 @@
 class AppSettings {
   // TODO: Add key and iv to enable download translations
-  static const String key = '';
-  static const String iv = '';
+  static String key = '';
+  static String iv = '';
+  
+  static Map<String, dynamic> secrets;
 }

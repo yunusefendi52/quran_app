@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quran_app/main.dart';
 import 'package:quran_app/models/chapters_models.dart';
@@ -21,11 +22,10 @@ void main() {
     test('getQuranListAya test', () async {
       try {
         var quranDataServiceMockup = QuranDataServiceMockup();
-        
+
         var alfatihah = await quranDataServiceMockup.getQuranListAya(1);
         expect(alfatihah.length == 7, true);
-      } finally {
-      }
+      } finally {}
     });
 
     test('getChaptersNavigator test english locale', () async {
@@ -39,8 +39,7 @@ void main() {
         );
         expect(m.key.translatedName.languageName == 'english', true);
         expect(m.key.translatedName.name == 'The Opener', true);
-      } finally {
-      }
+      } finally {}
     });
 
     test('getChaptersNavigator test indonesian locale', () async {
@@ -54,8 +53,7 @@ void main() {
         );
         expect(m.key.translatedName.languageName == 'indonesian', true);
         expect(m.key.translatedName.name == 'Pembukaan', true);
-      } finally {
-      }
+      } finally {}
     });
 
     test('getChapters test with switching languages', () async {
@@ -76,8 +74,7 @@ void main() {
           chapters2.chapters.first().translatedName.languageName == 'english',
           true,
         );
-      } finally {
-      }
+      } finally {}
     });
 
     test('getJuzs test', () async {
@@ -86,8 +83,7 @@ void main() {
 
         var juzs = await quranDataService.getJuzs();
         expect(juzs.juzs.length == 30, true);
-      } finally {
-      }
+      } finally {}
     });
 
     test('getListTranslationsData test', () async {
@@ -140,8 +136,7 @@ void main() {
     test('getTranslations test', () async {
       try {
         var quranDataService = QuranDataServiceMockup(
-          translationsListService: TranslationsListServiceMockup()
-        );
+            translationsListService: TranslationsListServiceMockup());
 
         // al-fatihah
         var alfatihah = await quranDataService.getTranslations(
@@ -158,8 +153,7 @@ void main() {
         albaqarah.entries.forEach((v) {
           expect(v.value.length == 286, true);
         });
-      } finally {
-      }
+      } finally {}
     });
   });
 }
