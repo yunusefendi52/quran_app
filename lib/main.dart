@@ -9,6 +9,8 @@ import 'package:quran_app/routes/routes.dart';
 import 'package:quran_app/screens/main_drawer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:quran_app/services/bookmarks_data_service.dart';
+import 'package:quran_app/services/database_file_service.dart';
+import 'package:quran_app/services/quran_data_services.dart';
 import 'package:quran_app/services/translations_list_service.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +42,14 @@ void registerDependencies() {
   Application.container
       .registerSingleton<ITranslationsListService, TranslationsListService>(
     (c) => TranslationsListService(),
+  );
+  Application.container
+      .registerSingleton<IQuranDataService, QuranDataService>(
+    (c) => QuranDataService(),
+  );
+  Application.container
+      .registerSingleton<IDatabaseFileService, DatabaseFileService>(
+    (c) => DatabaseFileService(),
   );
 }
 

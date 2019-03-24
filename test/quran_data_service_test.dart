@@ -10,6 +10,8 @@ import 'package:quran_app/services/quran_data_services.dart';
 import 'package:quran_app/services/translations_list_service.dart';
 
 import 'services/bookmarks_data_service_mock.dart';
+import 'services/quran_data_service_mockup.dart';
+import 'services/translations_list_service_mockup.dart';
 import 'test_start.dart';
 
 void main() {
@@ -18,20 +20,17 @@ void main() {
   group('QuranDataService', () {
     test('getQuranListAya test', () async {
       try {
-        var quranDataService = QuranDataService.instance;
-        quranDataService.useMocks = true;
-
-        var alfatihah = await quranDataService.getQuranListAya(1);
+        var quranDataServiceMockup = QuranDataServiceMockup();
+        
+        var alfatihah = await quranDataServiceMockup.getQuranListAya(1);
         expect(alfatihah.length == 7, true);
       } finally {
-        QuranDataService.instance.useMocks = false;
       }
     });
 
     test('getChaptersNavigator test english locale', () async {
       try {
-        var quranDataService = QuranDataService.instance;
-        quranDataService.useMocks = true;
+        var quranDataService = QuranDataServiceMockup();
 
         var chapters =
             await quranDataService.getChaptersNavigator(Locale('en'));
@@ -41,14 +40,12 @@ void main() {
         expect(m.key.translatedName.languageName == 'english', true);
         expect(m.key.translatedName.name == 'The Opener', true);
       } finally {
-        QuranDataService.instance.useMocks = false;
       }
     });
 
     test('getChaptersNavigator test indonesian locale', () async {
       try {
-        var quranDataService = QuranDataService.instance;
-        quranDataService.useMocks = true;
+        var quranDataService = QuranDataServiceMockup();
 
         var chapters =
             await quranDataService.getChaptersNavigator(Locale('id'));
@@ -58,14 +55,12 @@ void main() {
         expect(m.key.translatedName.languageName == 'indonesian', true);
         expect(m.key.translatedName.name == 'Pembukaan', true);
       } finally {
-        QuranDataService.instance.useMocks = false;
       }
     });
 
     test('getChapters test with switching languages', () async {
       try {
-        var quranDataService = QuranDataService.instance;
-        quranDataService.useMocks = true;
+        var quranDataService = QuranDataServiceMockup();
 
         var chapters1 = await quranDataService.getChapters(Locale('id'));
         expect(chapters1.chapters.length == 114, true);
@@ -82,19 +77,16 @@ void main() {
           true,
         );
       } finally {
-        QuranDataService.instance.useMocks = false;
       }
     });
 
     test('getJuzs test', () async {
       try {
-        var quranDataService = QuranDataService.instance;
-        quranDataService.useMocks = true;
+        var quranDataService = QuranDataServiceMockup();
 
         var juzs = await quranDataService.getJuzs();
         expect(juzs.juzs.length == 30, true);
       } finally {
-        QuranDataService.instance.useMocks = false;
       }
     });
 
@@ -147,8 +139,9 @@ void main() {
 
     test('getTranslations test', () async {
       try {
-        var quranDataService = QuranDataService.instance;
-        quranDataService.useMocks = true;
+        var quranDataService = QuranDataServiceMockup(
+          translationsListService: TranslationsListServiceMockup()
+        );
 
         // al-fatihah
         var alfatihah = await quranDataService.getTranslations(
@@ -166,7 +159,6 @@ void main() {
           expect(v.value.length == 286, true);
         });
       } finally {
-        QuranDataService.instance.useMocks = false;
       }
     });
   });

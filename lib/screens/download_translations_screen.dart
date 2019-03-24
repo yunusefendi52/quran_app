@@ -157,7 +157,7 @@ class _DownloadTranslationsScreenState
 }
 
 class DownloadTranslationsScreenModel extends Model {
-  QuranDataService quranDataService = QuranDataService.instance;
+  IQuranDataService quranDataService;
 
   List<TranslationDataKey> availableTranslations = [];
 
@@ -172,10 +172,13 @@ class DownloadTranslationsScreenModel extends Model {
 
   DownloadTranslationsScreenModel({
     @required this.eventKey,
-    ITranslationsListService translationsListService,
+    @required ITranslationsListService translationsListService,
+    @required IQuranDataService quranDataService,
   }) {
     _translationsListService = translationsListService ??
         Application.container.resolve<ITranslationsListService>();
+    this.quranDataService =
+        quranDataService ?? Application.container.resolve<IQuranDataService>();
   }
 
   Future init() async {
@@ -195,7 +198,8 @@ class DownloadTranslationsScreenModel extends Model {
         },
       );
 
-      var allTranslations = await _translationsListService.getListTranslationsData();
+      var allTranslations =
+          await _translationsListService.getListTranslationsData();
       availableTranslations = allTranslations
           .where(
             (v) => v.type == TranslationDataKeyType.Assets || v.isDownloaded,
@@ -235,9 +239,11 @@ class DownloadTranslationsScreenModel extends Model {
     streamSubscription = null;
   }
 
-  Future<bool> addAvailableTranslation(TranslationDataKey translationDataKey) async {
+  Future<bool> addAvailableTranslation(
+      TranslationDataKey translationDataKey) async {
     try {
-      return await _translationsListService.addTranslationsData(translationDataKey);
+      return await _translationsListService
+          .addTranslationsData(translationDataKey);
     } catch (error) {
       print(error.toString());
       return false;
