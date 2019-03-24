@@ -29,13 +29,17 @@ void start() async {
     var json = await rootBundle.loadString('assets/data/secrets.json');
     var a = jsonDecode(json);
     AppSettings.secrets = a;
-    
-    AppSettings.key = AppSettings.secrets['key'];
-    AppSettings.iv = AppSettings.secrets['iv'];
+
+    if (AppSettings.secrets.containsKey('key')) {
+      AppSettings.key = AppSettings.secrets['key'];
+    }
+    if (AppSettings.secrets.containsKey('iv')) {
+      AppSettings.iv = AppSettings.secrets['iv'];
+    }
   } catch (error) {
     print('No secrets.json file');
   }
-  
+
   await SettingsHelpers.instance.init();
 
   // Make sure /database directory created
@@ -59,8 +63,7 @@ void registerDependencies() {
       .registerSingleton<ITranslationsListService, TranslationsListService>(
     (c) => TranslationsListService(),
   );
-  Application.container
-      .registerSingleton<IQuranDataService, QuranDataService>(
+  Application.container.registerSingleton<IQuranDataService, QuranDataService>(
     (c) => QuranDataService(),
   );
   Application.container
