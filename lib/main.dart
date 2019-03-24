@@ -26,7 +26,7 @@ void start() async {
   // Load secrets file, ignore if the secrets.json is not exists
   // This is meant to use in development only
   try {
-    var json = await rootBundle.loadString('assets/secrets.json');
+    var json = await rootBundle.loadString('assets/data/secrets.json');
     var a = jsonDecode(json);
     AppSettings.secrets = a;
     
