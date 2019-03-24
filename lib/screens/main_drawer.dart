@@ -5,6 +5,7 @@ import 'package:quran_app/helpers/settings_helpers.dart';
 import 'package:quran_app/localizations/app_localizations.dart';
 import 'package:quran_app/models/chapters_models.dart';
 import 'package:quran_app/models/quran_data_model.dart';
+import 'package:quran_app/screens/download_translations_screen.dart';
 import 'package:quran_app/screens/quran_aya_screen.dart';
 import 'package:quran_app/services/quran_data_services.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -83,6 +84,30 @@ class _MainDrawerState extends State<MainDrawer> {
                           leading: Icon(MdiIcons.arrowRight),
                         );
                       },
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (
+                            BuildContext context,
+                          ) {
+                            return DownloadTranslationsScreen();
+                          },
+                        ),
+                      );
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.translate),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Text(
+                            AppLocalizations.of(context).translationsText,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   ListTile(
