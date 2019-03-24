@@ -23,6 +23,7 @@ void main() {
         eventKey: eventKey,
         quranDataService: QuranDataServiceMockup(),
         translationsListService: TranslationsListServiceMockup(),
+        databaseFileService: IDatabaseFileService(),
       );
 
       try {
@@ -41,6 +42,7 @@ void main() {
         eventKey: eventKey,
         quranDataService: QuranDataServiceMockup(),
         translationsListService: TranslationsListServiceMockup(),
+        databaseFileService: IDatabaseFileService(),
       );
 
       try {
@@ -71,6 +73,7 @@ void main() {
         eventKey: eventKey,
         quranDataService: QuranDataServiceMockup(),
         translationsListService: TranslationsListServiceMockup(),
+        databaseFileService: IDatabaseFileService(),
       );
 
       try {

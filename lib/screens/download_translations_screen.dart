@@ -12,6 +12,7 @@ import 'package:quran_app/app_settings.dart';
 import 'package:quran_app/helpers/my_event_bus.dart';
 import 'package:quran_app/main.dart';
 import 'package:quran_app/models/translation_quran_model.dart';
+import 'package:quran_app/services/database_file_service.dart';
 import 'package:quran_app/services/quran_data_services.dart';
 import 'package:quran_app/services/translations_list_service.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -169,16 +170,20 @@ class DownloadTranslationsScreenModel extends Model {
   final String eventKey;
 
   ITranslationsListService _translationsListService;
+  IDatabaseFileService _databaseFileService;
 
   DownloadTranslationsScreenModel({
     @required this.eventKey,
     @required ITranslationsListService translationsListService,
     @required IQuranDataService quranDataService,
+    IDatabaseFileService databaseFileService,
   }) {
     _translationsListService = translationsListService ??
         Application.container.resolve<ITranslationsListService>();
     this.quranDataService =
         quranDataService ?? Application.container.resolve<IQuranDataService>();
+    _databaseFileService = databaseFileService ??
+        Application.container.resolve<IDatabaseFileService>();
   }
 
   Future init() async {
@@ -268,12 +273,7 @@ class DownloadTranslationsScreenModel extends Model {
 
   Future moveAvailableToNotDownloadedTranslations(TranslationDataKey t) async {
     // Remove file first
-    var databasePath = await getDatabasesPath();
-    var path = join(databasePath, '${t.id}.db');
-    var file = File(path);
-    if (file.existsSync()) {
-      await file.delete();
-    }
+    await _databaseFileService.deleteDatabase('${t.id}.db');
 
     var tList = availableTranslations.firstWhere(
       (v) => v.id == t.id,
