@@ -1,29 +1,16 @@
 # quran_app
 
-[![Build Status](https://app.bitrise.io/app/85c5ce079791b4c6/status.svg?token=tMnN2zzwOuKgTxZvtrbiZw)](https://app.bitrise.io/app/85c5ce079791b4c6)
+A new Flutter project.
 
-This app is an Al-Quran app written with Flutter (Android and iOS).
+## Getting Started
 
-Quran text is using quran-uthmani from [Tanzil](http://tanzil.net)
+This project is a starting point for a Flutter application.
 
-**Light and Dark theme are available**
+A few resources to get you started if this is your first Flutter project:
 
-**Supported languages**
-- English
-- Indonesian
+- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-## Screenshot (Light theme)
-<p float="left">
-  <img src="screenshots/Screenshot_2019-01-27-07-19-01-679_com.yunus.quranapp.quranapp.png" width="200" />
-  <img src="screenshots/Screenshot_2019-01-27-07-19-15-988_com.yunus.quranapp.quranapp.png" width="200" /> 
-  <img src="screenshots/Screenshot_2019-01-27-07-19-19-866_com.yunus.quranapp.quranapp.png" width="200" />
-  <img src="screenshots/Screenshot_2019-01-27-07-19-42-591_com.yunus.quranapp.quranapp.png" width="200" />
-</p>
-
-## Screenshot (Dark theme)
-<p float="left">
-  <img src="screenshots/Screenshot_2019-01-27-07-19-50-803_com.yunus.quranapp.quranapp.png" width="200" />
-  <img src="screenshots/Screenshot_2019-01-27-07-19-54-491_com.yunus.quranapp.quranapp.png" width="200" /> 
-  <img src="screenshots/Screenshot_2019-01-27-07-19-59-320_com.yunus.quranapp.quranapp.png" width="200" />
-  <img src="screenshots/Screenshot_2019-01-27-07-20-06-604_com.yunus.quranapp.quranapp.png" width="200" />
-</p>
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.

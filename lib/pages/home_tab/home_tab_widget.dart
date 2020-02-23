@@ -1,0 +1,145 @@
+import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:quran_app/pages/home_surah/home_surah_widget.dart';
+
+import 'home_tab_store.dart';
+
+class HomeTabWidget extends StatefulWidget {
+  final store = HomeTabStore();
+
+  HomeTabWidget({Key key}) : super(key: key);
+
+  _HomeTabWidgetState createState() => _HomeTabWidgetState();
+}
+
+class _HomeTabWidgetState extends State<HomeTabWidget>
+    with TickerProviderStateMixin {
+  TabController tabController;
+  PageController pageTabController;
+
+  TabController quranTabController;
+  PageController pageQuranTabController;
+  final List<Widget Function()> pagesQuranTab = [
+    () => HomeSurahWidget(),
+    () => HomeSurahWidget(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    tabController = TabController(
+      length: 2,
+      vsync: this,
+    );
+    pageTabController = PageController();
+    tabController.addListener(() {
+      pageTabController.jumpToPage(tabController.index);
+    });
+
+    quranTabController = TabController(
+      length: 2,
+      vsync: this,
+    );
+    pageQuranTabController = PageController();
+    quranTabController.addListener(() {
+      pageQuranTabController.jumpToPage(quranTabController.index);
+    });
+  }
+
+  @override
+  void didUpdateWidget(HomeTabWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget != widget) {
+      oldWidget.store.dispose();
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.store.dispose();
+    tabController.dispose();
+    quranTabController.dispose();
+    pageTabController.dispose();
+
+    super.dispose();
+  }
+
+  HomeTabStore get store => widget.store;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            store.localization.getByKey('AppName'),
+          ),
+          bottom: TabBar(
+            controller: tabController,
+            tabs: <Widget>[
+              Tab(
+                icon: Icon(FontAwesomeIcons.quran),
+              ),
+              Tab(
+                icon: Icon(FontAwesomeIcons.solidBookmark),
+              ),
+            ],
+          ),
+        ),
+        body: PageView(
+          controller: pageTabController,
+          children: <Widget>[
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  TabBar(
+                    controller: quranTabController,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: BubbleTabIndicator(
+                      indicatorHeight: 25.0,
+                      indicatorColor: Theme.of(context).accentColor,
+                      tabBarIndicatorSize: TabBarIndicatorSize.tab,
+                    ),
+                    labelColor:
+                        Theme.of(context).accentTextTheme.display1.color,
+                    unselectedLabelColor:
+                        Theme.of(context).textTheme.display1.color,
+                    tabs: <Widget>[
+                      Tab(
+                        text: store.localization.getByKey('home_widget.sura'),
+                      ),
+                      Tab(
+                        text: store.localization.getByKey('home_widget.juz'),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: PageView.builder(
+                      controller: pageQuranTabController,
+                      itemCount: pagesQuranTab.length,
+                      itemBuilder: (
+                        BuildContext context,
+                        int index,
+                      ) {
+                        var widget = pagesQuranTab[index];
+                        return widget();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              color: Colors.blue,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
