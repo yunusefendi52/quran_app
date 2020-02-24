@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:quran_app/app_widgets/shimmer_loading.dart';
 import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/pages/error/error_widget.dart';
 
@@ -35,7 +36,9 @@ class _HomeSurahWidgetState extends State<HomeSurahWidget>
             return WidgetSelector<DataState>(
               selectedState: store.state,
               states: {
-                DataState(enumSelector: EnumSelector.success): ListView.builder(
+                DataState(
+                  enumSelector: EnumSelector.success,
+                ): ListView.builder(
                   itemCount: store.chapters.length,
                   itemBuilder: (
                     BuildContext context,
@@ -43,58 +46,92 @@ class _HomeSurahWidgetState extends State<HomeSurahWidget>
                   ) {
                     var item = store.chapters[index];
 
-                    return InkWell(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 7.5,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                '${item.chapterNumber}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
-                              ),
+                    return ListTile(
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            '${item.chapterNumber}',
+                            style: TextStyle(
+                              fontSize: 18,
                             ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  Text(
-                                    item.nameSimple,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  Text(item.translatedName.name),
-                                ],
-                              ),
+                          ),
+                        ],
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Text(
+                            item.nameSimple,
+                            style: TextStyle(
+                              fontSize: 18,
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                              child: Text(
-                                item.nameArabic,
-                                textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
+                          ),
+                          Text(item.translatedName.name),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            item.nameArabic,
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontSize: 20,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     );
                   },
                 ),
                 DataState(
                   enumSelector: EnumSelector.loading,
-                ): Center(
-                  child: CircularProgressIndicator(),
+                ): ListView.builder(
+                  itemCount: 5,
+                  itemBuilder: (
+                    BuildContext context,
+                    int index,
+                  ) {
+                    return ListTile(
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            height: 28,
+                            width: 32,
+                            child: ShimmerLoading(),
+                          ),
+                        ],
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Container(
+                            height: 25,
+                            child: ShimmerLoading(),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 22,
+                            child: ShimmerLoading(),
+                          ),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            width: 50,
+                            height: 28,
+                            child: ShimmerLoading(),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
                 DataState(
                   enumSelector: EnumSelector.error,
