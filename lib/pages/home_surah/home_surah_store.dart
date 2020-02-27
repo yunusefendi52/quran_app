@@ -6,6 +6,7 @@ import 'package:quran_app/baselib/command.dart';
 import 'package:quran_app/baselib/localization_service.dart';
 import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/models/models.dart';
+import 'package:quran_app/services/quran_provider.dart';
 
 import '../../main.dart';
 
@@ -15,16 +16,16 @@ class HomeSurahStore = _HomeSurahStore with _$HomeSurahStore;
 
 abstract class _HomeSurahStore extends BaseStore with Store {
   var _appServices = sl.get<AppServices>();
-  var _assetBundle = sl.get<AssetBundle>();
   var _localization = sl.get<ILocalizationService>();
+  var _quranProvider = sl.get<QuranProvider>();
 
   _HomeSurahStore({
     AppServices appServices,
-    AssetBundle assetBundle,
+    QuranProvider quranProvider,
     ILocalizationService localizationService,
   }) {
     _appServices = appServices ?? _appServices;
-    _assetBundle = assetBundle ?? _assetBundle;
+    _quranProvider = quranProvider ?? _quranProvider;
     _localization = localizationService ?? _localization;
 
     fetchSurah = Command(() async {
@@ -33,14 +34,9 @@ abstract class _HomeSurahStore extends BaseStore with Store {
           enumSelector: EnumSelector.loading,
         );
 
-        var raw = await _assetBundle.loadString(
-          'assets/quran-data/chapters/chapters.${_localization.neutralLocale.toLanguageTag()}.json',
-        );
-        var l = Surah.fromJson(raw);
+        var l = await _quranProvider.getChapters(_localization.neutralLocale);
         chapters.clear();
-        chapters.addAll(
-          l.chapters,
-        );
+        chapters.addAll(l);
 
         state = DataState(
           enumSelector: EnumSelector.success,
@@ -54,12 +50,23 @@ abstract class _HomeSurahStore extends BaseStore with Store {
         );
       }
     });
+
+    goToQuran = Command.parameter((v) async {
+      await _appServices.navigatorState.pushNamed(
+        '/quran',
+        arguments: {
+          'chapter': v,
+        },
+      );
+    });
   }
 
   @observable
   ObservableList<Chapters> chapters = ObservableList();
 
   Command fetchSurah;
+
+  Command<Chapters> goToQuran;
 
   @observable
   DataState state = DataState(

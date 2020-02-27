@@ -32,9 +32,11 @@ dependencies:
   intl: ^0.16.0
   font_awesome_flutter: ^8.2.0
   bubble_tab_indicator: ^0.1.4
-  built_collection: ">=2.0.0 <5.0.0"
+  built_collection: ^4.3.2
   built_value: ^7.0.2
   shimmer: ^1.0.1
+  flutter_widgets: ^0.1.11
+  xml2json: ^4.1.1
 
 dev_dependencies:
   flutter_test:

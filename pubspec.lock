@@ -200,6 +200,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_widgets:
+    dependency: "direct main"
+    description:
+      name: flutter_widgets
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.11"
   font_awesome_flutter:
     dependency: "direct main"
     description:
@@ -562,6 +569,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.5.0"
+  xml2json:
+    dependency: "direct main"
+    description:
+      name: xml2json
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.1"
   yaml:
     dependency: transitive
     description:
@@ -571,4 +585,4 @@ packages:
     version: "2.2.0"
 sdks:
   dart: ">=2.7.0 <3.0.0"
-  flutter: ">=0.1.2"
+  flutter: ">=1.12.13+hotfix.5 <2.0.0"

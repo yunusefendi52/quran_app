@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:intl/locale.dart';
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/command.dart';
 import '../../baselib/localization_service.dart';
@@ -26,10 +25,10 @@ abstract class _SplashStore extends BaseStore with Store {
 
     initialize = Command(() async {
       // Load localization
-      await _localizationService.loadFromBundle(Locale('en'));
+      await _localizationService.loadFromBundle(Locale.parse('en'));
 
       await _appServices.navigatorState.pushNamedAndRemoveUntil(
-        '/quran',
+        '/home',
         (_) => false,
       );
     });

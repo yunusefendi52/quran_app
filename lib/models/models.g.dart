@@ -7,9 +7,15 @@ part of surah;
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(Aya.serializer)
+      ..add(AyaTranslation.serializer)
+      ..add(ChapterData.serializer)
       ..add(Chapters.serializer)
-      ..add(Surah.serializer)
+      ..add(Sura.serializer)
       ..add(TranslatedName.serializer)
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Aya)]),
+          () => new ListBuilder<Aya>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Chapters)]),
           () => new ListBuilder<Chapters>())
@@ -17,19 +23,19 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(BuiltList, const [const FullType(int)]),
           () => new ListBuilder<int>()))
     .build();
-Serializer<Surah> _$surahSerializer = new _$SurahSerializer();
+Serializer<ChapterData> _$chapterDataSerializer = new _$ChapterDataSerializer();
 Serializer<Chapters> _$chaptersSerializer = new _$ChaptersSerializer();
 Serializer<TranslatedName> _$translatedNameSerializer =
     new _$TranslatedNameSerializer();
 
-class _$SurahSerializer implements StructuredSerializer<Surah> {
+class _$ChapterDataSerializer implements StructuredSerializer<ChapterData> {
   @override
-  final Iterable<Type> types = const [Surah, _$Surah];
+  final Iterable<Type> types = const [ChapterData, _$ChapterData];
   @override
-  final String wireName = 'Surah';
+  final String wireName = 'ChapterData';
 
   @override
-  Iterable<Object> serialize(Serializers serializers, Surah object,
+  Iterable<Object> serialize(Serializers serializers, ChapterData object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'chapters',
@@ -42,9 +48,9 @@ class _$SurahSerializer implements StructuredSerializer<Surah> {
   }
 
   @override
-  Surah deserialize(Serializers serializers, Iterable<Object> serialized,
+  ChapterData deserialize(Serializers serializers, Iterable<Object> serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new SurahBuilder();
+    final result = new ChapterDataBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -230,30 +236,30 @@ class _$TranslatedNameSerializer
   }
 }
 
-class _$Surah extends Surah {
+class _$ChapterData extends ChapterData {
   @override
   final BuiltList<Chapters> chapters;
 
-  factory _$Surah([void Function(SurahBuilder) updates]) =>
-      (new SurahBuilder()..update(updates)).build();
+  factory _$ChapterData([void Function(ChapterDataBuilder) updates]) =>
+      (new ChapterDataBuilder()..update(updates)).build();
 
-  _$Surah._({this.chapters}) : super._() {
+  _$ChapterData._({this.chapters}) : super._() {
     if (chapters == null) {
-      throw new BuiltValueNullFieldError('Surah', 'chapters');
+      throw new BuiltValueNullFieldError('ChapterData', 'chapters');
     }
   }
 
   @override
-  Surah rebuild(void Function(SurahBuilder) updates) =>
+  ChapterData rebuild(void Function(ChapterDataBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  SurahBuilder toBuilder() => new SurahBuilder()..replace(this);
+  ChapterDataBuilder toBuilder() => new ChapterDataBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Surah && chapters == other.chapters;
+    return other is ChapterData && chapters == other.chapters;
   }
 
   @override
@@ -263,22 +269,23 @@ class _$Surah extends Surah {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('Surah')..add('chapters', chapters))
+    return (newBuiltValueToStringHelper('ChapterData')
+          ..add('chapters', chapters))
         .toString();
   }
 }
 
-class SurahBuilder implements Builder<Surah, SurahBuilder> {
-  _$Surah _$v;
+class ChapterDataBuilder implements Builder<ChapterData, ChapterDataBuilder> {
+  _$ChapterData _$v;
 
   ListBuilder<Chapters> _chapters;
   ListBuilder<Chapters> get chapters =>
       _$this._chapters ??= new ListBuilder<Chapters>();
   set chapters(ListBuilder<Chapters> chapters) => _$this._chapters = chapters;
 
-  SurahBuilder();
+  ChapterDataBuilder();
 
-  SurahBuilder get _$this {
+  ChapterDataBuilder get _$this {
     if (_$v != null) {
       _chapters = _$v.chapters?.toBuilder();
       _$v = null;
@@ -287,23 +294,23 @@ class SurahBuilder implements Builder<Surah, SurahBuilder> {
   }
 
   @override
-  void replace(Surah other) {
+  void replace(ChapterData other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$Surah;
+    _$v = other as _$ChapterData;
   }
 
   @override
-  void update(void Function(SurahBuilder) updates) {
+  void update(void Function(ChapterDataBuilder) updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$Surah build() {
-    _$Surah _$result;
+  _$ChapterData build() {
+    _$ChapterData _$result;
     try {
-      _$result = _$v ?? new _$Surah._(chapters: chapters.build());
+      _$result = _$v ?? new _$ChapterData._(chapters: chapters.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -311,7 +318,7 @@ class SurahBuilder implements Builder<Surah, SurahBuilder> {
         chapters.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'Surah', _$failedField, e.toString());
+            'ChapterData', _$failedField, e.toString());
       }
       rethrow;
     }

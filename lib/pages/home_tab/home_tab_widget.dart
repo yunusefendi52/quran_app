@@ -1,20 +1,24 @@
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/pages/home_surah/home_surah_widget.dart';
+import 'package:quran_app/pages/home_tab/home_tab_store.dart';
 
 import 'home_tab_store.dart';
 
 class HomeTabWidget extends StatefulWidget {
-  final store = HomeTabStore();
-
   HomeTabWidget({Key key}) : super(key: key);
 
   _HomeTabWidgetState createState() => _HomeTabWidgetState();
 }
 
 class _HomeTabWidgetState extends State<HomeTabWidget>
-    with TickerProviderStateMixin {
+    with BaseStateMixin<HomeTabStore, HomeTabWidget>, TickerProviderStateMixin {
+  final _store = HomeTabStore();
+  @override
+  HomeTabStore get store => _store;
+
   TabController tabController;
   PageController pageTabController;
 
@@ -49,25 +53,13 @@ class _HomeTabWidgetState extends State<HomeTabWidget>
   }
 
   @override
-  void didUpdateWidget(HomeTabWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget != widget) {
-      oldWidget.store.dispose();
-    }
-  }
-
-  @override
   void dispose() {
-    widget.store.dispose();
     tabController.dispose();
     quranTabController.dispose();
     pageTabController.dispose();
 
     super.dispose();
   }
-
-  HomeTabStore get store => widget.store;
 
   @override
   Widget build(BuildContext context) {

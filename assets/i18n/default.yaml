@@ -1,3 +1,5 @@
 AppName: Quran App
 home_widget.sura: Sura
 home_widget.juz: Juz
+quran_navigator_widget.pick_sura: Pick Sura
+quran_navigator_widget.pick_aya: Pick Aya

@@ -1,38 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:quran_app/baselib/base_state_mixin.dart';
+import 'package:quran_app/baselib/base_widgetparameter_mixin.dart';
 import 'splash_store.dart';
 
-class SplashWidget extends StatefulWidget {
-  final store = SplashStore();
-
+class SplashWidget extends StatefulWidget with BaseWidgetParameterMixin {
   SplashWidget({Key key}) : super(key: key);
 
   _SplashWidgetState createState() => _SplashWidgetState();
 }
 
-class _SplashWidgetState extends State<SplashWidget> {
+class _SplashWidgetState extends State<SplashWidget>
+    with BaseStateMixin<SplashStore, SplashWidget> {
+  final _store = SplashStore();
+  @override
+  SplashStore get store => _store;
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.store.initialize.execute();
+      store.initialize.execute();
     });
-  }
-
-  @override
-  void didUpdateWidget(SplashWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget != widget) {
-      oldWidget.store.dispose();
-    }
-  }
-
-  @override
-  void dispose() async {
-    widget.store.dispose();
-
-    super.dispose();
   }
 
   @override

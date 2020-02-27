@@ -1,34 +1,67 @@
-class Command<T> {
-  Future<T> Function() _execute;
+import 'dart:async';
 
-  Command(
-    Future<T> Function() execute, [
-    Future<bool> Function() canExecute,
+import 'package:rxdart/rxdart.dart';
+
+class Command<TParameter> {
+  Future Function(TParameter parameter) _execute;
+
+  Command._(
+    Future Function(TParameter parameter) execute, [
+    Future<bool> Function(TParameter parameter) canExecute,
   ]) {
     _execute = execute;
-    this.canExecute = canExecute ?? () => Future.value(!isExecuting);
+    this.canExecute =
+        canExecute ?? (TParameter parameter) => Future.value(!isExecuting);
   }
 
-  Future<bool> Function() canExecute;
+  factory Command(
+    Future Function() execute, [
+    Future<bool> Function() canExecute,
+  ]) {
+    return Command._(
+      (_) => execute(),
+      (_) => canExecute != null ? canExecute() : Future.value(true),
+    );
+  }
+
+  factory Command.parameter(
+    Future Function(TParameter parameter) execute, [
+    Future<bool> Function(TParameter parameter) canExecute,
+  ]) {
+    return Command._(execute, canExecute);
+  }
+
+  Future<bool> Function(TParameter parameter) canExecute;
 
   var isExecuting = false;
 
-  Future<T> execute() async {
+  Future execute([TParameter parameter]) async {
     try {
       isExecuting = true;
 
-      return await _execute();
+      return await _execute(parameter).whenComplete(() {
+        _subject.add(null);
+      });
     } finally {
       isExecuting = false;
     }
   }
 
-  Future<T> executeIf() async {
-    var canExecute = await this.canExecute();
+  Future executeIf([TParameter parameter]) async {
+    var canExecute = await this.canExecute(parameter);
     if (!canExecute || isExecuting) {
       return null;
     }
 
-    return await execute();
+    return await execute(parameter).whenComplete(() {
+      _subject.add(null);
+    });
+  }
+
+  var _subject = PublishSubject();
+  Future get next => _subject.take(1).last;
+
+  void dispose() {
+    _subject.close();
   }
 }

@@ -1,9 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/services.dart';
+import 'package:intl/locale.dart';
 import 'dart:convert';
 import 'package:path/path.dart' as p;
-import 'package:intl/intl.dart';
 import 'package:yaml/yaml.dart';
 
 import '../main.dart';
@@ -49,7 +47,7 @@ class LocalizationService extends ILocalizationService {
     return _localeResources[key] ?? _defaultResources[key] ?? '-';
   }
 
-  var _neutralLocale = Locale('en');
+  var _neutralLocale = Locale.parse('en');
   @override
   Locale get neutralLocale => _neutralLocale;
 }

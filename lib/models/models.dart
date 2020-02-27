@@ -9,34 +9,38 @@ import 'package:built_collection/built_collection.dart';
 import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
+import 'package:quran_app/services/quran_provider.dart';
 
 part 'models.g.dart';
 
 @SerializersFor([
-  Surah,
+  ChapterData,
   Chapters,
   TranslatedName,
+  Sura,
+  Aya,
+  AyaTranslation,
 ])
 Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();
 
-abstract class Surah implements Built<Surah, SurahBuilder> {
-  Surah._();
+abstract class ChapterData implements Built<ChapterData, ChapterDataBuilder> {
+  ChapterData._();
 
-  factory Surah([updates(SurahBuilder b)]) = _$Surah;
+  factory ChapterData([updates(ChapterDataBuilder b)]) = _$ChapterData;
 
   @BuiltValueField(wireName: 'chapters')
   BuiltList<Chapters> get chapters;
   String toJson() {
-    return json.encode(serializers.serializeWith(Surah.serializer, this));
+    return json.encode(serializers.serializeWith(ChapterData.serializer, this));
   }
 
-  static Surah fromJson(String jsonString) {
+  static ChapterData fromJson(String jsonString) {
     return serializers.deserializeWith(
-        Surah.serializer, json.decode(jsonString));
+        ChapterData.serializer, json.decode(jsonString));
   }
 
-  static Serializer<Surah> get serializer => _$surahSerializer;
+  static Serializer<ChapterData> get serializer => _$chapterDataSerializer;
 }
 
 abstract class Chapters implements Built<Chapters, ChaptersBuilder> {

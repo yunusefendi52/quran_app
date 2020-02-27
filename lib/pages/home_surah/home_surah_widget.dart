@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:quran_app/app_widgets/shimmer_loading.dart';
+import 'package:quran_app/baselib/base_state_mixin.dart';
+import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/pages/error/error_widget.dart';
 
@@ -13,8 +15,11 @@ class HomeSurahWidget extends StatefulWidget {
 }
 
 class _HomeSurahWidgetState extends State<HomeSurahWidget>
-    with AutomaticKeepAliveClientMixin {
-  final store = HomeSurahStore();
+    with
+        AutomaticKeepAliveClientMixin,
+        BaseStateMixin<HomeSurahStore, HomeSurahWidget> {
+  final _store = HomeSurahStore();
+  HomeSurahStore get store => _store;
 
   @override
   void initState() {
@@ -27,8 +32,9 @@ class _HomeSurahWidgetState extends State<HomeSurahWidget>
   bool get wantKeepAlive => true;
 
   @override
-  // ignore: must_call_super
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       body: Container(
         child: Observer(
@@ -82,13 +88,16 @@ class _HomeSurahWidgetState extends State<HomeSurahWidget>
                           ),
                         ],
                       ),
+                      onTap: () {
+                        store.goToQuran.executeIf(item);
+                      },
                     );
                   },
                 ),
                 DataState(
                   enumSelector: EnumSelector.loading,
                 ): ListView.builder(
-                  itemCount: 5,
+                  itemCount: 10,
                   itemBuilder: (
                     BuildContext context,
                     int index,
@@ -146,5 +155,17 @@ class _HomeSurahWidgetState extends State<HomeSurahWidget>
         ),
       ),
     );
+    // return BaseWidget<HomeSurahStore>(
+    //   store: store,
+    //   initState: (store) {
+    //     // store.fetchSurah.executeIf();
+    //   },
+    //   builder: (
+    //     BuildContext context,
+    //     HomeSurahStore store,
+    //   ) {
+    //     return ;
+    //   },
+    // );
   }
 }
