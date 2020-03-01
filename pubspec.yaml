@@ -37,6 +37,9 @@ dependencies:
   shimmer: ^1.0.1
   flutter_widgets: ^0.1.11
   xml2json: ^4.1.1
+  tuple: ^1.0.3
+  rx_shared_preferences: ^1.1.1+1
+  expandable: ^4.1.2
 
 dev_dependencies:
   flutter_test:

@@ -58,8 +58,12 @@ class Command<TParameter> {
     });
   }
 
-  var _subject = PublishSubject();
+  var _subject = BehaviorSubject(
+    sync: true,
+  );
   Future get next => _subject.take(1).last;
+
+  BehaviorSubject get execute$ => _subject;
 
   void dispose() {
     _subject.close();

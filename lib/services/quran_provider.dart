@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/locale.dart';
 import 'package:quran_app/models/models.dart';
 import 'package:path/path.dart' as p;
+import 'package:quran_app/models/translation_data.dart';
 import 'package:xml2json/xml2json.dart';
 
 import '../main.dart';
@@ -50,6 +50,11 @@ abstract class Aya implements Built<Aya, AyaBuilder> {
 
   @BuiltValueField(wireName: 'text')
   String get text;
+
+  @nullable
+  @BuiltValueField(serialize: false)
+  TranslationData get translationData;
+
   String toJson() {
     return json.encode(serializers..serializeWith(Aya.serializer, this));
   }
@@ -62,7 +67,7 @@ abstract class Aya implements Built<Aya, AyaBuilder> {
 
   @nullable
   @BuiltValueField(serialize: false)
-  BuiltList<AyaTranslation> get translations;
+  BuiltList<Aya> get translations;
 }
 
 abstract class AyaTranslation
@@ -90,11 +95,19 @@ abstract class AyaTranslation
 }
 
 abstract class QuranProvider {
-  Future initialize(QuranTextType quranTextType);
+  Future<List<QuranTextData>> getListQuranTextData();
+
+  Future<List<TranslationData>> getListTranslations();
+
+  Future initialize(QuranTextData quranTextData);
 
   Future<List<Chapters>> getChapters(Locale locale);
 
-  Future<List<Aya>> getAyaByChapter(int chapter, QuranTextType quranTextType);
+  Future<List<Aya>> getAyaByChapter(
+    int chapter,
+    QuranTextData quranTextData, [
+    List<TranslationData> translations,
+  ]);
 
   void dispose();
 }
@@ -108,16 +121,26 @@ class JsonQuranProvider implements QuranProvider {
     _assetBundle = assetBundle ?? _assetBundle;
   }
 
-  final Map<QuranTextType, BuiltList<Sura>> mapListSura = {};
+  Future<List<QuranTextData>> getListQuranTextData() {
+    var l = List<QuranTextData>();
+    l.add(
+      QuranTextData()
+        ..filename = 'quran-uthmani.xml'
+        ..name = 'Quran Uthmani',
+    );
+    return Future.value(l);
+  }
+
+  final Map<QuranTextData, BuiltList<Sura>> mapListSura = Map();
 
   @override
-  Future initialize(QuranTextType quranTextType) async {
-    if (!mapListSura.containsKey(quranTextType)) {
+  Future initialize(QuranTextData quranTextData) async {
+    if (!mapListSura.containsKey(quranTextData)) {
       final xml2json = Xml2Json();
       var filePath = p.join(
         'assets',
         'quran-data',
-        'quran-uthmani.xml',
+        quranTextData.filename,
       );
       var xmlRaw = await _assetBundle.loadString(filePath);
       xml2json.parse(xmlRaw);
@@ -129,7 +152,7 @@ class JsonQuranProvider implements QuranProvider {
         var sura = Sura.fromJson(raw);
         return sura;
       });
-      mapListSura.putIfAbsent(quranTextType, () {
+      mapListSura.putIfAbsent(quranTextData, () {
         return BuiltList(l);
       });
     }
@@ -150,24 +173,118 @@ class JsonQuranProvider implements QuranProvider {
 
   Future<List<Aya>> getAyaByChapter(
     int chapter,
-    QuranTextType quranTextType,
-  ) async {
-    var listSura = mapListSura[quranTextType];
+    QuranTextData quranTextData, [
+    List<TranslationData> translations,
+  ]) async {
+    var listSura = mapListSura[quranTextData];
     if (listSura == null) {
       return [];
     }
-
-    return listSura
+    var listAyaImmutable = listSura
         .where(
           (t) => int.parse(t.index) == chapter,
         )
         .first
-        .aya
-        .asList();
+        .aya;
+    var listAya = List<Aya>();
+
+    if (translations?.isNotEmpty == true) {
+      for (var item in listAyaImmutable) {
+        var l = await Stream.fromIterable(translations)
+            .asyncMap((f) async {
+              var translation = await getTranslation(chapter, f);
+              return translation;
+            })
+            .where((v) => v != null)
+            .expand((t) => t)
+            .where((t) => t.index == item.index)
+            .toList();
+        var itemBuilder = item.toBuilder();
+        itemBuilder.update((f) {
+          f.translations.clear();
+          f.translations.addAll(l);
+        });
+        var newItem = itemBuilder.build();
+        listAya.add(newItem);
+      }
+    } else {
+      listAya = listAyaImmutable.asList();
+    }
+
+    return listAya;
+  }
+
+  final mapListTranslation = Map<TranslationData, BuiltList<Sura>>();
+
+  Future<List<TranslationData>> getListTranslations() {
+    var l = List<TranslationData>();
+    l.add(
+      TranslationData()
+        ..id = '8212a77e-ef9c-4197-bb9f-aefa3b3ba8fe'
+        ..filename = 'en.sahih.xml'
+        ..languageCode = 'en'
+        ..name = 'Saheeh International'
+        ..translator = 'Saheeh International',
+    );
+    l.add(
+      TranslationData()
+        ..id = 'b9d87e27-c12e-4041-8602-97365c796a32'
+        ..filename = 'id.indonesian.xml'
+        ..languageCode = 'id'
+        ..name = 'Bahasa Indonesia'
+        ..translator = 'Indonesian Ministry of Religious Affairs',
+    );
+    return Future.value(l);
+  }
+
+  Future<List<Aya>> getTranslation(
+    int chapter,
+    TranslationData translationData,
+  ) async {
+    if (!mapListTranslation.containsKey(translationData)) {
+      final xml2json = Xml2Json();
+      var filePath = p.join(
+        'assets',
+        'quran-data',
+        'translations',
+        '${translationData.filename}',
+      );
+      var xmlRaw = await _assetBundle.loadString(filePath);
+      xml2json.parse(xmlRaw);
+      var raw = xml2json.toGData();
+      Map map = json.decode(raw);
+      List ll = map['quran']['sura'];
+      var l = ll.map((t) {
+        var raw = jsonEncode(t);
+        var sura = Sura.fromJson(raw);
+        return sura;
+      });
+      mapListTranslation.putIfAbsent(translationData, () {
+        return BuiltList(l);
+      });
+    }
+    var l = mapListTranslation[translationData]?.where(
+      (t) => int.parse(t.index) == chapter,
+    );
+    if (l == null) {
+      return null;
+    }
+
+    return l.expand((f) => f.aya).map((f) {
+      var newF = f.toBuilder()
+        ..update((v) {
+          v.translationData = translationData;
+        });
+      return newF.build();
+    }).toList();
   }
 
   @override
   void dispose() {}
 }
 
-enum QuranTextType { Uthmani }
+class QuranTextData {
+  String filename;
+
+  String name;
+}

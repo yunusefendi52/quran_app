@@ -3,3 +3,5 @@ home_widget.sura: Sura
 home_widget.juz: Juz
 quran_navigator_widget.pick_sura: Pick Sura
 quran_navigator_widget.pick_aya: Pick Aya
+quran_settings_translations.translations: Translations
+quran_settings.title: Settings

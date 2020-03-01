@@ -43,23 +43,6 @@ mixin _$QuranStore on _QuranStore, Store {
     }, _$stateAtom, name: '${_$stateAtom.name}_set');
   }
 
-  final _$quranTextTypeAtom = Atom(name: '_QuranStore.quranTextType');
-
-  @override
-  QuranTextType get quranTextType {
-    _$quranTextTypeAtom.context.enforceReadPolicy(_$quranTextTypeAtom);
-    _$quranTextTypeAtom.reportObserved();
-    return super.quranTextType;
-  }
-
-  @override
-  set quranTextType(QuranTextType value) {
-    _$quranTextTypeAtom.context.conditionallyRunInAction(() {
-      super.quranTextType = value;
-      _$quranTextTypeAtom.reportChanged();
-    }, _$quranTextTypeAtom, name: '${_$quranTextTypeAtom.name}_set');
-  }
-
   final _$chaptersAtom = Atom(name: '_QuranStore.chapters');
 
   @override
@@ -80,7 +63,7 @@ mixin _$QuranStore on _QuranStore, Store {
   @override
   String toString() {
     final string =
-        'listAya: ${listAya.toString()},state: ${state.toString()},quranTextType: ${quranTextType.toString()},chapters: ${chapters.toString()}';
+        'listAya: ${listAya.toString()},state: ${state.toString()},chapters: ${chapters.toString()}';
     return '{$string}';
   }
 }

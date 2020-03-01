@@ -1,13 +1,17 @@
 import 'package:mobx/mobx.dart';
+import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/command.dart';
 import 'package:quran_app/baselib/interaction.dart';
 import 'package:quran_app/baselib/localization_service.dart';
 import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/models/models.dart';
+import 'package:quran_app/models/setting_ids.dart';
+import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/pages/quran_navigator/quran_navigator_store.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:rxdart/rxdart.dart';
+import '../quran_settings_translations/quran_settings_translations_store.dart';
 
 import '../../main.dart';
 
@@ -18,19 +22,21 @@ class QuranStore = _QuranStore with _$QuranStore;
 abstract class _QuranStore extends BaseStore with Store {
   var _quranProvider = sl.get<QuranProvider>();
   var localization = sl.get<ILocalizationService>();
+  var appServices = sl.get<AppServices>();
 
   _QuranStore({
     Map<String, Object> parameter,
     QuranProvider quranProvider,
     ILocalizationService localizationService,
+    AppServices appServices,
   }) {
-    var selectedChapter = parameter['chapter'];
+    Chapters selectedChapter = parameter['chapter'];
     selectedChapter$.add(selectedChapter);
 
     this.localization =
         localizationService ?? (localizationService = this.localization);
-
     _quranProvider = quranProvider ?? _quranProvider;
+    this.appServices = appServices ?? (appServices = this.appServices);
 
     initialize = Command(() async {
       try {
@@ -38,11 +44,27 @@ abstract class _QuranStore extends BaseStore with Store {
           enumSelector: EnumSelector.loading,
         );
 
-        await _quranProvider.initialize(quranTextType);
+        listQuranTextData = await _quranProvider.getListQuranTextData();
+        if (!selectedQuranTextData$.hasValue) {
+          selectedQuranTextData$.add(listQuranTextData.first);
+        }
+
+        var _listTranslationData = await _quranProvider.getListTranslations();
+        listTranslationData.clear();
+        listTranslationData.addAll(_listTranslationData);
+
+        await _quranProvider.initialize(selectedQuranTextData$.value);
 
         var _chapters = await _quranProvider.getChapters(localization.locale);
         chapters.clear();
         chapters.addAll(_chapters);
+        if (selectedChapter$.value.id == selectedChapter.id) {
+          var newSelectedChapter = _chapters.firstWhere(
+            (t) => t.id == selectedChapter.id,
+            orElse: () => null,
+          );
+          selectedChapter$.add(newSelectedChapter);
+        }
       } finally {
         state = DataState(
           enumSelector: EnumSelector.success,
@@ -56,9 +78,35 @@ abstract class _QuranStore extends BaseStore with Store {
           enumSelector: EnumSelector.loading,
         );
 
+        // Get selected translation from preferenes,
+        // If none exists, fallback to the default ones, in this case English
+        const defaultSelectedTranslationsIds = [
+          '8212a77e-ef9c-4197-bb9f-aefa3b3ba8fe',
+        ];
+        var selectedTranslationIds =
+            await rxPrefs.getStringList(SettingIds.translationId) ??
+                defaultSelectedTranslationsIds;
+
+        var selectedListTranslationData = listTranslationData
+            .map((t) {
+              var isSelected = selectedTranslationIds.firstWhere(
+                    (v) => v == t.id,
+                    orElse: () => null,
+                  ) !=
+                  null;
+              if (!t.isSelected$.hasValue) {
+                t.isSelected$.add(isSelected);
+              }
+              return t;
+            })
+            .where(
+              (t) => t.isSelected$.value == true,
+            )
+            .toList();
         var listAyaByChapter = await _quranProvider.getAyaByChapter(
           selectedChapter$.value.chapterNumber,
-          quranTextType,
+          selectedQuranTextData$.value,
+          selectedListTranslationData,
         );
         listAya.clear();
         listAya.addAll(listAyaByChapter);
@@ -73,13 +121,50 @@ abstract class _QuranStore extends BaseStore with Store {
     });
 
     {
-      var d = selectedChapter$.switchMap((_) {
-        return Stream.fromFuture(initialize.executeIf());
-      }).switchMap((_) {
-        return Stream.fromFuture(getAya.executeIf());
-      }).listen(null);
+      var ds = CompositeSubscription();
+
+      ds.add(Stream.fromFuture(
+        initialize.executeIf(),
+      ).listen(null));
+
+      var getAyaRefresh$ = PublishSubject(
+        sync: true,
+      );
+
+      ds.add(selectedChapter$.skip(1).map((t) => null).mergeWith(
+        [
+          getAyaRefresh$.map((t) => null),
+        ],
+      ).switchMap((_) {
+        return Stream.fromFutures([
+          getAya.executeIf(),
+        ]);
+      }).handleError((e) {
+        appServices.logger.e(e);
+      }).listen(null));
+
+      listTranslationData.observe(
+        (t) {
+          if (t.type == OperationType.add) {
+            var l = t.added.length;
+            for (var i = 0; i < l; i++) {
+              var v = t.added[i];
+              var d = v.isSelected$
+                  .distinct(
+                (t1, t2) => t1 == t2,
+              )
+                  .doOnData((v) {
+                getAyaRefresh$.add(null);
+              }).listen(null);
+              ds.add(d);
+            }
+          }
+        },
+      );
+
       registerDispose(() {
-        d.cancel();
+        ds.dispose();
+        ds = null;
       });
     }
 
@@ -110,9 +195,19 @@ abstract class _QuranStore extends BaseStore with Store {
       }
     });
 
+    showSettings = Command(() {
+      settingsParameter.clear();
+
+      settingsParameter.putIfAbsent(QuranSettingsTranslationsStore, () {
+        return listTranslationData;
+      });
+      return showSettingsInteraction.handle(null);
+    });
+
     registerDispose(() {
       _quranProvider.dispose();
       selectedChapter$.close();
+      selectedQuranTextData$.close();
     });
   }
 
@@ -132,17 +227,26 @@ abstract class _QuranStore extends BaseStore with Store {
     enumSelector: EnumSelector.none,
   );
 
-  @observable
-  QuranTextType quranTextType = QuranTextType.Uthmani;
+  var listQuranTextData = List<QuranTextData>();
+
+  var selectedQuranTextData$ = BehaviorSubject<QuranTextData>(
+    sync: true,
+  );
+
+  var listTranslationData = ObservableList<TranslationData>();
 
   @observable
   ObservableList<Chapters> chapters = ObservableList();
 
-  BehaviorSubject<Chapters> selectedChapter$ = BehaviorSubject(
+  var selectedChapter$ = BehaviorSubject<Chapters>(
     sync: true,
   );
 
   final Interaction<Map<String, Object>, Map<String, Object>>
       pickQuranNavigatorInteraction = Interaction();
   Command pickQuranNavigator;
+
+  final settingsParameter = Map<Type, Object>();
+  final showSettingsInteraction = Interaction();
+  Command showSettings;
 }

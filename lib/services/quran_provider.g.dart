@@ -284,12 +284,16 @@ class _$Aya extends Aya {
   @override
   final String text;
   @override
-  final BuiltList<AyaTranslation> translations;
+  final TranslationData translationData;
+  @override
+  final BuiltList<Aya> translations;
 
   factory _$Aya([void Function(AyaBuilder) updates]) =>
       (new AyaBuilder()..update(updates)).build();
 
-  _$Aya._({this.indexString, this.text, this.translations}) : super._() {
+  _$Aya._(
+      {this.indexString, this.text, this.translationData, this.translations})
+      : super._() {
     if (indexString == null) {
       throw new BuiltValueNullFieldError('Aya', 'indexString');
     }
@@ -311,12 +315,15 @@ class _$Aya extends Aya {
     return other is Aya &&
         indexString == other.indexString &&
         text == other.text &&
+        translationData == other.translationData &&
         translations == other.translations;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc($jc(0, indexString.hashCode), text.hashCode),
+    return $jf($jc(
+        $jc($jc($jc(0, indexString.hashCode), text.hashCode),
+            translationData.hashCode),
         translations.hashCode));
   }
 
@@ -325,6 +332,7 @@ class _$Aya extends Aya {
     return (newBuiltValueToStringHelper('Aya')
           ..add('indexString', indexString)
           ..add('text', text)
+          ..add('translationData', translationData)
           ..add('translations', translations))
         .toString();
   }
@@ -341,10 +349,15 @@ class AyaBuilder implements Builder<Aya, AyaBuilder> {
   String get text => _$this._text;
   set text(String text) => _$this._text = text;
 
-  ListBuilder<AyaTranslation> _translations;
-  ListBuilder<AyaTranslation> get translations =>
-      _$this._translations ??= new ListBuilder<AyaTranslation>();
-  set translations(ListBuilder<AyaTranslation> translations) =>
+  TranslationData _translationData;
+  TranslationData get translationData => _$this._translationData;
+  set translationData(TranslationData translationData) =>
+      _$this._translationData = translationData;
+
+  ListBuilder<Aya> _translations;
+  ListBuilder<Aya> get translations =>
+      _$this._translations ??= new ListBuilder<Aya>();
+  set translations(ListBuilder<Aya> translations) =>
       _$this._translations = translations;
 
   AyaBuilder();
@@ -353,6 +366,7 @@ class AyaBuilder implements Builder<Aya, AyaBuilder> {
     if (_$v != null) {
       _indexString = _$v.indexString;
       _text = _$v.text;
+      _translationData = _$v.translationData;
       _translations = _$v.translations?.toBuilder();
       _$v = null;
     }
@@ -380,6 +394,7 @@ class AyaBuilder implements Builder<Aya, AyaBuilder> {
           new _$Aya._(
               indexString: indexString,
               text: text,
+              translationData: translationData,
               translations: _translations?.build());
     } catch (_) {
       String _$failedField;

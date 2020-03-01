@@ -10,8 +10,10 @@ import 'package:quran_app/pages/quran/quran_store.dart';
 import 'package:quiver/strings.dart';
 import 'package:quran_app/pages/quran_navigator/quran_navigator_store.dart';
 import 'package:quran_app/pages/quran_navigator/quran_navigator_widget.dart';
+import 'package:quran_app/pages/quran_settings/quran_settings_widget.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:rxdart/rxdart.dart';
+import '../quran_settings/quran_settings_store.dart';
 
 class QuranWidget extends StatefulWidget with BaseWidgetParameterMixin {
   QuranWidget({Key key}) : super(key: key);
@@ -68,9 +70,14 @@ class _QuranWidgetState extends State<QuranWidget>
         }
 
         var itemIndex = store.listAya.indexOf(v);
-        itemScrollController.jumpTo(
-          index: itemIndex,
+        store.appServices.logger.i(
+          'item scroll controller isAttached ${itemScrollController.isAttached}',
         );
+        if (itemScrollController.isAttached) {
+          itemScrollController.jumpTo(
+            index: itemIndex,
+          );
+        }
       }).listen(null);
       _store.registerDispose(() {
         d.cancel();
@@ -115,11 +122,39 @@ class _QuranWidgetState extends State<QuranWidget>
           ),
         ),
         actions: <Widget>[
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.settings),
+          Builder(
+            builder: (BuildContext context) {
+              {
+                var d = store.showSettingsInteraction.registerHandler((_) {
+                  Scaffold.of(context).openEndDrawer();
+                  return Future.value();
+                });
+                _store.registerDispose(() {
+                  d.dispose();
+                });
+              }
+
+              return IconButton(
+                onPressed: () {
+                  _store.showSettings.executeIf();
+                },
+                icon: Icon(Icons.settings),
+              );
+            },
           ),
         ],
+      ),
+      endDrawer: Drawer(
+        // Defer the drawer until drawer opened
+        child: Builder(
+          builder: (BuildContext context) {
+            return QuranSettingsWidget(
+              store: QuranSettingsStore(
+                parameter: store.settingsParameter,
+              ),
+            );
+          },
+        ),
       ),
       body: Observer(
         name: '_QuranStore.state',
@@ -141,34 +176,36 @@ class _QuranWidgetState extends State<QuranWidget>
                     var item = store.listAya[index];
 
                     List<Widget> listTranslationWidget = [];
-                    // for (var translation in item.translations ?? []) {
-                    //   listTranslationWidget.add(
-                    //     Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.stretch,
-                    //       children: <Widget>[
-                    //         SizedBox.fromSize(
-                    //           size: Size.fromHeight(10),
-                    //         ),
-                    //         Container(
-                    //           child: Text(
-                    //             '${translation.languageCode}',
-                    //             style: TextStyle(
-                    //               fontWeight: FontWeight.w600,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //         SizedBox.fromSize(
-                    //           size: Size.fromHeight(1),
-                    //         ),
-                    //         Container(
-                    //           child: Text(
-                    //             '${translation.translation}',
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   );
-                    // }
+                    if (item.translations != null) {
+                      for (var translation in item.translations) {
+                        listTranslationWidget.add(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              SizedBox.fromSize(
+                                size: Size.fromHeight(10),
+                              ),
+                              Container(
+                                child: Text(
+                                  '${translation.translationData?.languageCode ?? ''}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              SizedBox.fromSize(
+                                size: Size.fromHeight(1),
+                              ),
+                              Container(
+                                child: Text(
+                                  '${translation.text}',
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
 
                     return InkWell(
                       child: Container(
