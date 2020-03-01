@@ -26,23 +26,6 @@ mixin _$QuranStore on _QuranStore, Store {
     }, _$listAyaAtom, name: '${_$listAyaAtom.name}_set');
   }
 
-  final _$stateAtom = Atom(name: '_QuranStore.state');
-
-  @override
-  DataState get state {
-    _$stateAtom.context.enforceReadPolicy(_$stateAtom);
-    _$stateAtom.reportObserved();
-    return super.state;
-  }
-
-  @override
-  set state(DataState value) {
-    _$stateAtom.context.conditionallyRunInAction(() {
-      super.state = value;
-      _$stateAtom.reportChanged();
-    }, _$stateAtom, name: '${_$stateAtom.name}_set');
-  }
-
   final _$chaptersAtom = Atom(name: '_QuranStore.chapters');
 
   @override
@@ -63,7 +46,7 @@ mixin _$QuranStore on _QuranStore, Store {
   @override
   String toString() {
     final string =
-        'listAya: ${listAya.toString()},state: ${state.toString()},chapters: ${chapters.toString()}';
+        'listAya: ${listAya.toString()},chapters: ${chapters.toString()}';
     return '{$string}';
   }
 }

@@ -32,6 +32,11 @@ class DataState {
 
   @override
   int get hashCode => enumSelector.hashCode;
+
+  @override
+  String toString() {
+    return '$enumSelector - $message';
+  }
 }
 
 enum EnumSelector {

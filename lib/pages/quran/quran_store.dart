@@ -9,9 +9,11 @@ import 'package:quran_app/models/models.dart';
 import 'package:quran_app/models/setting_ids.dart';
 import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/pages/quran_navigator/quran_navigator_store.dart';
+import 'package:quran_app/pages/quran_settings_fontsizes/quran_settings_fontsizes_store.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import '../quran_settings_translations/quran_settings_translations_store.dart';
+import '../../extensions/settings_extension.dart';
 
 import '../../main.dart';
 
@@ -40,8 +42,10 @@ abstract class _QuranStore extends BaseStore with Store {
 
     initialize = Command(() async {
       try {
-        state = DataState(
-          enumSelector: EnumSelector.loading,
+        state$.add(
+          DataState(
+            enumSelector: EnumSelector.loading,
+          ),
         );
 
         listQuranTextData = await _quranProvider.getListQuranTextData();
@@ -66,16 +70,20 @@ abstract class _QuranStore extends BaseStore with Store {
           selectedChapter$.add(newSelectedChapter);
         }
       } finally {
-        state = DataState(
-          enumSelector: EnumSelector.success,
+        state$.add(
+          DataState(
+            enumSelector: EnumSelector.success,
+          ),
         );
       }
     });
 
     getAya = Command(() async {
       try {
-        state = DataState(
-          enumSelector: EnumSelector.loading,
+        state$.add(
+          DataState(
+            enumSelector: EnumSelector.loading,
+          ),
         );
 
         // Get selected translation from preferenes,
@@ -111,11 +119,16 @@ abstract class _QuranStore extends BaseStore with Store {
         listAya.clear();
         listAya.addAll(listAyaByChapter);
         if (!selectedAya$.hasValue) {
-          selectedAya$.add(listAya.first);
+          var f = listAya.firstWhere((t) => t != null, orElse: () => null);
+          if (f != null) {
+            selectedAya$.add(f);
+          }
         }
       } finally {
-        state = DataState(
-          enumSelector: EnumSelector.success,
+        state$.add(
+          DataState(
+            enumSelector: EnumSelector.success,
+          ),
         );
       }
     });
@@ -135,7 +148,7 @@ abstract class _QuranStore extends BaseStore with Store {
         [
           getAyaRefresh$.map((t) => null),
         ],
-      ).switchMap((_) {
+      ).asyncExpand((_) {
         return Stream.fromFutures([
           getAya.executeIf(),
         ]);
@@ -201,8 +214,24 @@ abstract class _QuranStore extends BaseStore with Store {
       settingsParameter.putIfAbsent(QuranSettingsTranslationsStore, () {
         return listTranslationData;
       });
+
+      settingsParameter.putIfAbsent(QuranSettingsFontsizesStore, () {
+        final Map<String, Object> m = {
+          'arabicFontSize': arabicFontSize$,
+          'translationFontSize': translationFontSize$,
+        };
+        return m;
+      });
       return showSettingsInteraction.handle(null);
     });
+
+    rxPrefs.getArabicFontSize().asStream().doOnData((v) {
+      arabicFontSize$.add(v);
+    }).listen(null);
+
+    rxPrefs.getTranslationFontSize().asStream().doOnData((v) {
+      translationFontSize$.add(v);
+    }).listen(null);
 
     registerDispose(() {
       _quranProvider.dispose();
@@ -222,9 +251,10 @@ abstract class _QuranStore extends BaseStore with Store {
     sync: true,
   );
 
-  @observable
-  var state = DataState(
-    enumSelector: EnumSelector.none,
+  var state$ = BehaviorSubject<DataState>.seeded(
+    DataState(
+      enumSelector: EnumSelector.none,
+    ),
   );
 
   var listQuranTextData = List<QuranTextData>();
@@ -249,4 +279,14 @@ abstract class _QuranStore extends BaseStore with Store {
   final settingsParameter = Map<Type, Object>();
   final showSettingsInteraction = Interaction();
   Command showSettings;
+
+  final arabicFontSize$ = BehaviorSubject<double>.seeded(
+    28,
+    sync: true,
+  );
+
+  final translationFontSize$ = BehaviorSubject<double>.seeded(
+    16,
+    sync: true,
+  );
 }

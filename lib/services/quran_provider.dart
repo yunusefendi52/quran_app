@@ -9,6 +9,7 @@ import 'package:quran_app/models/models.dart';
 import 'package:path/path.dart' as p;
 import 'package:quran_app/models/translation_data.dart';
 import 'package:xml2json/xml2json.dart';
+import 'package:quiver/core.dart';
 
 import '../main.dart';
 
@@ -287,4 +288,10 @@ class QuranTextData {
   String filename;
 
   String name;
+
+  bool operator ==(o) =>
+      o is QuranTextData && name == o.name && filename == o.filename;
+
+  @override
+  int get hashCode => hash2(filename, name);
 }
