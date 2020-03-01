@@ -36,18 +36,25 @@ abstract class _QuranSettingsFontsizesStore extends BaseStore
       _translationFontSize$ = p['translationFontSize'];
     }
 
-    arabicFontSizeChanged$.asyncExpand((v) {
+    var ds = CompositeSubscription();
+
+    ds.add(arabicFontSizeChanged$.asyncExpand((v) {
       return rxPrefs.setArabicFontSize(v).asStream().map((_) => v);
     }).doOnData((v) {
       arabicFontSize$.add(v);
-    }).listen(null);
+    }).listen(null));
 
-    translationFontSizeChanged$.asyncExpand((v) {
+    ds.add(translationFontSizeChanged$.asyncExpand((v) {
       return rxPrefs.setTranslationFontSize(v).asStream().map((_) => v);
     }).doOnData((v) {
       translationFontSize$.add(v);
       // return translationFontSize$.take(1);
-    }).listen(null);
+    }).listen(null));
+
+    registerDispose(() {
+      ds.dispose();
+      ds = null;
+    });
   }
 
   SettingsItem _settingsItems;

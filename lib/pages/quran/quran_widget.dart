@@ -230,101 +230,111 @@ class _QuranWidgetState extends State<QuranWidget>
                           }
                         }
 
-                        return InkWell(
-                          child: Container(
-                            padding: EdgeInsets.only(
-                              left: 15,
-                              top: 15,
-                              right: 20,
-                              bottom: 25,
-                            ),
-                            child: Stack(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: <Widget>[
-                                    // Bismillah
-                                    // !isBlank('aya.bismillah')
-                                    !isBlank('')
-                                        ? Container(
-                                            padding: EdgeInsets.only(
-                                              top: 10,
-                                              bottom: 25,
-                                            ),
-                                            child: Text(
-                                              'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: 30,
-                                              ),
-                                            ),
-                                          )
-                                        : Container(),
-                                    // 1
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                '${item.index}',
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                              // Icons (e.g bookmarks)
-                                              // Container(
-                                              //   width: aya.isBookmarked ? 10 : 0,
-                                              // ),
-                                              // aya.isBookmarked
-                                              //     ? Icon(
-                                              //         Icons.bookmark,
-                                              //         color: Theme.of(context).accentColor,
-                                              //       )
-                                              //     : Container(),
-                                              // Icon(
-                                              //   Icons.bookmark,
-                                              //   color:
-                                              //       Theme.of(context).accentColor,
-                                              // ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          child: Icon(Icons.more_vert),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox.fromSize(
-                                      size: Size.fromHeight(
-                                        15,
-                                      ),
-                                    ),
-                                    // 2
-                                    StreamBuilder<double>(
-                                      initialData: store.arabicFontSize$.value,
-                                      stream: store.arabicFontSize$,
-                                      builder: (
-                                        BuildContext context,
-                                        AsyncSnapshot<double> snapshot,
-                                      ) {
-                                        return Text(
-                                          '${item.text}',
-                                          textDirection: TextDirection.rtl,
-                                          style: TextStyle(
-                                            fontSize: snapshot.data,
-                                            fontFamily:
-                                                'KFGQPC Uthman Taha Naskh',
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ]..addAll(listTranslationWidget),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            InkWell(
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                  left: 15,
+                                  top: 15,
+                                  right: 20,
+                                  bottom: 25,
                                 ),
-                              ],
+                                child: Stack(
+                                  children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        // Bismillah
+                                        // !isBlank('aya.bismillah')
+                                        !isBlank('')
+                                            ? Container(
+                                                padding: EdgeInsets.only(
+                                                  top: 10,
+                                                  bottom: 25,
+                                                ),
+                                                child: Text(
+                                                  'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 30,
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(),
+                                        // 1
+                                        Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                    '${item.index}',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                  // Icons (e.g bookmarks)
+                                                  // Container(
+                                                  //   width: aya.isBookmarked ? 10 : 0,
+                                                  // ),
+                                                  // aya.isBookmarked
+                                                  //     ? Icon(
+                                                  //         Icons.bookmark,
+                                                  //         color: Theme.of(context).accentColor,
+                                                  //       )
+                                                  //     : Container(),
+                                                  // Icon(
+                                                  //   Icons.bookmark,
+                                                  //   color:
+                                                  //       Theme.of(context).accentColor,
+                                                  // ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              child: Icon(Icons.more_vert),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox.fromSize(
+                                          size: Size.fromHeight(
+                                            15,
+                                          ),
+                                        ),
+                                        // 2
+                                        StreamBuilder<double>(
+                                          initialData:
+                                              store.arabicFontSize$.value,
+                                          stream: store.arabicFontSize$,
+                                          builder: (
+                                            BuildContext context,
+                                            AsyncSnapshot<double> snapshot,
+                                          ) {
+                                            return Text(
+                                              '${item.text}',
+                                              textDirection: TextDirection.rtl,
+                                              style: TextStyle(
+                                                fontSize: snapshot.data,
+                                                fontFamily:
+                                                    'KFGQPC Uthman Taha Naskh',
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ]..addAll(listTranslationWidget),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                            Container(
+                              height: 1,
+                              color: Theme.of(context).dividerColor,
+                            ),
+                          ],
                         );
                       },
                     );

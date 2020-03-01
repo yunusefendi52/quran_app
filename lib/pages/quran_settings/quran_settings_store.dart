@@ -4,6 +4,8 @@ import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/localization_service.dart';
 import 'package:quran_app/pages/quran_settings_fontsizes/quran_settings_fontsizes_store.dart';
 import 'package:quran_app/pages/quran_settings_fontsizes/quran_settings_fontsizes_widget.dart';
+import 'package:quran_app/pages/quran_settings_theme/quran_settings_theme_store.dart';
+import 'package:quran_app/pages/quran_settings_theme/quran_settings_theme_widget.dart';
 import 'package:quran_app/pages/quran_settings_translations/quran_settings_translations_widget.dart';
 import 'package:tuple/tuple.dart';
 
@@ -52,6 +54,17 @@ abstract class _QuranSettingsStore extends BaseStore with Store {
         items.add(
           Tuple2(
             QuranSettingsFontSizesWidget(
+              store: store,
+            ),
+            store,
+          ),
+        );
+      }
+      {
+        final store = QuranSettingsThemeStore();
+        items.add(
+          Tuple2(
+            QuranSettingsThemeWidget(
               store: store,
             ),
             store,

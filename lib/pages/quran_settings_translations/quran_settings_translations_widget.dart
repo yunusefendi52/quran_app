@@ -68,6 +68,9 @@ class _QuranSettingsTranslationsWidgetState
                       child: Column(
                         children: <Widget>[
                           ExpandablePanel(
+                            theme: ExpandableThemeData(
+                              iconColor: Theme.of(context).accentColor,
+                            ),
                             header: Padding(
                               padding: EdgeInsets.all(10),
                               child: Text(

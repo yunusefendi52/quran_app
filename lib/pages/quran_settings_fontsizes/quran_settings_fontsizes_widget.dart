@@ -49,6 +49,9 @@ class _QuranSettingsFontSizesWidgetState
               child: Column(
                 children: <Widget>[
                   ExpandablePanel(
+                    theme: ExpandableThemeData(
+                      iconColor: Theme.of(context).accentColor,
+                    ),
                     header: Padding(
                       padding: EdgeInsets.all(10),
                       child: Text(
@@ -89,6 +92,9 @@ class _QuranSettingsFontSizesWidgetState
               child: Column(
                 children: <Widget>[
                   ExpandablePanel(
+                    theme: ExpandableThemeData(
+                      iconColor: Theme.of(context).accentColor,
+                    ),
                     header: Padding(
                       padding: EdgeInsets.all(10),
                       child: Text(
