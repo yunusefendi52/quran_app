@@ -71,37 +71,20 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          10,
+        ),
+      ),
       child: Container(
         padding: EdgeInsets.all(10),
-        height: 220,
+        height: 250,
         child: Row(
           children: <Widget>[
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  // TextField(
-                  //   keyboardType: TextInputType.number,
-                  //   decoration: InputDecoration(
-                  //     contentPadding: EdgeInsets.all(5),
-                  //   ),
-                  //   autofocus: false,
-                  //   controller: suraTextController,
-                  //   inputFormatters: [
-                  //     WhitelistingTextInputFormatter.digitsOnly,
-                  //   ],
-                  //   onChanged: (v) {
-                  //     int sura = int.tryParse(v);
-                  //     if (sura == null) {
-                  //       return;
-                  //     }
-                  //     suraScrollController.jumpToItem(sura - 1);
-                  //     model.changeSelectedChapterBySura(sura);
-                  //   },
-                  // ),
-                  SizedBox.fromSize(
-                    size: Size.fromHeight(10),
-                  ),
                   Expanded(
                     child: Container(
                       child: Observer(
@@ -111,6 +94,10 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
                               return Center(
                                 child: Text(
                                   '${item.chapterNumber}. ${item.nameSimple}',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).textTheme.body1.color,
+                                  ),
                                 ),
                               );
                             }).toList(),
@@ -151,27 +138,6 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  // TextField(
-                  //   keyboardType: TextInputType.number,
-                  //   decoration: InputDecoration(
-                  //     contentPadding: EdgeInsets.all(5),
-                  //   ),
-                  //   inputFormatters: [
-                  //     WhitelistingTextInputFormatter.digitsOnly,
-                  //   ],
-                  //   // controller: ayaTextController,
-                  //   onChanged: (v) {
-                  //     int aya = int.tryParse(v);
-                  //     if (aya == null) {
-                  //       return;
-                  //     }
-
-                  //     ayaScrollController.jumpToItem(aya - 1);
-                  //   },
-                  // ),
-                  SizedBox.fromSize(
-                    size: Size.fromHeight(10),
-                  ),
                   Expanded(
                     child: Container(
                       child: Observer(
@@ -186,6 +152,12 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
                                 return Center(
                                   child: Text(
                                     '$v',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .body1
+                                          .color,
+                                    ),
                                   ),
                                 );
                               },
@@ -226,5 +198,150 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
         ),
       ),
     );
+    // NOTE(yunus) Cupertino aya flickering when draging
+    // return Container(
+    //   height: 260,
+    //   color: Theme.of(context).dialogBackgroundColor,
+    //   child: Column(
+    //     crossAxisAlignment: CrossAxisAlignment.stretch,
+    //     children: <Widget>[
+    //       Container(
+    //         child: Align(
+    //           alignment: Alignment.center,
+    //           child: Icon(
+    //             Icons.drag_handle,
+    //           ),
+    //         ),
+    //       ),
+    //       Expanded(
+    //         child: Container(
+    //           padding: EdgeInsets.symmetric(
+    //             horizontal: 10,
+    //           ),
+    //           child: Row(
+    //             children: <Widget>[
+    //               Expanded(
+    //                 flex: 70,
+    //                 child: Column(
+    //                   crossAxisAlignment: CrossAxisAlignment.stretch,
+    //                   children: <Widget>[
+    //                     Expanded(
+    //                       child: Container(
+    //                         child: Observer(
+    //                           builder: (BuildContext context) {
+    //                             return CupertinoPicker(
+    //                               children: store.chapters.map((item) {
+    //                                 return Center(
+    //                                   child: Text(
+    //                                     '${item.chapterNumber}. ${item.nameSimple}',
+    //                                     style: TextStyle(
+    //                                       color: Theme.of(context)
+    //                                           .textTheme
+    //                                           .body1
+    //                                           .color,
+    //                                     ),
+    //                                   ),
+    //                                 );
+    //                               }).toList(),
+    //                               looping: true,
+    //                               itemExtent: 30,
+    //                               scrollController: pickerSurahController,
+    //                               backgroundColor:
+    //                                   Theme.of(context).dialogBackgroundColor,
+    //                               onSelectedItemChanged: (
+    //                                 int value,
+    //                               ) {
+    //                                 var item = store.chapters[value];
+    //                                 store.selectedChapter$.add(item);
+    //                               },
+    //                             );
+    //                           },
+    //                         ),
+    //                       ),
+    //                     ),
+    //                     FlatButton(
+    //                       onPressed: () {
+    //                         store.pickSura.executeIf();
+    //                       },
+    //                       child: Text(
+    //                         store.localization.getByKey(
+    //                           'quran_navigator_widget.pick_sura',
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //               SizedBox.fromSize(
+    //                 size: Size.fromWidth(10),
+    //               ),
+    //               Expanded(
+    //                 flex: 30,
+    //                 child: Column(
+    //                   crossAxisAlignment: CrossAxisAlignment.stretch,
+    //                   children: <Widget>[
+    //                     Expanded(
+    //                       child: Container(
+    //                         child: Observer(
+    //                           builder: (BuildContext context) {
+    //                             if (store.listAya.isEmpty) {
+    //                               return Container();
+    //                             }
+
+    //                             return CupertinoPicker(
+    //                               children: store.listAya.map(
+    //                                 (v) {
+    //                                   return Center(
+    //                                     child: Text(
+    //                                       '$v',
+    //                                       style: TextStyle(
+    //                                         color: Theme.of(context)
+    //                                             .textTheme
+    //                                             .body1
+    //                                             .color,
+    //                                       ),
+    //                                     ),
+    //                                   );
+    //                                 },
+    //                               ).toList(),
+    //                               itemExtent: 30,
+    //                               looping: true,
+    //                               scrollController: pickerAyaController,
+    //                               backgroundColor:
+    //                                   Theme.of(context).dialogBackgroundColor,
+    //                               onSelectedItemChanged: (
+    //                                 int value,
+    //                               ) {
+    //                                 var item = store.listAya[value];
+    //                                 store.selectedAya = item;
+    //                               },
+    //                             );
+    //                           },
+    //                         ),
+    //                       ),
+    //                     ),
+    //                     FlatButton(
+    //                       onPressed: () {
+    //                         store.pickAya.executeIf();
+    //                       },
+    //                       child: Center(
+    //                         child: Text(
+    //                           store.localization.getByKey(
+    //                             'quran_navigator_widget.pick_aya',
+    //                           ),
+    //                           textAlign: TextAlign.center,
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }
