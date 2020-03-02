@@ -29,16 +29,12 @@ class _QuranSettingsThemeWidgetState extends State<QuranSettingsThemeWidget>
   QuranSettingsThemeStore get store => widget.store;
 
   @override
-  void initState() {
-    super.initState();
-
+  Widget build(BuildContext context) {
+    // initState only called once, try to change the theme
     (() async {
       await store.getThemes.executeIf();
     })();
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 10,

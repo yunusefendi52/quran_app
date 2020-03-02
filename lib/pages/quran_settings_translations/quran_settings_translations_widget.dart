@@ -30,16 +30,11 @@ class _QuranSettingsTranslationsWidgetState
   QuranSettingsTranslationsStore get store => widget.store;
 
   @override
-  void initState() {
-    super.initState();
-
+  Widget build(BuildContext context) {
     (() async {
       await store.getListTranslations.executeIf();
     })();
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 10,
