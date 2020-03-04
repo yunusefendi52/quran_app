@@ -29,15 +29,27 @@ class SqliteQuranProvider implements QuranProvider {
   }
 
   @override
-  Future<Aya> getAya(int chapter, int aya, QuranTextData quranTextData,
-      [List<TranslationData> translations]) async {
+  Future<Aya> getAya(
+    int chapter,
+    int aya,
+    QuranTextData quranTextData, [
+    List<TranslationData> translations,
+  ]) async {
+    await initialize(quranTextData);
     var database = _mapDatabase[quranTextData];
-    var r = await database
-        .rawQuery("select * from quran where [sura] == ? and [aya] == ?", [
+    var r = await database.rawQuery(
+        "select * from quran where [sura] == '$chapter' and [aya] == '$aya'", [
       chapter,
       aya,
     ]);
-    var rr = r;
+    var ayaData = r.map((m) {
+      var aya = Aya((v) {
+        v.indexString = m['sura'];
+        v.text = m['text'];
+      });
+      return aya;
+    }).first;
+    return ayaData;
   }
 
   @override
@@ -145,7 +157,7 @@ class SqliteQuranProvider implements QuranProvider {
     }
     var database = _translationMapDatabase[translationData];
     var rawQuery = await database.rawQuery(
-      'select * from verses where [sura] == $chapter',
+      'SELECT * FROM "verses" where [sura] == $chapter',
     );
     var l = List<Aya>();
     rawQuery.forEach((m) {
@@ -163,9 +175,6 @@ class SqliteQuranProvider implements QuranProvider {
   Future<Directory> getQuranFolder() async {
     var appDocDir = await getApplicationDocumentsDirectory();
     var quranFolder = Directory(join(appDocDir.path, 'q'));
-    if (!(await quranFolder.exists())) {
-      await quranFolder.create();
-    }
     return quranFolder;
   }
 
@@ -174,7 +183,9 @@ class SqliteQuranProvider implements QuranProvider {
     var quranFolder = await getQuranFolder();
 
     // Copy db from flutter assets to local store, so library can open the db as path
-    {
+    if (!(await quranFolder.exists())) {
+      await quranFolder.create();
+
       // Copy the quran db
       {
         {
