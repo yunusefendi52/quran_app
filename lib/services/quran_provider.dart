@@ -117,13 +117,18 @@ abstract class QuranProvider {
     List<TranslationData> translations,
   ]);
 
+  Future<List<Aya>> getTranslation(
+    int chapter,
+    TranslationData translationData,
+  );
+
   void dispose();
 }
 
-class JsonQuranProvider implements QuranProvider {
+class XmlQuranProvider implements QuranProvider {
   var _assetBundle = sl.get<AssetBundle>();
 
-  JsonQuranProvider({
+  XmlQuranProvider({
     AssetBundle assetBundle,
   }) {
     _assetBundle = assetBundle ?? _assetBundle;

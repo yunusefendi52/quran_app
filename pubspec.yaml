@@ -40,6 +40,8 @@ dependencies:
   tuple: ^1.0.3
   rx_shared_preferences: ^1.1.1+1
   expandable: ^4.1.2
+  sqflite: ^1.2.1
+  path_provider: ^1.6.5
 
 dev_dependencies:
   flutter_test:

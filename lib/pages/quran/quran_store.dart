@@ -245,7 +245,6 @@ abstract class _QuranStore extends BaseStore with Store {
     }).listen(null);
 
     registerDispose(() {
-      _quranProvider.dispose();
       selectedChapter$.close();
       selectedQuranTextData$.close();
     });
