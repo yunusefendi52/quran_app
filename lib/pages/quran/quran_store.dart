@@ -153,9 +153,11 @@ abstract class _QuranStore extends BaseStore with Store {
           getAyaRefresh$.map((t) => null),
         ],
       ).asyncExpand((_) {
-        return Stream.fromFutures([
-          getAya.executeIf(),
-        ]);
+        return DeferStream(() {
+          return Stream.fromFutures([
+            getAya.executeIf(),
+          ]);
+        });
       }).handleError((e) {
         appServices.logger.e(e);
       }).listen(null));

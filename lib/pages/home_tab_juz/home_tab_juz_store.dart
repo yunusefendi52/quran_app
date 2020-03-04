@@ -50,34 +50,40 @@ abstract class _HomeTabJuzStore extends BaseStore with Store {
       var _listJuz = await Stream.fromIterable(
         rootJuzItem.juzs.toList(),
       ).asyncExpand((f) {
-        var verseMapping = JuzItem.getVerseMappingJuzItem(f.verseMapping);
-        var chapter = chapters.firstWhere(
-          (t) => t.chapterNumber == verseMapping.first.surah,
-        );
-        var b = f.toBuilder();
-        b.update((v) {
-          v.chapters.replace(chapter);
-        });
-        return Stream.value(b);
-      }).asyncExpand((b) {
-        return quranProvider
-            .getListQuranTextData()
-            .asStream()
-            .map((t) => t[0])
-            .asyncExpand((t) {
-          var f = Future(() async {
-            var verseMapping =
-                JuzItem.getVerseMappingJuzItem(b.verseMapping.build());
-            var first = verseMapping.first;
-            var aya = await quranProvider.getAya(
-              first.surah,
-              first.startAya,
-              t,
-            );
-            b.listAya.replace([aya]);
-            return b.build();
+        return DeferStream(() {
+          var verseMapping = JuzItem.getVerseMappingJuzItem(f.verseMapping);
+          var chapter = chapters.firstWhere(
+            (t) => t.chapterNumber == verseMapping.first.surah,
+          );
+          var b = f.toBuilder();
+          b.update((v) {
+            v.chapters.replace(chapter);
           });
-          return f.asStream();
+          return Stream.value(b);
+        });
+      }).asyncExpand((b) {
+        return DeferStream(() {
+          return quranProvider
+              .getListQuranTextData()
+              .asStream()
+              .map((t) => t[0])
+              .asyncExpand((t) {
+            return DeferStream(() {
+              var f = Future(() async {
+                var verseMapping =
+                    JuzItem.getVerseMappingJuzItem(b.verseMapping.build());
+                var first = verseMapping.first;
+                var aya = await quranProvider.getAya(
+                  first.surah,
+                  first.startAya,
+                  t,
+                );
+                b.listAya.replace([aya]);
+                return b.build();
+              });
+              return f.asStream();
+            });
+          });
         });
       }).toList();
       listJuz.clear();
