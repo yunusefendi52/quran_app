@@ -119,7 +119,11 @@ abstract class _QuranStore extends BaseStore with Store {
         listAya.clear();
         listAya.addAll(listAyaByChapter);
         if (!selectedAya$.hasValue) {
-          var f = listAya.firstWhere((t) => t != null, orElse: () => null);
+          int aya = parameter['aya'];
+          var f = listAya.firstWhere(
+            (t) => aya != null ? t.index == aya : t != null,
+            orElse: () => null,
+          );
           if (f != null) {
             selectedAya$.add(f);
           }
@@ -174,6 +178,13 @@ abstract class _QuranStore extends BaseStore with Store {
           }
         },
       );
+
+      selectedAya$
+          .doOnData((v) {
+            initialSelectedAya$.add(v);
+          })
+          .take(1)
+          .listen(null);
 
       registerDispose(() {
         ds.dispose();
@@ -246,6 +257,10 @@ abstract class _QuranStore extends BaseStore with Store {
 
   @observable
   ObservableList<Aya> listAya = ObservableList();
+
+  BehaviorSubject<Aya> initialSelectedAya$ = BehaviorSubject(
+    sync: true,
+  );
 
   BehaviorSubject<Aya> selectedAya$ = BehaviorSubject(
     sync: true,

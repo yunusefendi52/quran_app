@@ -2,8 +2,9 @@ import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
-import 'package:quran_app/pages/home_surah/home_surah_widget.dart';
 import 'package:quran_app/pages/home_tab/home_tab_store.dart';
+import 'package:quran_app/pages/home_tab_juz/home_tab_juz_widget.dart';
+import 'package:quran_app/pages/home_tab_surah/home_tab_surah_widget.dart';
 
 import 'home_tab_store.dart';
 
@@ -25,8 +26,8 @@ class _HomeTabWidgetState extends State<HomeTabWidget>
   TabController quranTabController;
   PageController pageQuranTabController;
   final List<Widget Function()> pagesQuranTab = [
-    () => HomeSurahWidget(),
-    () => HomeSurahWidget(),
+    () => HomeTabSurahWidget(),
+    () => HomeTabJuzWidget(),
   ];
 
   @override

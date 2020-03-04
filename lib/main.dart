@@ -35,11 +35,18 @@ void main() {
   registerInjector();
 
   runApp(
-    MaterialApp(
-      theme: ThemeData(),
+    MainApp(),
+  );
+}
+
+class MainApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData.light(),
       builder: (context, child) {
         return MainWidget();
       },
-    ),
-  );
+    );
+  }
 }

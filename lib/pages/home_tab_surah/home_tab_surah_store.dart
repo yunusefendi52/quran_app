@@ -10,16 +10,16 @@ import 'package:quran_app/services/quran_provider.dart';
 
 import '../../main.dart';
 
-part 'home_surah_store.g.dart';
+part 'home_tab_surah_store.g.dart';
 
-class HomeSurahStore = _HomeSurahStore with _$HomeSurahStore;
+class HomeTabSurahStore = _HomeTabSurahStore with _$HomeTabSurahStore;
 
-abstract class _HomeSurahStore extends BaseStore with Store {
+abstract class _HomeTabSurahStore extends BaseStore with Store {
   var _appServices = sl.get<AppServices>();
   var _localization = sl.get<ILocalizationService>();
   var _quranProvider = sl.get<QuranProvider>();
 
-  _HomeSurahStore({
+  _HomeTabSurahStore({
     AppServices appServices,
     QuranProvider quranProvider,
     ILocalizationService localizationService,

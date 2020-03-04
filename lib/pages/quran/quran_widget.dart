@@ -64,6 +64,28 @@ class _QuranWidgetState extends State<QuranWidget>
     }
 
     {
+      var d = store.initialSelectedAya$
+          .where((t) => t != null)
+          .delay(const Duration(milliseconds: 500))
+          .doOnData((v) {
+            // WORKAROUND: I don't know why ItemScrollController not attached for the first time
+            if (itemScrollController.isAttached) {
+              var ayaIndex = store.listAya.indexOf(
+                v,
+              );
+              itemScrollController.jumpTo(
+                index: ayaIndex,
+              );
+            }
+          })
+          .take(1)
+          .listen(null);
+      store.registerDispose(() {
+        d.cancel();
+      });
+    }
+
+    {
       var d = store.selectedAya$.doOnData((v) {
         if (v == null) {
           return;

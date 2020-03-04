@@ -6,20 +6,20 @@ import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/pages/error/error_widget.dart';
 
-import 'home_surah_store.dart';
+import 'home_tab_surah_store.dart';
 
-class HomeSurahWidget extends StatefulWidget {
-  HomeSurahWidget({Key key}) : super(key: key);
+class HomeTabSurahWidget extends StatefulWidget {
+  HomeTabSurahWidget({Key key}) : super(key: key);
 
-  _HomeSurahWidgetState createState() => _HomeSurahWidgetState();
+  _HomeTabSurahWidgetState createState() => _HomeTabSurahWidgetState();
 }
 
-class _HomeSurahWidgetState extends State<HomeSurahWidget>
+class _HomeTabSurahWidgetState extends State<HomeTabSurahWidget>
     with
         AutomaticKeepAliveClientMixin,
-        BaseStateMixin<HomeSurahStore, HomeSurahWidget> {
-  final _store = HomeSurahStore();
-  HomeSurahStore get store => _store;
+        BaseStateMixin<HomeTabSurahStore, HomeTabSurahWidget> {
+  final _store = HomeTabSurahStore();
+  HomeTabSurahStore get store => _store;
 
   @override
   void initState() {
@@ -155,14 +155,14 @@ class _HomeSurahWidgetState extends State<HomeSurahWidget>
         ),
       ),
     );
-    // return BaseWidget<HomeSurahStore>(
+    // return BaseWidget<HomeTabSurahStore>(
     //   store: store,
     //   initState: (store) {
     //     // store.fetchSurah.executeIf();
     //   },
     //   builder: (
     //     BuildContext context,
-    //     HomeSurahStore store,
+    //     HomeTabSurahStore store,
     //   ) {
     //     return ;
     //   },

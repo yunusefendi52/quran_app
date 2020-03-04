@@ -110,6 +110,13 @@ abstract class QuranProvider {
     List<TranslationData> translations,
   ]);
 
+  Future<Aya> getAya(
+    int chapter,
+    int aya,
+    QuranTextData quranTextData, [
+    List<TranslationData> translations,
+  ]);
+
   void dispose();
 }
 
@@ -213,6 +220,28 @@ class JsonQuranProvider implements QuranProvider {
     }
 
     return listAya;
+  }
+
+  Future<Aya> getAya(
+    int chapter,
+    int aya,
+    QuranTextData quranTextData, [
+    List<TranslationData> translations,
+  ]) async {
+    await initialize(quranTextData);
+
+    var listSura = mapListSura[quranTextData];
+    if (listSura == null) {
+      return null;
+    }
+    var ayaData = listSura
+        .where(
+          (t) => int.parse(t.index) == chapter,
+        )
+        .first
+        .aya
+        .firstWhere((t) => t.index == aya);
+    return ayaData;
   }
 
   final mapListTranslation = Map<TranslationData, BuiltList<Sura>>();

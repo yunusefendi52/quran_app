@@ -1,5 +1,6 @@
 {
-    "juzs": [{
+    "juzs": [
+        {
             "id": 1,
             "juz_number": 1,
             "verse_mapping": {
