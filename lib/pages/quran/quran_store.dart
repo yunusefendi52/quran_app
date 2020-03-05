@@ -13,6 +13,7 @@ import 'package:quran_app/pages/quran_settings_fontsizes/quran_settings_fontsize
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tuple/tuple.dart';
 import '../quran_settings_translations/quran_settings_translations_store.dart';
 import '../../extensions/settings_extension.dart';
 
@@ -96,7 +97,7 @@ abstract class _QuranStore extends BaseStore with Store {
             await rxPrefs.getStringList(SettingIds.translationId) ??
                 defaultSelectedTranslationsIds;
 
-        var selectedListTranslationData = listTranslationData
+        selectedListTranslationData = listTranslationData
             .map((t) {
               var isSelected = selectedTranslationIds.firstWhere(
                     (v) => v == t.id,
@@ -152,16 +153,16 @@ abstract class _QuranStore extends BaseStore with Store {
           return getAya.next.asStream();
         });
       }).doOnData((v) {
-        listAya.clear();
-        listAya.addAll(v);
-        if (!selectedAya$.hasValue) {
+        sourceListAya.clear();
+        sourceListAya.addAll(v);
+        if (!initialSelectedAya$.hasValue) {
           int aya = parameter['aya'];
-          var f = listAya.firstWhere(
+          var f = sourceListAya.firstWhere(
             (t) => aya != null ? t.index == aya : t != null,
             orElse: () => null,
           );
           if (f != null) {
-            selectedAya$.add(f);
+            initialSelectedAya$.add(f);
           }
         }
       }).handleError((e) {
@@ -187,13 +188,6 @@ abstract class _QuranStore extends BaseStore with Store {
         },
       );
 
-      selectedAya$
-          .doOnData((v) {
-            initialSelectedAya$.add(v);
-          })
-          .take(1)
-          .listen(null);
-
       registerDispose(() {
         ds.dispose();
         ds = null;
@@ -208,7 +202,7 @@ abstract class _QuranStore extends BaseStore with Store {
       final Map<String, Object> p = {
         'chapters': chapters,
         'selectedChapter': selectedChapter$.value,
-        'selectedAya': selectedAya$.value.index
+        'selectedAya': initialSelectedAya$.value.index
       };
       var result = await pickQuranNavigatorInteraction.handle(p);
       if (result != null) {
@@ -219,10 +213,10 @@ abstract class _QuranStore extends BaseStore with Store {
         }
         if (result.containsKey('aya')) {
           await getAya.next;
-          var selectedAya = listAya.firstWhere((t) {
+          var selectedAya = sourceListAya.firstWhere((t) {
             return t.index == result['aya'];
           }, orElse: () => null);
-          selectedAya$.add(selectedAya);
+          initialSelectedAya$.add(selectedAya);
         }
       }
     });
@@ -263,15 +257,26 @@ abstract class _QuranStore extends BaseStore with Store {
   RxCommand getAya;
 
   @observable
-  ObservableList<Aya> listAya = ObservableList();
+  ObservableList<Aya> sourceListAya = ObservableList();
+
+  @computed
+  ObservableList<AyaStore> get listAya {
+    return ObservableList.of(sourceListAya.map((f) {
+      return AyaStore(
+        selectedChapter$.value,
+        f,
+        selectedListTranslationData,
+      );
+    }));
+  }
 
   BehaviorSubject<Aya> initialSelectedAya$ = BehaviorSubject(
     sync: true,
   );
 
-  BehaviorSubject<Aya> selectedAya$ = BehaviorSubject(
-    sync: true,
-  );
+  // BehaviorSubject<Aya> selectedAya$ = BehaviorSubject(
+  //   sync: true,
+  // );
 
   var state$ = BehaviorSubject<DataState>.seeded(
     DataState(
@@ -284,6 +289,8 @@ abstract class _QuranStore extends BaseStore with Store {
   var selectedQuranTextData$ = BehaviorSubject<QuranTextData>(
     sync: true,
   );
+
+  var selectedListTranslationData = List<TranslationData>();
 
   var listTranslationData = ObservableList<TranslationData>();
 
@@ -309,6 +316,62 @@ abstract class _QuranStore extends BaseStore with Store {
 
   final translationFontSize$ = BehaviorSubject<double>.seeded(
     16,
+    sync: true,
+  );
+}
+
+class AyaStore {
+  var appServices = sl.get<AppServices>();
+  var quranProvider = sl.get<QuranProvider>();
+
+  AyaStore(
+    Chapters chapter,
+    Aya aya,
+    List<TranslationData> translationsData, {
+    AppServices appServices,
+    QuranProvider quranProvider,
+  }) {
+    this.aya.add(aya);
+
+    this.appServices = appServices ?? (appServices = this.appServices);
+    this.quranProvider = quranProvider ?? (quranProvider = this.quranProvider);
+
+    appServices.logger.i('Item aya ${aya.index}');
+
+    getTranslations = RxCommand.createAsyncNoParamNoResult(() async {
+      translationState.add(DataState(enumSelector: EnumSelector.loading));
+
+      var _translation = await Stream.fromIterable(
+        translationsData,
+      ).asyncExpand((t) {
+        return DeferStream(() {
+          return quranProvider
+              .getTranslation(chapter.chapterNumber, aya.index, t)
+              .asStream()
+              .map((aya) {
+            return Tuple2(aya, t);
+          });
+        });
+      }).handleError((e) {
+        appServices.logger.e(e ?? '');
+      }).toList();
+      if (!translations.hasValue) {
+        translations.add(_translation);
+      }
+
+      translationState.add(DataState(enumSelector: EnumSelector.success));
+    });
+  }
+
+  RxCommand getTranslations;
+
+  final aya = BehaviorSubject<Aya>();
+
+  final translations = BehaviorSubject<List<Tuple2<Aya, TranslationData>>>(
+    sync: true,
+  );
+
+  final translationState = BehaviorSubject<DataState>(
     sync: true,
   );
 }

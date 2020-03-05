@@ -23,8 +23,10 @@ class _QuranSettingsWidgetState extends State<QuranSettingsWidget>
       children: <Widget>[
         SafeArea(
           child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 15,
+            padding: EdgeInsets.only(
+              left: 15,
+              right: 15,
+              top: 10,
             ),
             child: Text(
               store.localization.getByKey('quran_settings.title'),

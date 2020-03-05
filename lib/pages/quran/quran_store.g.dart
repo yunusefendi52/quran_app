@@ -9,21 +9,28 @@ part of 'quran_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$QuranStore on _QuranStore, Store {
-  final _$listAyaAtom = Atom(name: '_QuranStore.listAya');
+  Computed<ObservableList<AyaStore>> _$listAyaComputed;
 
   @override
-  ObservableList<Aya> get listAya {
-    _$listAyaAtom.context.enforceReadPolicy(_$listAyaAtom);
-    _$listAyaAtom.reportObserved();
-    return super.listAya;
+  ObservableList<AyaStore> get listAya => (_$listAyaComputed ??=
+          Computed<ObservableList<AyaStore>>(() => super.listAya))
+      .value;
+
+  final _$sourceListAyaAtom = Atom(name: '_QuranStore.sourceListAya');
+
+  @override
+  ObservableList<Aya> get sourceListAya {
+    _$sourceListAyaAtom.context.enforceReadPolicy(_$sourceListAyaAtom);
+    _$sourceListAyaAtom.reportObserved();
+    return super.sourceListAya;
   }
 
   @override
-  set listAya(ObservableList<Aya> value) {
-    _$listAyaAtom.context.conditionallyRunInAction(() {
-      super.listAya = value;
-      _$listAyaAtom.reportChanged();
-    }, _$listAyaAtom, name: '${_$listAyaAtom.name}_set');
+  set sourceListAya(ObservableList<Aya> value) {
+    _$sourceListAyaAtom.context.conditionallyRunInAction(() {
+      super.sourceListAya = value;
+      _$sourceListAyaAtom.reportChanged();
+    }, _$sourceListAyaAtom, name: '${_$sourceListAyaAtom.name}_set');
   }
 
   final _$chaptersAtom = Atom(name: '_QuranStore.chapters');
@@ -46,7 +53,7 @@ mixin _$QuranStore on _QuranStore, Store {
   @override
   String toString() {
     final string =
-        'listAya: ${listAya.toString()},chapters: ${chapters.toString()}';
+        'sourceListAya: ${sourceListAya.toString()},chapters: ${chapters.toString()},listAya: ${listAya.toString()}';
     return '{$string}';
   }
 }

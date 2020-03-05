@@ -6,6 +6,7 @@ import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/baselib/base_widgetparameter_mixin.dart';
 import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/models/models.dart';
+import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/pages/quran/quran_store.dart';
 import 'package:quiver/strings.dart';
 import 'package:quran_app/pages/quran_navigator/quran_navigator_store.dart';
@@ -13,6 +14,7 @@ import 'package:quran_app/pages/quran_navigator/quran_navigator_widget.dart';
 import 'package:quran_app/pages/quran_settings/quran_settings_widget.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:tuple/tuple.dart';
 import '../quran_settings/quran_settings_store.dart';
 
 class QuranWidget extends StatefulWidget with BaseWidgetParameterMixin {
@@ -25,8 +27,6 @@ class _QuranWidgetState extends State<QuranWidget>
     with
         BaseStateMixin<QuranStore, QuranWidget>,
         AutomaticKeepAliveClientMixin {
-  ItemScrollController itemScrollController;
-
   QuranStore _store;
   @override
   QuranStore get store => _store;
@@ -41,8 +41,6 @@ class _QuranWidgetState extends State<QuranWidget>
     _store = QuranStore(
       parameter: widget.parameter,
     );
-
-    itemScrollController = ItemScrollController();
 
     {
       var d = _store.pickQuranNavigatorInteraction.registerHandler((p) async {
@@ -60,49 +58,6 @@ class _QuranWidgetState extends State<QuranWidget>
       });
       _store.registerDispose(() {
         d.dispose();
-      });
-    }
-
-    {
-      var d = store.initialSelectedAya$
-          .where((t) => t != null)
-          .delay(const Duration(milliseconds: 500))
-          .doOnData((v) {
-            // WORKAROUND: I don't know why ItemScrollController not attached for the first time
-            if (itemScrollController.isAttached) {
-              var ayaIndex = store.listAya.indexOf(
-                v,
-              );
-              itemScrollController.jumpTo(
-                index: ayaIndex,
-              );
-            }
-          })
-          .take(1)
-          .listen(null);
-      store.registerDispose(() {
-        d.cancel();
-      });
-    }
-
-    {
-      var d = store.selectedAya$.doOnData((v) {
-        if (v == null) {
-          return;
-        }
-
-        var itemIndex = store.listAya.indexOf(v);
-        store.appServices.logger.i(
-          'item scroll controller isAttached ${itemScrollController.isAttached}',
-        );
-        if (itemScrollController.isAttached) {
-          itemScrollController.jumpTo(
-            index: itemIndex,
-          );
-        }
-      }).listen(null);
-      _store.registerDispose(() {
-        d.cancel();
       });
     }
   }
@@ -193,10 +148,14 @@ class _QuranWidgetState extends State<QuranWidget>
               ): Container(
                 child: Observer(
                   builder: (BuildContext context) {
+                    var itemIndex = store.listAya.indexWhere(
+                      (t) => t.aya.value == store.initialSelectedAya$.value,
+                    );
                     // https://github.com/google/flutter.widgets/issues/24
                     return ScrollablePositionedList.builder(
                       itemCount: store.listAya.length,
-                      itemScrollController: itemScrollController,
+                      initialScrollIndex: itemIndex >= 0 ? itemIndex : 0,
+                      addAutomaticKeepAlives: true,
                       itemBuilder: (
                         BuildContext context,
                         int index,
@@ -206,51 +165,9 @@ class _QuranWidgetState extends State<QuranWidget>
                         }
 
                         var item = store.listAya[index];
+                        item.getTranslations.execute();
 
-                        List<Widget> listTranslationWidget = [];
-                        if (item.translations != null) {
-                          for (var translation in item.translations) {
-                            listTranslationWidget.add(
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  SizedBox.fromSize(
-                                    size: Size.fromHeight(10),
-                                  ),
-                                  Container(
-                                    child: Text(
-                                      '${translation.translationData?.languageCode ?? ''}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox.fromSize(
-                                    size: Size.fromHeight(1),
-                                  ),
-                                  Container(
-                                    child: StreamBuilder<double>(
-                                      initialData:
-                                          store.translationFontSize$.value,
-                                      stream: store.translationFontSize$,
-                                      builder: (
-                                        BuildContext context,
-                                        AsyncSnapshot<double> snapshot,
-                                      ) {
-                                        return Text(
-                                          '${translation.text}',
-                                          style: TextStyle(
-                                            fontSize: snapshot.data,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        }
+                        var aya = item.aya.value;
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -293,7 +210,7 @@ class _QuranWidgetState extends State<QuranWidget>
                                               child: Row(
                                                 children: <Widget>[
                                                   Text(
-                                                    '${item.index}',
+                                                    '${aya.index}',
                                                     style: TextStyle(
                                                       fontSize: 18,
                                                     ),
@@ -336,7 +253,7 @@ class _QuranWidgetState extends State<QuranWidget>
                                             AsyncSnapshot<double> snapshot,
                                           ) {
                                             return Text(
-                                              '${item.text}',
+                                              '${aya.text}',
                                               textDirection: TextDirection.rtl,
                                               style: TextStyle(
                                                 fontSize: snapshot.data,
@@ -346,7 +263,159 @@ class _QuranWidgetState extends State<QuranWidget>
                                             );
                                           },
                                         ),
-                                      ]..addAll(listTranslationWidget),
+                                      ]..add(
+                                          Builder(
+                                            builder: (
+                                              BuildContext context,
+                                            ) {
+                                              return StreamBuilder<DataState>(
+                                                initialData:
+                                                    item.translationState.value,
+                                                stream:
+                                                    item.translationState.delay(
+                                                  const Duration(
+                                                    milliseconds: 500,
+                                                  ),
+                                                ),
+                                                builder: (
+                                                  BuildContext context,
+                                                  AsyncSnapshot<DataState>
+                                                      snapshot,
+                                                ) {
+                                                  return WidgetSelector(
+                                                    selectedState:
+                                                        snapshot.data,
+                                                    states: {
+                                                      DataState(
+                                                        enumSelector:
+                                                            EnumSelector
+                                                                .loading,
+                                                      ): Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      ),
+                                                      DataState(
+                                                        enumSelector:
+                                                            EnumSelector
+                                                                .success,
+                                                      ): Builder(
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return StreamBuilder<
+                                                              List<
+                                                                  Tuple2<Aya,
+                                                                      TranslationData>>>(
+                                                            initialData: item
+                                                                .translations
+                                                                .value,
+                                                            stream: item
+                                                                .translations
+                                                                .delay(
+                                                              const Duration(
+                                                                milliseconds:
+                                                                    500,
+                                                              ),
+                                                            ),
+                                                            builder: (
+                                                              BuildContext
+                                                                  context,
+                                                              AsyncSnapshot<
+                                                                      List<
+                                                                          Tuple2<
+                                                                              Aya,
+                                                                              TranslationData>>>
+                                                                  snapshot,
+                                                            ) {
+                                                              List<Widget>
+                                                                  listTranslationWidget =
+                                                                  [];
+                                                              for (var item
+                                                                  in snapshot
+                                                                      .data) {
+                                                                var translation =
+                                                                    item.item1;
+                                                                var translationData =
+                                                                    item.item2;
+                                                                listTranslationWidget
+                                                                    .add(Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .stretch,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    SizedBox
+                                                                        .fromSize(
+                                                                      size: Size
+                                                                          .fromHeight(
+                                                                              10),
+                                                                    ),
+                                                                    Container(
+                                                                      child:
+                                                                          Text(
+                                                                        '${translationData.languageCode ?? ''}',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox
+                                                                        .fromSize(
+                                                                      size: Size
+                                                                          .fromHeight(
+                                                                              1),
+                                                                    ),
+                                                                    Container(
+                                                                      child: StreamBuilder<
+                                                                          double>(
+                                                                        initialData:
+                                                                            store.translationFontSize$.value ??
+                                                                                18,
+                                                                        stream:
+                                                                            store.translationFontSize$,
+                                                                        builder:
+                                                                            (
+                                                                          BuildContext
+                                                                              context,
+                                                                          AsyncSnapshot<double>
+                                                                              snapshot,
+                                                                        ) {
+                                                                          return Text(
+                                                                            '${translation.text}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontSize: snapshot.data,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ));
+                                                              }
+
+                                                              return Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .stretch,
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children:
+                                                                    listTranslationWidget,
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    },
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          ),
+                                        ),
                                     ),
                                   ],
                                 ),

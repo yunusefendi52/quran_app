@@ -38,18 +38,29 @@ abstract class _QuranSettingsFontsizesStore extends BaseStore
 
     var ds = CompositeSubscription();
 
-    ds.add(arabicFontSizeChanged$.asyncExpand((v) {
-      return rxPrefs.setArabicFontSize(v).asStream().map((_) => v);
-    }).doOnData((v) {
-      arabicFontSize$.add(v);
-    }).listen(null));
+    ds.add(arabicFontSizeChanged$
+        .doOnData((v) {
+          arabicFontSize$.add(v);
+        })
+        .debounceTime(const Duration(milliseconds: 300))
+        .switchMap((v) {
+          return DeferStream(() {
+            return rxPrefs.setArabicFontSize(v).asStream();
+          });
+        })
+        .listen(null));
 
-    ds.add(translationFontSizeChanged$.asyncExpand((v) {
-      return rxPrefs.setTranslationFontSize(v).asStream().map((_) => v);
-    }).doOnData((v) {
-      translationFontSize$.add(v);
-      // return translationFontSize$.take(1);
-    }).listen(null));
+    ds.add(translationFontSizeChanged$
+        .doOnData((v) {
+          translationFontSize$.add(v);
+        })
+        .debounceTime(const Duration(milliseconds: 300))
+        .switchMap((v) {
+          return DeferStream(() {
+            return rxPrefs.setTranslationFontSize(v).asStream().map((_) => v);
+          });
+        })
+        .listen(null));
 
     registerDispose(() {
       ds.dispose();

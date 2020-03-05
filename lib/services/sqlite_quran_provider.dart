@@ -38,10 +38,8 @@ class SqliteQuranProvider implements QuranProvider {
     await initialize(quranTextData);
     var database = _mapDatabase[quranTextData];
     var r = await database.rawQuery(
-        "select * from quran where [sura] == '$chapter' and [aya] == '$aya'", [
-      chapter,
-      aya,
-    ]);
+      "select * from quran where [sura] == '$chapter' and [aya] == '$aya'",
+    );
     var ayaData = r.map((m) {
       var aya = Aya((v) {
         v.indexString = m['sura'];
@@ -70,24 +68,25 @@ class SqliteQuranProvider implements QuranProvider {
 
     var listAya = List<Aya>();
     if (translations?.isNotEmpty == true) {
-      for (var item in listAyaHolder) {
-        var l = await Stream.fromIterable(translations)
-            .asyncMap((f) async {
-              var translation = await getTranslation(chapter, f);
-              return translation;
-            })
-            .where((v) => v != null)
-            .expand((t) => t)
-            .where((t) => t.index == item.index)
-            .toList();
-        var itemBuilder = item.toBuilder();
-        itemBuilder.update((f) {
-          f.translations.clear();
-          f.translations.addAll(l);
-        });
-        var newItem = itemBuilder.build();
-        listAya.add(newItem);
-      }
+      listAya = listAyaHolder;
+      // for (var item in listAyaHolder) {
+      //   var l = await Stream.fromIterable(translations)
+      //       .asyncMap((f) async {
+      //         var translation = await getTranslations(chapter, f);
+      //         return translation;
+      //       })
+      //       .where((v) => v != null)
+      //       .expand((t) => t)
+      //       .where((t) => t.index == item.index)
+      //       .toList();
+      //   var itemBuilder = item.toBuilder();
+      //   itemBuilder.update((f) {
+      //     f.translations.clear();
+      //     f.translations.addAll(l);
+      //   });
+      //   var newItem = itemBuilder.build();
+      //   listAya.add(newItem);
+      // }
     } else {
       listAya = listAyaHolder;
     }
@@ -142,8 +141,7 @@ class SqliteQuranProvider implements QuranProvider {
     return Future.value(l);
   }
 
-  Future<List<Aya>> getTranslation(
-    int chapter,
+  Future<Database> _getDatabaseTranslation(
     TranslationData translationData,
   ) async {
     var quranFolder = await getQuranFolder();
@@ -157,6 +155,14 @@ class SqliteQuranProvider implements QuranProvider {
       });
     }
     var database = _translationMapDatabase[translationData];
+    return database;
+  }
+
+  Future<List<Aya>> getTranslations(
+    int chapter,
+    TranslationData translationData,
+  ) async {
+    var database = await _getDatabaseTranslation(translationData);
     var rawQuery = await database.rawQuery(
       'SELECT * FROM "verses" where [sura] == $chapter',
     );
@@ -257,5 +263,30 @@ class SqliteQuranProvider implements QuranProvider {
         })
         .take(1)
         .listen(null);
+  }
+
+  @override
+  Future<Aya> getTranslation(
+    int chapter,
+    int aya,
+    TranslationData translationData,
+  ) async {
+    var database = await _getDatabaseTranslation(translationData);
+    var rawQuery = await database.rawQuery(
+      'select * from "verses" where [sura] == $chapter and [ayah] == $aya',
+    );
+    var m = rawQuery.firstWhere(
+      (t) => t != null,
+      orElse: () => null,
+    );
+    if (m == null) {
+      throw ArgumentError('This should be not null');
+    }
+    var i = Aya((v) {
+      v.indexString = m['ayah']?.toString();
+      v.text = m['text'];
+      v.translationData = translationData;
+    });
+    return i;
   }
 }

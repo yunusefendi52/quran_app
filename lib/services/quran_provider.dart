@@ -117,8 +117,14 @@ abstract class QuranProvider {
     List<TranslationData> translations,
   ]);
 
-  Future<List<Aya>> getTranslation(
+  Future<List<Aya>> getTranslations(
     int chapter,
+    TranslationData translationData,
+  );
+
+  Future<Aya> getTranslation(
+    int chapter,
+    int aya,
     TranslationData translationData,
   );
 
@@ -205,7 +211,7 @@ class XmlQuranProvider implements QuranProvider {
       for (var item in listAyaImmutable) {
         var l = await Stream.fromIterable(translations)
             .asyncMap((f) async {
-              var translation = await getTranslation(chapter, f);
+              var translation = await getTranslations(chapter, f);
               return translation;
             })
             .where((v) => v != null)
@@ -272,7 +278,7 @@ class XmlQuranProvider implements QuranProvider {
     return Future.value(l);
   }
 
-  Future<List<Aya>> getTranslation(
+  Future<List<Aya>> getTranslations(
     int chapter,
     TranslationData translationData,
   ) async {
@@ -316,6 +322,13 @@ class XmlQuranProvider implements QuranProvider {
 
   @override
   void dispose() {}
+
+  @override
+  Future<Aya> getTranslation(
+      int chapter, int aya, TranslationData translationData) {
+    // TODO: implement getTranslation
+    return null;
+  }
 }
 
 class QuranTextData {
