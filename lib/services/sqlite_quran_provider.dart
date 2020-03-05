@@ -67,6 +67,7 @@ class SqliteQuranProvider implements QuranProvider {
       });
       listAyaHolder.add(aya);
     });
+
     var listAya = List<Aya>();
     if (translations?.isNotEmpty == true) {
       for (var item in listAyaHolder) {

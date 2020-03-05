@@ -11,6 +11,7 @@ import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/pages/quran_navigator/quran_navigator_store.dart';
 import 'package:quran_app/pages/quran_settings_fontsizes/quran_settings_fontsizes_store.dart';
 import 'package:quran_app/services/quran_provider.dart';
+import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
 import '../quran_settings_translations/quran_settings_translations_store.dart';
 import '../../extensions/settings_extension.dart';
@@ -78,7 +79,7 @@ abstract class _QuranStore extends BaseStore with Store {
       }
     });
 
-    getAya = Command(() async {
+    getAya = RxCommand.createAsyncNoParam(() async {
       try {
         state$.add(
           DataState(
@@ -111,23 +112,16 @@ abstract class _QuranStore extends BaseStore with Store {
               (t) => t.isSelected$.value == true,
             )
             .toList();
+
+        appServices.logger.i('Fetching aya');
         var listAyaByChapter = await _quranProvider.getAyaByChapter(
           selectedChapter$.value.chapterNumber,
           selectedQuranTextData$.value,
           selectedListTranslationData,
         );
-        listAya.clear();
-        listAya.addAll(listAyaByChapter);
-        if (!selectedAya$.hasValue) {
-          int aya = parameter['aya'];
-          var f = listAya.firstWhere(
-            (t) => aya != null ? t.index == aya : t != null,
-            orElse: () => null,
-          );
-          if (f != null) {
-            selectedAya$.add(f);
-          }
-        }
+        appServices.logger.i('Done fetching aya');
+
+        return listAyaByChapter;
       } finally {
         state$.add(
           DataState(
@@ -154,10 +148,22 @@ abstract class _QuranStore extends BaseStore with Store {
         ],
       ).asyncExpand((_) {
         return DeferStream(() {
-          return Stream.fromFutures([
-            getAya.executeIf(),
-          ]);
+          getAya.execute();
+          return getAya.next.asStream();
         });
+      }).doOnData((v) {
+        listAya.clear();
+        listAya.addAll(v);
+        if (!selectedAya$.hasValue) {
+          int aya = parameter['aya'];
+          var f = listAya.firstWhere(
+            (t) => aya != null ? t.index == aya : t != null,
+            orElse: () => null,
+          );
+          if (f != null) {
+            selectedAya$.add(f);
+          }
+        }
       }).handleError((e) {
         appServices.logger.e(e);
       }).listen(null));
@@ -254,7 +260,7 @@ abstract class _QuranStore extends BaseStore with Store {
 
   Command initialize;
 
-  Command getAya;
+  RxCommand getAya;
 
   @observable
   ObservableList<Aya> listAya = ObservableList();
