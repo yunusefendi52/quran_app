@@ -18,36 +18,45 @@ class _QuranSettingsWidgetState extends State<QuranSettingsWidget>
     with BaseStateMixin<QuranSettingsStore, QuranSettingsWidget> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        SafeArea(
-          child: Container(
-            padding: EdgeInsets.only(
-              left: 15,
-              right: 15,
-              top: 10,
-            ),
-            child: Text(
-              store.localization.getByKey('quran_settings.title'),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          store.localization.getByKey('quran_settings.title'),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.body1.color,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: store.items.length,
-            itemBuilder: (BuildContext context, int index) {
-              final item = store.items[index];
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // SafeArea(
+          //   child: Container(
+          //     padding: EdgeInsets.only(
+          //       left: 15,
+          //       right: 15,
+          //       top: 10,
+          //     ),
+          //     child: ,
+          //   ),
+          // ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: store.items.length,
+              itemBuilder: (BuildContext context, int index) {
+                final item = store.items[index];
 
-              return item.item1;
-            },
+                return item.item1;
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
