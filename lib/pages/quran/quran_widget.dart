@@ -1,3 +1,4 @@
+import 'package:animator/animator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
@@ -166,6 +167,7 @@ class _QuranWidgetState extends State<QuranWidget>
 
                         var item = store.listAya[index];
                         item.getTranslations.execute();
+                        item.getBookmark.execute();
 
                         var aya = item.aya.value;
 
@@ -173,6 +175,7 @@ class _QuranWidgetState extends State<QuranWidget>
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             InkWell(
+                              onTap: () {},
                               child: Container(
                                 padding: EdgeInsets.only(
                                   left: 15,
@@ -215,21 +218,98 @@ class _QuranWidgetState extends State<QuranWidget>
                                                       fontSize: 18,
                                                     ),
                                                   ),
-                                                  // Icons (e.g bookmarks)
-                                                  // Container(
-                                                  //   width: aya.isBookmarked ? 10 : 0,
-                                                  // ),
-                                                  // aya.isBookmarked
-                                                  //     ? Icon(
-                                                  //         Icons.bookmark,
-                                                  //         color: Theme.of(context).accentColor,
-                                                  //       )
-                                                  //     : Container(),
-                                                  // Icon(
-                                                  //   Icons.bookmark,
-                                                  //   color:
-                                                  //       Theme.of(context).accentColor,
-                                                  // ),
+                                                  // Bookmarks
+                                                  StreamBuilder<bool>(
+                                                    initialData:
+                                                        item.isBookmarked.value,
+                                                    stream: item.isBookmarked,
+                                                    builder: (
+                                                      BuildContext context,
+                                                      AsyncSnapshot snapshot,
+                                                    ) {
+                                                      var isBookmarked = item
+                                                          .isBookmarked.value;
+
+                                                      return Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: <Widget>[
+                                                          isBookmarked
+                                                              ? Builder(
+                                                                  builder: (
+                                                                    BuildContext
+                                                                        context,
+                                                                  ) {
+                                                                    return Animator<
+                                                                        double>(
+                                                                      duration:
+                                                                          const Duration(
+                                                                        milliseconds:
+                                                                            100,
+                                                                      ),
+                                                                      builder:
+                                                                          (v) {
+                                                                        return Transform
+                                                                            .scale(
+                                                                          scale:
+                                                                              v.value,
+                                                                          child:
+                                                                              IconButton(
+                                                                            icon:
+                                                                                Icon(
+                                                                              Icons.bookmark,
+                                                                              color: Theme.of(context).accentColor,
+                                                                            ),
+                                                                            onPressed:
+                                                                                () {
+                                                                              store.bookmarkActionType.add(
+                                                                                Tuple3(QuranBookmarkButtonMode.remove, item, item.quranBookmark),
+                                                                              );
+                                                                            },
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                )
+                                                              : Animator<
+                                                                  double>(
+                                                                  duration:
+                                                                      const Duration(
+                                                                    milliseconds:
+                                                                        100,
+                                                                  ),
+                                                                  builder: (v) {
+                                                                    return Transform
+                                                                        .scale(
+                                                                      scale: v
+                                                                          .value,
+                                                                      child:
+                                                                          IconButton(
+                                                                        icon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .bookmark_border,
+                                                                        ),
+                                                                        onPressed:
+                                                                            () {
+                                                                          store
+                                                                              .bookmarkActionType
+                                                                              .add(
+                                                                            Tuple3(
+                                                                                QuranBookmarkButtonMode.add,
+                                                                                item,
+                                                                                null),
+                                                                          );
+                                                                        },
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                )
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
                                                 ],
                                               ),
                                             ),

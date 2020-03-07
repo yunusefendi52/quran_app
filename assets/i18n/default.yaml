@@ -9,3 +9,7 @@ quran_settings_fontsizes.arabic_fontsize: Arabic font size
 quran_settings_fontsizes.translation_fontsize: Translation font size
 quran_settings_theme.title: Theme
 home_tab_juz.juz: Juz
+bookmarks.title: Bookmarks
+bookmarks.no_bookmarks: No bookmarks added
+bookmarks.add_to_bookmark: Add bookmark
+bookmarks.remove_bookmark: Remove bookmark

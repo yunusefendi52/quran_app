@@ -47,7 +47,7 @@ class LocalizationService extends ILocalizationService {
     return _localeResources[key] ?? _defaultResources[key] ?? '-';
   }
 
-  var _neutralLocale = Locale.parse('en');
+  var _neutralLocale = Locale.parse('en-US');
   @override
   Locale get neutralLocale => _neutralLocale;
 }

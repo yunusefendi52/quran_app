@@ -25,7 +25,7 @@ abstract class _SplashStore extends BaseStore with Store {
 
     initialize = Command(() async {
       // Load localization
-      await _localizationService.loadFromBundle(Locale.parse('en'));
+      await _localizationService.loadFromBundle(Locale.parse('en-US'));
 
       await _appServices.navigatorState.pushNamedAndRemoveUntil(
         '/home',

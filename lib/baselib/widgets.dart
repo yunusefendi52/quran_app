@@ -16,6 +16,19 @@ class WidgetSelector<T> extends StatelessWidget {
 }
 
 class DataState {
+  static DataState none = DataState(
+    enumSelector: EnumSelector.none,
+  );
+  static DataState loading = DataState(
+    enumSelector: EnumSelector.loading,
+  );
+  static DataState error = DataState(
+    enumSelector: EnumSelector.error,
+  );
+  static DataState success = DataState(
+    enumSelector: EnumSelector.success,
+  );
+
   final EnumSelector enumSelector;
   final String message;
 

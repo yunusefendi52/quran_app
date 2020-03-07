@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:moor/moor.dart';
 import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/command.dart';
@@ -10,6 +11,8 @@ import 'package:quran_app/models/setting_ids.dart';
 import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/pages/quran_navigator/quran_navigator_store.dart';
 import 'package:quran_app/pages/quran_settings_fontsizes/quran_settings_fontsizes_store.dart';
+import 'package:quran_app/services/appdb.dart';
+import 'package:quran_app/services/bookmarks_provider.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
@@ -27,12 +30,14 @@ abstract class _QuranStore extends BaseStore with Store {
   var _quranProvider = sl.get<QuranProvider>();
   var localization = sl.get<ILocalizationService>();
   var appServices = sl.get<AppServices>();
+  var bookmarksProvider = sl.get<BookmarksProvider>();
 
   _QuranStore({
     Map<String, Object> parameter,
     QuranProvider quranProvider,
     ILocalizationService localizationService,
     AppServices appServices,
+    BookmarksProvider bookmarksProvider,
   }) {
     Chapters selectedChapter = parameter['chapter'];
     selectedChapter$.add(selectedChapter);
@@ -41,6 +46,8 @@ abstract class _QuranStore extends BaseStore with Store {
         localizationService ?? (localizationService = this.localization);
     _quranProvider = quranProvider ?? _quranProvider;
     this.appServices = appServices ?? (appServices = this.appServices);
+    this.bookmarksProvider =
+        bookmarksProvider ?? (bookmarksProvider = this.bookmarksProvider);
 
     initialize = Command(() async {
       try {
@@ -64,9 +71,10 @@ abstract class _QuranStore extends BaseStore with Store {
         var _chapters = await _quranProvider.getChapters(localization.locale);
         chapters.clear();
         chapters.addAll(_chapters);
-        if (selectedChapter$.value.id == selectedChapter.id) {
+        if (selectedChapter$.value.chapterNumber ==
+            selectedChapter.chapterNumber) {
           var newSelectedChapter = _chapters.firstWhere(
-            (t) => t.id == selectedChapter.id,
+            (t) => t.chapterNumber == selectedChapter.chapterNumber,
             orElse: () => null,
           );
           selectedChapter$.add(newSelectedChapter);
@@ -246,6 +254,50 @@ abstract class _QuranStore extends BaseStore with Store {
       translationFontSize$.add(v);
     }).listen(null);
 
+    addBookmark = RxCommand.createAsyncNoResult((AyaStore item) async {
+      var utc = DateTime.now();
+      var v = QuranBookmarksCompanion(
+        aya: Value(item.aya.value.index),
+        insertTime: Value(utc.microsecondsSinceEpoch),
+        sura: Value(item.chapter.chapterNumber),
+        suraName: Value(item.chapter.nameSimple),
+      );
+      var id = await bookmarksProvider.addItem(v);
+      appServices.logger.i('Addded item id: $id');
+
+      item.getBookmark.execute();
+    });
+
+    removeBookmark = RxCommand.createAsyncNoResult(
+      (Tuple3<QuranBookmarkButtonMode, AyaStore, QuranBookmark> item) async {
+        var id = await bookmarksProvider.removeItem(item.item3);
+        appServices.logger.i('Removed item id: $id');
+
+        item.item2.isBookmarked.add(false);
+      },
+    );
+
+    {
+      var d = bookmarkActionType.asyncExpand((t) {
+        if (t.item1 == QuranBookmarkButtonMode.add) {
+          return DeferStream(() {
+            addBookmark.execute(t.item2);
+            return addBookmark.next.asStream();
+          });
+        } else {
+          return DeferStream(() {
+            removeBookmark.execute(t);
+            return removeBookmark.next.asStream();
+          });
+        }
+      }).doOnData((_) {
+        appServices.logger.i('Bookmark action done');
+      }).listen(null);
+      registerDispose(() {
+        d.cancel();
+      });
+    }
+
     registerDispose(() {
       selectedChapter$.close();
       selectedQuranTextData$.close();
@@ -255,6 +307,14 @@ abstract class _QuranStore extends BaseStore with Store {
   Command initialize;
 
   RxCommand getAya;
+
+  RxCommand<AyaStore, void> addBookmark;
+
+  RxCommand<Tuple3<QuranBookmarkButtonMode, AyaStore, QuranBookmark>, void>
+      removeBookmark;
+
+  final bookmarkActionType = PublishSubject<
+      Tuple3<QuranBookmarkButtonMode, AyaStore, QuranBookmark>>();
 
   @observable
   ObservableList<Aya> sourceListAya = ObservableList();
@@ -273,10 +333,6 @@ abstract class _QuranStore extends BaseStore with Store {
   BehaviorSubject<Aya> initialSelectedAya$ = BehaviorSubject(
     sync: true,
   );
-
-  // BehaviorSubject<Aya> selectedAya$ = BehaviorSubject(
-  //   sync: true,
-  // );
 
   var state$ = BehaviorSubject<DataState>.seeded(
     DataState(
@@ -320,9 +376,15 @@ abstract class _QuranStore extends BaseStore with Store {
   );
 }
 
+enum QuranBookmarkButtonMode {
+  add,
+  remove,
+}
+
 class AyaStore {
   var appServices = sl.get<AppServices>();
   var quranProvider = sl.get<QuranProvider>();
+  var bookmarksProvider = sl.get<BookmarksProvider>();
 
   AyaStore(
     Chapters chapter,
@@ -330,11 +392,15 @@ class AyaStore {
     List<TranslationData> translationsData, {
     AppServices appServices,
     QuranProvider quranProvider,
+    BookmarksProvider bookmarksProvider,
   }) {
+    this.chapter = chapter;
     this.aya.add(aya);
 
     this.appServices = appServices ?? (appServices = this.appServices);
     this.quranProvider = quranProvider ?? (quranProvider = this.quranProvider);
+    this.bookmarksProvider =
+        bookmarksProvider ?? (bookmarksProvider = this.bookmarksProvider);
 
     appServices.logger.i('Item aya ${aya.index}');
 
@@ -361,9 +427,21 @@ class AyaStore {
 
       translationState.add(DataState(enumSelector: EnumSelector.success));
     });
+
+    getBookmark = RxCommand.createAsyncNoParamNoResult(() async {
+      var item =
+          await bookmarksProvider.getItem(aya.index, chapter.chapterNumber);
+      quranBookmark = item;
+      isBookmarked.add(quranBookmark != null);
+      appServices.logger.i('get quran bookmark: $quranBookmark');
+    });
   }
 
   RxCommand getTranslations;
+
+  RxCommand getBookmark;
+
+  Chapters chapter;
 
   final aya = BehaviorSubject<Aya>();
 
@@ -373,5 +451,11 @@ class AyaStore {
 
   final translationState = BehaviorSubject<DataState>(
     sync: true,
+  );
+
+  QuranBookmark quranBookmark;
+
+  final isBookmarked = BehaviorSubject<bool>.seeded(
+    false,
   );
 }

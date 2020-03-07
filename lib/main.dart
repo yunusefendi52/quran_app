@@ -7,6 +7,8 @@ import 'baselib/app_services.dart';
 import 'baselib/localization_service.dart';
 import 'baselib/service_locator.dart';
 import 'pages/main/main_widget.dart';
+import 'services/appdb.dart';
+import 'services/bookmarks_provider.dart';
 import 'services/quran_provider.dart';
 import 'services/sqlite_quran_provider.dart';
 
@@ -32,6 +34,12 @@ void registerInjector() {
   });
   sl.registerLazySingleton<ThemeProviderImplementation>(() {
     return ThemeProviderImplementation();
+  });
+  sl.registerLazySingleton<AppDb>(() {
+    return AppDb();
+  });
+  sl.registerLazySingleton<BookmarksProvider>(() {
+    return SqliteBookmarksProvider();
   });
 }
 

@@ -179,7 +179,7 @@ class XmlQuranProvider implements QuranProvider {
 
   Future<List<Chapters>> getChapters(Locale locale) async {
     var raw = await _assetBundle.loadString(
-      'assets/quran-data/chapters/chapters.${locale.toLanguageTag()}.json',
+      'assets/quran-data/chapters/chapters.${locale.languageCode}.json',
     );
     Map m = jsonDecode(raw);
     List list = m['chapters'];
