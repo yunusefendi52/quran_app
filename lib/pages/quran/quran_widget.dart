@@ -153,361 +153,354 @@ class _QuranWidgetState extends State<QuranWidget>
                       (t) => t.aya.value == store.initialSelectedAya$.value,
                     );
                     // https://github.com/google/flutter.widgets/issues/24
-                    return ScrollablePositionedList.builder(
-                      itemCount: store.listAya.length,
-                      initialScrollIndex: itemIndex >= 0 ? itemIndex : 0,
-                      addAutomaticKeepAlives: true,
-                      itemBuilder: (
-                        BuildContext context,
-                        int index,
-                      ) {
-                        if (store.listAya.isEmpty) {
-                          return Container();
-                        }
 
-                        var item = store.listAya[index];
-                        item.getTranslations.execute();
-                        item.getBookmark.execute();
+                    return Scrollbar(
+                      child: ScrollablePositionedList.builder(
+                        itemCount: store.listAya.length,
+                        initialScrollIndex: itemIndex >= 0 ? itemIndex : 0,
+                        addAutomaticKeepAlives: true,
+                        itemBuilder: (
+                          BuildContext context,
+                          int index,
+                        ) {
+                          if (store.listAya.isEmpty) {
+                            return Container();
+                          }
 
-                        var aya = item.aya.value;
+                          var item = store.listAya[index];
+                          item.getTranslations.execute();
+                          item.getBookmark.execute();
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            InkWell(
-                              onTap: () {},
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                  left: 15,
-                                  top: 15,
-                                  right: 20,
-                                  bottom: 25,
-                                ),
-                                child: Stack(
-                                  children: <Widget>[
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: <Widget>[
-                                        // Bismillah
-                                        // !isBlank('aya.bismillah')
-                                        !isBlank('')
-                                            ? Container(
-                                                padding: EdgeInsets.only(
-                                                  top: 10,
-                                                  bottom: 25,
-                                                ),
-                                                child: Text(
-                                                  'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize: 30,
+                          var aya = item.aya.value;
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              InkWell(
+                                onTap: () {},
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                    left: 15,
+                                    top: 15,
+                                    right: 20,
+                                    bottom: 25,
+                                  ),
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: <Widget>[
+                                          // Bismillah
+                                          // !isBlank('aya.bismillah')
+                                          !isBlank('')
+                                              ? Container(
+                                                  padding: EdgeInsets.only(
+                                                    top: 10,
+                                                    bottom: 25,
                                                   ),
-                                                ),
-                                              )
-                                            : Container(),
-                                        // 1
-                                        Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    '${aya.index}',
+                                                  child: Text(
+                                                    'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                                                    textAlign: TextAlign.center,
                                                     style: TextStyle(
-                                                      fontSize: 18,
+                                                      fontSize: 30,
                                                     ),
                                                   ),
-                                                  // Bookmarks
-                                                  StreamBuilder<bool>(
-                                                    initialData:
-                                                        item.isBookmarked.value,
-                                                    stream: item.isBookmarked,
-                                                    builder: (
-                                                      BuildContext context,
-                                                      AsyncSnapshot snapshot,
-                                                    ) {
-                                                      var isBookmarked = item
-                                                          .isBookmarked.value;
+                                                )
+                                              : Container(),
+                                          // 1
+                                          Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '${aya.index}',
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                    // Bookmarks
+                                                    StreamBuilder<bool>(
+                                                      initialData: item
+                                                          .isBookmarked.value,
+                                                      stream: item.isBookmarked,
+                                                      builder: (
+                                                        BuildContext context,
+                                                        AsyncSnapshot snapshot,
+                                                      ) {
+                                                        var isBookmarked = item
+                                                            .isBookmarked.value;
 
-                                                      return Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: <Widget>[
-                                                          isBookmarked
-                                                              ? Builder(
-                                                                  builder: (
-                                                                    BuildContext
-                                                                        context,
-                                                                  ) {
-                                                                    return Animator<
-                                                                        double>(
-                                                                      duration:
-                                                                          const Duration(
-                                                                        milliseconds:
-                                                                            100,
-                                                                      ),
-                                                                      builder:
-                                                                          (v) {
-                                                                        return Transform
-                                                                            .scale(
-                                                                          scale:
-                                                                              v.value,
-                                                                          child:
-                                                                              IconButton(
-                                                                            icon:
-                                                                                Icon(
-                                                                              Icons.bookmark,
-                                                                              color: Theme.of(context).accentColor,
-                                                                            ),
-                                                                            onPressed:
-                                                                                () {
-                                                                              store.bookmarkActionType.add(
-                                                                                Tuple3(QuranBookmarkButtonMode.remove, item, item.quranBookmark),
-                                                                              );
-                                                                            },
-                                                                          ),
-                                                                        );
-                                                                      },
-                                                                    );
-                                                                  },
-                                                                )
-                                                              : Animator<
-                                                                  double>(
-                                                                  duration:
-                                                                      const Duration(
-                                                                    milliseconds:
-                                                                        100,
-                                                                  ),
-                                                                  builder: (v) {
-                                                                    return Transform
-                                                                        .scale(
-                                                                      scale: v
-                                                                          .value,
-                                                                      child:
-                                                                          IconButton(
-                                                                        icon:
-                                                                            Icon(
-                                                                          Icons
-                                                                              .bookmark_border,
+                                                        return Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            isBookmarked
+                                                                ? Builder(
+                                                                    builder: (
+                                                                      BuildContext
+                                                                          context,
+                                                                    ) {
+                                                                      return Animator<
+                                                                          double>(
+                                                                        duration:
+                                                                            const Duration(
+                                                                          milliseconds:
+                                                                              100,
                                                                         ),
-                                                                        onPressed:
-                                                                            () {
-                                                                          store
-                                                                              .bookmarkActionType
-                                                                              .add(
-                                                                            Tuple3(
-                                                                                QuranBookmarkButtonMode.add,
-                                                                                item,
-                                                                                null),
+                                                                        builder:
+                                                                            (v) {
+                                                                          return Transform
+                                                                              .scale(
+                                                                            scale:
+                                                                                v.value,
+                                                                            child:
+                                                                                IconButton(
+                                                                              icon: Icon(
+                                                                                Icons.bookmark,
+                                                                                color: Theme.of(context).accentColor,
+                                                                              ),
+                                                                              onPressed: () {
+                                                                                store.bookmarkActionType.add(
+                                                                                  Tuple3(QuranBookmarkButtonMode.remove, item, item.quranBookmark),
+                                                                                );
+                                                                              },
+                                                                            ),
                                                                           );
                                                                         },
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                )
-                                                        ],
-                                                      );
-                                                    },
-                                                  ),
-                                                ],
+                                                                      );
+                                                                    },
+                                                                  )
+                                                                : Animator<
+                                                                    double>(
+                                                                    duration:
+                                                                        const Duration(
+                                                                      milliseconds:
+                                                                          100,
+                                                                    ),
+                                                                    builder:
+                                                                        (v) {
+                                                                      return Transform
+                                                                          .scale(
+                                                                        scale: v
+                                                                            .value,
+                                                                        child:
+                                                                            IconButton(
+                                                                          icon:
+                                                                              Icon(
+                                                                            Icons.bookmark_border,
+                                                                          ),
+                                                                          onPressed:
+                                                                              () {
+                                                                            store.bookmarkActionType.add(
+                                                                              Tuple3(QuranBookmarkButtonMode.add, item, null),
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                  )
+                                                          ],
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            Container(
-                                              child: Icon(Icons.more_vert),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox.fromSize(
-                                          size: Size.fromHeight(
-                                            15,
+                                              Container(
+                                                child: Icon(Icons.more_vert),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                        // 2
-                                        StreamBuilder<double>(
-                                          initialData:
-                                              store.arabicFontSize$.value,
-                                          stream: store.arabicFontSize$,
-                                          builder: (
-                                            BuildContext context,
-                                            AsyncSnapshot<double> snapshot,
-                                          ) {
-                                            return Text(
-                                              '${aya.text}',
-                                              textDirection: TextDirection.rtl,
-                                              style: TextStyle(
-                                                fontSize: snapshot.data,
-                                                fontFamily:
-                                                    'KFGQPC Uthman Taha Naskh',
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ]..add(
-                                          Builder(
+                                          SizedBox.fromSize(
+                                            size: Size.fromHeight(
+                                              15,
+                                            ),
+                                          ),
+                                          // 2
+                                          StreamBuilder<double>(
+                                            initialData:
+                                                store.arabicFontSize$.value,
+                                            stream: store.arabicFontSize$,
                                             builder: (
                                               BuildContext context,
+                                              AsyncSnapshot<double> snapshot,
                                             ) {
-                                              return StreamBuilder<DataState>(
-                                                initialData:
-                                                    item.translationState.value,
-                                                stream:
-                                                    item.translationState.delay(
-                                                  const Duration(
-                                                    milliseconds: 500,
-                                                  ),
+                                              return Text(
+                                                '${aya.text}',
+                                                textDirection:
+                                                    TextDirection.rtl,
+                                                style: TextStyle(
+                                                  fontSize: snapshot.data,
+                                                  fontFamily:
+                                                      'KFGQPC Uthman Taha Naskh',
                                                 ),
-                                                builder: (
-                                                  BuildContext context,
-                                                  AsyncSnapshot<DataState>
-                                                      snapshot,
-                                                ) {
-                                                  return WidgetSelector(
-                                                    selectedState:
-                                                        snapshot.data,
-                                                    states: {
-                                                      DataState(
-                                                        enumSelector:
-                                                            EnumSelector
-                                                                .loading,
-                                                      ): Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      ),
-                                                      DataState(
-                                                        enumSelector:
-                                                            EnumSelector
-                                                                .success,
-                                                      ): Builder(
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return StreamBuilder<
-                                                              List<
-                                                                  Tuple2<Aya,
-                                                                      TranslationData>>>(
-                                                            initialData: item
-                                                                .translations
-                                                                .value,
-                                                            stream: item
-                                                                .translations
-                                                                .delay(
-                                                              const Duration(
-                                                                milliseconds:
-                                                                    500,
-                                                              ),
-                                                            ),
-                                                            builder: (
-                                                              BuildContext
-                                                                  context,
-                                                              AsyncSnapshot<
-                                                                      List<
-                                                                          Tuple2<
-                                                                              Aya,
-                                                                              TranslationData>>>
-                                                                  snapshot,
-                                                            ) {
-                                                              List<Widget>
-                                                                  listTranslationWidget =
-                                                                  [];
-                                                              for (var item
-                                                                  in snapshot
-                                                                      .data) {
-                                                                var translation =
-                                                                    item.item1;
-                                                                var translationData =
-                                                                    item.item2;
-                                                                listTranslationWidget
-                                                                    .add(Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .stretch,
-                                                                  children: <
-                                                                      Widget>[
-                                                                    SizedBox
-                                                                        .fromSize(
-                                                                      size: Size
-                                                                          .fromHeight(
-                                                                              10),
-                                                                    ),
-                                                                    Container(
-                                                                      child:
-                                                                          Text(
-                                                                        '${translationData.languageCode ?? ''}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox
-                                                                        .fromSize(
-                                                                      size: Size
-                                                                          .fromHeight(
-                                                                              1),
-                                                                    ),
-                                                                    Container(
-                                                                      child: StreamBuilder<
-                                                                          double>(
-                                                                        initialData:
-                                                                            store.translationFontSize$.value ??
-                                                                                18,
-                                                                        stream:
-                                                                            store.translationFontSize$,
-                                                                        builder:
-                                                                            (
-                                                                          BuildContext
-                                                                              context,
-                                                                          AsyncSnapshot<double>
-                                                                              snapshot,
-                                                                        ) {
-                                                                          return Text(
-                                                                            '${translation.text}',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: snapshot.data,
-                                                                            ),
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ));
-                                                              }
-
-                                                              return Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .stretch,
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                children:
-                                                                    listTranslationWidget,
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                      ),
-                                                    },
-                                                  );
-                                                },
                                               );
                                             },
                                           ),
-                                        ),
-                                    ),
-                                  ],
+                                        ]..add(
+                                            Builder(
+                                              builder: (
+                                                BuildContext context,
+                                              ) {
+                                                return StreamBuilder<DataState>(
+                                                  initialData: item
+                                                      .translationState.value,
+                                                  stream: item.translationState
+                                                      .delay(
+                                                    const Duration(
+                                                      milliseconds: 500,
+                                                    ),
+                                                  ),
+                                                  builder: (
+                                                    BuildContext context,
+                                                    AsyncSnapshot<DataState>
+                                                        snapshot,
+                                                  ) {
+                                                    return WidgetSelector(
+                                                      selectedState:
+                                                          snapshot.data,
+                                                      states: {
+                                                        DataState(
+                                                          enumSelector:
+                                                              EnumSelector
+                                                                  .loading,
+                                                        ): Center(
+                                                          child:
+                                                              CircularProgressIndicator(),
+                                                        ),
+                                                        DataState(
+                                                          enumSelector:
+                                                              EnumSelector
+                                                                  .success,
+                                                        ): Builder(
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return StreamBuilder<
+                                                                List<
+                                                                    Tuple2<Aya,
+                                                                        TranslationData>>>(
+                                                              initialData: item
+                                                                  .translations
+                                                                  .value,
+                                                              stream: item
+                                                                  .translations
+                                                                  .delay(
+                                                                const Duration(
+                                                                  milliseconds:
+                                                                      500,
+                                                                ),
+                                                              ),
+                                                              builder: (
+                                                                BuildContext
+                                                                    context,
+                                                                AsyncSnapshot<
+                                                                        List<
+                                                                            Tuple2<Aya,
+                                                                                TranslationData>>>
+                                                                    snapshot,
+                                                              ) {
+                                                                List<Widget>
+                                                                    listTranslationWidget =
+                                                                    [];
+                                                                for (var item
+                                                                    in snapshot
+                                                                        .data) {
+                                                                  var translation =
+                                                                      item.item1;
+                                                                  var translationData =
+                                                                      item.item2;
+                                                                  listTranslationWidget
+                                                                      .add(
+                                                                          Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .stretch,
+                                                                    children: <
+                                                                        Widget>[
+                                                                      SizedBox
+                                                                          .fromSize(
+                                                                        size: Size.fromHeight(
+                                                                            10),
+                                                                      ),
+                                                                      Container(
+                                                                        child:
+                                                                            Text(
+                                                                          '${translationData.languageCode ?? ''}',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w600,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox
+                                                                          .fromSize(
+                                                                        size: Size
+                                                                            .fromHeight(1),
+                                                                      ),
+                                                                      Container(
+                                                                        child: StreamBuilder<
+                                                                            double>(
+                                                                          initialData:
+                                                                              store.translationFontSize$.value ?? 18,
+                                                                          stream:
+                                                                              store.translationFontSize$,
+                                                                          builder:
+                                                                              (
+                                                                            BuildContext
+                                                                                context,
+                                                                            AsyncSnapshot<double>
+                                                                                snapshot,
+                                                                          ) {
+                                                                            return Text(
+                                                                              '${translation.text}',
+                                                                              style: TextStyle(
+                                                                                fontSize: snapshot.data,
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ));
+                                                                }
+
+                                                                return Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .stretch,
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  children:
+                                                                      listTranslationWidget,
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
+                                                      },
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              height: 1,
-                              color: Theme.of(context).dividerColor,
-                            ),
-                          ],
-                        );
-                      },
+                              Container(
+                                height: 1,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     );
                   },
                 ),

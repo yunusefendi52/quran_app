@@ -46,6 +46,7 @@ dependencies:
   moor: ^2.4.1
   moor_ffi: ^0.4.0
   animator: ^1.0.0+5
+  draggable_scrollbar: ^0.0.4
 
 dev_dependencies:
   flutter_test:
