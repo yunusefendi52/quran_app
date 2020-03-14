@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:quran_app/services/quran_translation_file_provider.dart';
 import 'package:quran_app/services/theme_provider.dart';
 import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 
@@ -40,6 +41,9 @@ void registerInjector() {
   });
   sl.registerLazySingleton<BookmarksProvider>(() {
     return SqliteBookmarksProvider();
+  });
+  sl.registerLazySingleton<QuranTranslationFileProvider>(() {
+    return QuranTranslationFileProviderImplementation();
   });
 }
 

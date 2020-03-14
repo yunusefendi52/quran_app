@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/command.dart';
+import 'package:quran_app/baselib/disposable.dart';
 import 'package:quran_app/baselib/localization_service.dart';
 import 'package:quran_app/baselib/widgets.dart';
+import 'package:quran_app/helpers/sort_comparison_builder.dart';
 import 'package:quran_app/models/models.dart';
 import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/services/quran_provider.dart';
@@ -13,6 +15,7 @@ import 'package:tuple/tuple.dart';
 import '../../main.dart';
 import '../quran_settings/quran_settings_store.dart';
 import '../../models/setting_ids.dart';
+import 'quran_settings_translation_item_store.dart';
 
 part 'quran_settings_translations_store.g.dart';
 
@@ -36,6 +39,20 @@ abstract class _QuranSettingsTranslationsStore extends BaseStore
         'quran_settings_translations.translations',
       );
 
+    void disposeTraslations() {
+      translations.forEach((f) {
+        if (f is Disposable) {
+          f.dispose();
+        }
+      });
+    }
+
+    var comparisoBuilder =
+        SortComparisonBuilder<QuranSettingsTranslationItemStore>();
+    comparisoBuilder
+      ..ascending((t) => t.translationData.type.index)
+      ..thenByAscending((t) => t.translationData.name)
+      ..thenByAscending((t) => t.translationData.translator);
     getListTranslations = Command(() async {
       try {
         dataState$.add(DataState(enumSelector: EnumSelector.loading));
@@ -43,7 +60,15 @@ abstract class _QuranSettingsTranslationsStore extends BaseStore
         if (parameter[QuranSettingsTranslationsStore] != null) {
           ObservableList<TranslationData> fetchedTranslations =
               parameter[QuranSettingsTranslationsStore];
-          translations.addAll(fetchedTranslations);
+          var _translations =
+              await Stream.fromIterable(fetchedTranslations).asyncExpand((v) {
+            var item = QuranSettingsTranslationItemStore(v);
+            return Stream.value(item);
+          }).toList();
+          _translations.sort((x, y) => comparisoBuilder.getCompareTo(x, y));
+          disposeTraslations();
+          translations.clear();
+          translations.addAll(_translations);
         }
       } finally {
         dataState$.add(DataState(enumSelector: EnumSelector.success));
@@ -54,12 +79,12 @@ abstract class _QuranSettingsTranslationsStore extends BaseStore
       try {
         dataState$.add(DataState(enumSelector: EnumSelector.loading));
 
-        v.item1.isSelected$.add(v.item2);
+        v.item1.translationData.isSelected$.add(v.item2);
 
         var selectedTranslations = translations.where((t) {
-          return t.isSelected$.value == true;
+          return t.translationData.isSelected$.value == true;
         }).map((f) {
-          return f.id;
+          return f.translationData.id;
         }).toList();
         await rxPrefs.setStringList(
           SettingIds.translationId,
@@ -69,6 +94,38 @@ abstract class _QuranSettingsTranslationsStore extends BaseStore
         dataState$.add(DataState(enumSelector: EnumSelector.success));
       }
     });
+
+    registerDispose(() {
+      disposeTraslations();
+    });
+
+    // QuranSettingsTranslationItemStore transformer(
+    //     TranslationData translationData) {
+    //   var s = QuranSettingsTranslationItemStore(translationData);
+    //   return s;
+    // }
+
+    // sourceListTranslations.observe(
+    //   (f) {
+    //     if (f.type == OperationType.add) {
+    //       var n = f.added.map((v) {
+    //         return transformer(v);
+    //       });
+    //       translations.addAll(n);
+    //     } else if (f.type == OperationType.remove) {
+    //       f.removed.forEach((v) {
+    //         var indexItem = translations.indexWhere(
+    //           (t) => t.translationData == v,
+    //         );
+    //         translations.removeAt(indexItem);
+    //       });
+    //     }
+    //     translations.sort(
+    //       (x, y) => comparisoBuilder.getCompareTo(x, y),
+    //     );
+    //   },
+    //   fireImmediately: true,
+    // );
   }
 
   SettingsItem _settingsItems;
@@ -82,7 +139,7 @@ abstract class _QuranSettingsTranslationsStore extends BaseStore
   Command getListTranslations;
 
   @observable
-  ObservableList<TranslationData> translations = ObservableList();
+  var translations = ObservableList<QuranSettingsTranslationItemStore>();
 
-  Command<Tuple2<TranslationData, bool>> translationChanged;
+  Command<Tuple2<QuranSettingsTranslationItemStore, bool>> translationChanged;
 }

@@ -5,10 +5,14 @@ import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/helpers/localized_helpers.dart';
 import 'package:quran_app/models/models.dart';
+import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/services/quran_provider.dart';
+import 'package:quran_app/services/quran_translation_file_provider.dart';
 import 'package:tuple/tuple.dart';
+import 'quran_settings_translation_item_store.dart';
 import 'quran_settings_translations_store.dart';
 import '../quran_settings/quran_settings_store.dart';
+import 'package:rxdart/rxdart.dart';
 
 class QuranSettingsTranslationsWidget extends StatefulWidget {
   final QuranSettingsTranslationsStore store;
@@ -85,14 +89,13 @@ class _QuranSettingsTranslationsWidgetState
                                 int index,
                               ) {
                                 var item = store.translations[index];
-                                var language =
-                                    LocalizedHelpers.getDisplayLanguage(
-                                  item.languageCode,
-                                );
+                                var translationData = item.translationData;
 
                                 return StreamBuilder<bool>(
-                                  initialData: item.isSelected$.value,
-                                  stream: item.isSelected$.distinct(),
+                                  initialData:
+                                      item.translationData.isSelected$.value,
+                                  stream: item.translationData.isSelected$
+                                      .distinct(),
                                   builder: (
                                     BuildContext context,
                                     AsyncSnapshot<bool> snapshot,
@@ -101,38 +104,220 @@ class _QuranSettingsTranslationsWidgetState
                                       return Container();
                                     }
 
-                                    return CheckboxListTile(
-                                      value: snapshot.data,
-                                      onChanged: (bool value) {
-                                        store.translationChanged.executeIf(
-                                          Tuple2(item, value),
+                                    (() {
+                                      item.checkTranslationFile.execute();
+                                    })();
+
+                                    Widget content = Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 5,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: <Widget>[
+                                          Text(
+                                            translationData.name,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 3,
+                                          ),
+                                          Text(
+                                            translationData.translator,
+                                          ),
+                                        ],
+                                      ),
+                                    );
+
+                                    return StreamBuilder<bool>(
+                                      initialData:
+                                          item.translationFileExists.value,
+                                      stream: item.translationFileExists,
+                                      builder: (
+                                        BuildContext context,
+                                        AsyncSnapshot snapshot,
+                                      ) {
+                                        var isTranslationFileExists =
+                                            item.translationFileExists.value;
+
+                                        if (!isTranslationFileExists &&
+                                            item.translationData.type ==
+                                                TranslationType.download) {
+                                          return ListTile(
+                                            dense: true,
+                                            title: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                content,
+                                                StreamBuilder<QueueStatusModel>(
+                                                  initialData:
+                                                      item.onChangeStatus.value,
+                                                  stream: item.onChangeStatus,
+                                                  builder: (
+                                                    BuildContext context,
+                                                    AsyncSnapshot snapshot,
+                                                  ) {
+                                                    var status = item
+                                                        .onChangeStatus.value;
+
+                                                    return WidgetSelector<
+                                                        QueueStatusModel>(
+                                                      selectedState: status,
+                                                      states: {
+                                                        QueueStatusModel()
+                                                              ..queueStatus =
+                                                                  QueueStatus
+                                                                      .error:
+                                                            Container(
+                                                          child: Text(
+                                                            item
+                                                                    .onChangeStatus
+                                                                    .value
+                                                                    .status ??
+                                                                '',
+                                                            style: TextStyle(
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .italic,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            trailing: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                // Download button
+                                                StreamBuilder<bool>(
+                                                  initialData: true,
+                                                  stream: item
+                                                      .checkTranslationFile
+                                                      .isExecuting,
+                                                  builder: (
+                                                    BuildContext context,
+                                                    AsyncSnapshot<bool>
+                                                        snapshot,
+                                                  ) {
+                                                    if (snapshot.data) {
+                                                      return Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal: 8,
+                                                        ),
+                                                        child: SizedBox(
+                                                          height: 18,
+                                                          width: 18,
+                                                          child:
+                                                              CircularProgressIndicator(),
+                                                        ),
+                                                      );
+                                                    }
+
+                                                    var isTranslationFileExists =
+                                                        item.translationFileExists
+                                                            .value;
+                                                    if (isTranslationFileExists) {
+                                                      return Container();
+                                                    }
+
+                                                    var downloadWidget =
+                                                        InkWell(
+                                                      onTap: () {
+                                                        item.downloadTranslation
+                                                            .executeIf();
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.all(8),
+                                                        child: Icon(
+                                                          Icons.file_download,
+                                                        ),
+                                                      ),
+                                                    );
+                                                    return Container(
+                                                      child: StreamBuilder<
+                                                          QueueStatusModel>(
+                                                        initialData: item
+                                                            .onChangeStatus
+                                                            .value,
+                                                        stream:
+                                                            item.onChangeStatus,
+                                                        builder: (
+                                                          BuildContext context,
+                                                          AsyncSnapshot
+                                                              snapshot,
+                                                        ) {
+                                                          var status = item
+                                                              .onChangeStatus
+                                                              .value
+                                                              .queueStatus;
+                                                          if (status ==
+                                                              QueueStatus
+                                                                  .downloading) {
+                                                            return Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                horizontal: 8,
+                                                              ),
+                                                              child: SizedBox(
+                                                                height: 18,
+                                                                width: 18,
+                                                                child:
+                                                                    CircularProgressIndicator(),
+                                                              ),
+                                                            );
+                                                          }
+
+                                                          // if (downloadStatus ==
+                                                          //     DownloadStatus
+                                                          //         .error) {
+                                                          //   return Observer(
+                                                          //     builder:
+                                                          //         (BuildContext
+                                                          //             context) {
+                                                          //       return Container(
+                                                          //         child: Text(
+                                                          //           item.downloadStatus ??
+                                                          //               '',
+                                                          //         ),
+                                                          //       );
+                                                          //     },
+                                                          //   );
+                                                          // }
+
+                                                          return downloadWidget;
+                                                        },
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+
+                                        return CheckboxListTile(
+                                          value: item.translationData
+                                              .isSelected$.value,
+                                          onChanged: (bool value) {
+                                            store.translationChanged.executeIf(
+                                              Tuple2(item, value),
+                                            );
+                                          },
+                                          dense: true,
+                                          title: content,
                                         );
                                       },
-                                      dense: true,
-                                      title: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 5,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: <Widget>[
-                                            Text(
-                                              language,
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 3,
-                                            ),
-                                            Text(
-                                              item.translator,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
                                     );
                                   },
                                 );

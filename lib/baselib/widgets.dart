@@ -30,7 +30,7 @@ class DataState {
   );
 
   final EnumSelector enumSelector;
-  final String message;
+  String message;
 
   DataState({
     @required this.enumSelector,

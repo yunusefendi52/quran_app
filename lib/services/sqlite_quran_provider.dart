@@ -11,6 +11,7 @@ import 'package:quran_app/models/translation_data.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:yaml/yaml.dart';
 
 import '../main.dart';
 import 'quran_provider.dart';
@@ -120,32 +121,30 @@ class SqliteQuranProvider implements QuranProvider {
   }
 
   @override
-  Future<List<TranslationData>> getListTranslations() {
-    var l = List<TranslationData>();
-    l.add(
-      TranslationData()
-        ..id = '8212a77e-ef9c-4197-bb9f-aefa3b3ba8fe'
-        ..filename = 'en.sahih.db'
-        ..languageCode = 'en'
-        ..name = 'Saheeh International'
-        ..translator = 'Saheeh International',
-    );
-    l.add(
-      TranslationData()
-        ..id = 'b9d87e27-c12e-4041-8602-97365c796a32'
-        ..filename = 'id.indonesian.db'
-        ..languageCode = 'id'
-        ..name = 'Bahasa Indonesia'
-        ..translator = 'Indonesian Ministry of Religious Affairs',
-    );
-    return Future.value(l);
+  Future<List<TranslationData>> getListTranslations() async {
+    var path = join('assets', 'translations.yaml');
+    var listTranslationData =
+        await _assetBundle.loadString(path).asStream().map((raw) {
+      YamlList jsonList = loadYaml(raw);
+      var l = jsonList.map((map) {
+        YamlMap yamlMap = map;
+        var translationData = TranslationData.fromMap(
+          Map<String, dynamic>.from(yamlMap),
+        );
+        return translationData;
+      }).toList();
+      return l;
+    }).first;
+    return listTranslationData;
   }
 
   Future<Database> _getDatabaseTranslation(
     TranslationData translationData,
   ) async {
     var quranFolder = await getQuranFolder();
-    var translationsFolder = Directory(join(quranFolder.path, 'translations'));
+    var translationsFolder = translationData.type == TranslationType.builtIn
+        ? Directory(join(quranFolder.path, 'translations'))
+        : Directory(join(quranFolder.path, 'downloaded_translations'));
     if (!_translationMapDatabase.containsKey(translationData)) {
       var database = await openDatabase(
         join(translationsFolder.path, translationData.filename),
@@ -179,12 +178,6 @@ class SqliteQuranProvider implements QuranProvider {
     return l;
   }
 
-  Future<Directory> getQuranFolder() async {
-    var appDocDir = await getApplicationDocumentsDirectory();
-    var quranFolder = Directory(join(appDocDir.path, 'q'));
-    return quranFolder;
-  }
-
   @override
   Future initialize(QuranTextData quranTextData) async {
     var quranFolder = await getQuranFolder();
@@ -215,7 +208,7 @@ class SqliteQuranProvider implements QuranProvider {
           var l = await getListTranslations();
           for (var item in l) {
             // Get data from assets
-            var p = join('assets', 'quran-data', 'translations', item.filename);
+            var p = join('assets', 'quran-data', 'translations', item.uri);
             var d = await _assetBundle.load(p);
             var translationDirectory = Directory(
               join(
@@ -228,7 +221,7 @@ class SqliteQuranProvider implements QuranProvider {
             }
             var localFilePath = join(
               translationDirectory.path,
-              item.filename,
+              item.uri,
             );
             var localFile = File(localFilePath);
             final buffer = d.buffer;
@@ -272,6 +265,9 @@ class SqliteQuranProvider implements QuranProvider {
     TranslationData translationData,
   ) async {
     var database = await _getDatabaseTranslation(translationData);
+    if (translationData.type == TranslationType.download) {
+      var f = '';
+    }
     var rawQuery = await database.rawQuery(
       'select * from "verses" where [sura] == $chapter and [ayah] == $aya',
     );

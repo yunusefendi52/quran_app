@@ -9,7 +9,7 @@ part 'appdb.g.dart';
 
 @UseMoor(
   include: {
-    'moors/bookmarks.moor',
+    'moors/appdb.moor',
   },
 )
 class AppDb extends _$AppDb {

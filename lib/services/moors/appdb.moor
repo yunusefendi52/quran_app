@@ -6,3 +6,10 @@ CREATE TABLE "quran_bookmarks" (
 	"insert_time"	INTEGER,
 	PRIMARY KEY("id")
 );
+
+CREATE TABLE "downloaded_translations" (
+	"id"	TEXT,
+	"url"	INTEGER,
+	"insert_time"	INTEGER,
+	PRIMARY KEY("id")
+);

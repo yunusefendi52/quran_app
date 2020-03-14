@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/locale.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:quran_app/models/models.dart';
 import 'package:path/path.dart' as p;
 import 'package:quran_app/models/translation_data.dart';
@@ -129,6 +131,12 @@ abstract class QuranProvider {
   );
 
   void dispose();
+}
+
+Future<Directory> getQuranFolder() async {
+  var appDocDir = await getApplicationDocumentsDirectory();
+  var quranFolder = Directory(p.join(appDocDir.path, 'q'));
+  return quranFolder;
 }
 
 class XmlQuranProvider implements QuranProvider {
@@ -262,7 +270,7 @@ class XmlQuranProvider implements QuranProvider {
     l.add(
       TranslationData()
         ..id = '8212a77e-ef9c-4197-bb9f-aefa3b3ba8fe'
-        ..filename = 'en.sahih.xml'
+        ..uri = 'en.sahih.xml'
         ..languageCode = 'en'
         ..name = 'Saheeh International'
         ..translator = 'Saheeh International',
@@ -270,7 +278,7 @@ class XmlQuranProvider implements QuranProvider {
     l.add(
       TranslationData()
         ..id = 'b9d87e27-c12e-4041-8602-97365c796a32'
-        ..filename = 'id.indonesian.xml'
+        ..uri = 'id.indonesian.xml'
         ..languageCode = 'id'
         ..name = 'Bahasa Indonesia'
         ..translator = 'Indonesian Ministry of Religious Affairs',
@@ -288,7 +296,7 @@ class XmlQuranProvider implements QuranProvider {
         'assets',
         'quran-data',
         'translations',
-        '${translationData.filename}',
+        '${translationData.uri}',
       );
       var xmlRaw = await _assetBundle.loadString(filePath);
       xml2json.parse(xmlRaw);

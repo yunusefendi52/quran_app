@@ -47,7 +47,9 @@ dependencies:
   moor_ffi: ^0.4.0
   animator: ^1.0.0+5
   draggable_scrollbar: ^0.0.4
-
+  yaml: ^2.2.0
+  dio: ^3.0.9
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -76,6 +78,8 @@ flutter:
     - assets/quran-data/translations/
     - assets/quran-data/
     - assets/i18n/
+    - assets/
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see
