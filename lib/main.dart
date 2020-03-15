@@ -41,12 +41,12 @@ void registerInjector() {
   sl.registerLazySingleton<AppDb>(() {
     return AppDb();
   });
-  sl.registerLazySingleton<QuranDb>(() {
-    return QuranDb();
-  });
-  sl.registerLazySingleton<TranslationDb>(() {
-    return TranslationDb();
-  });
+  // sl.registerLazySingleton<QuranDb>(() {
+  //   return QuranDb();
+  // });
+  // sl.registerLazySingleton<TranslationDb>(() {
+  //   return TranslationDb();
+  // });
   sl.registerLazySingleton<BookmarksProvider>(() {
     return SqliteBookmarksProvider();
   });
