@@ -20,3 +20,27 @@
   name: Garcia
   translator: Muhammad Isa García
   type: download
+- id: 9873178e49fb4681a2681c81845e749c
+  tableName: sqnahi
+  uri: http://tanzil.net/trans/sq.nahi&type=xml
+  languageCode: sq
+  language: Albanian
+  name: Efendi Nahi
+  translator: Hasan Efendi Nahi
+  type: download
+- id: a81152303f5147f6873487ffc603fe75
+  tableName: de_aburida
+  uri: http://tanzil.net/trans/de.aburida&type=xml
+  languageCode: de
+  language: German
+  name: Abu Rida
+  translator: Abu Rida Muhammad ibn Ahmad ibn Rassoul
+  type: download
+- id: 3622b2a1a74740c7bff5cf44c69d177a
+  tableName: hi_farooq
+  uri: http://tanzil.net/trans/hi.farooq&type=xml
+  languageCode: hi
+  language: Hindi
+  name: फ़ारूक़ ख़ान & अहमद
+  translator: Muhammad Farooq Khan and Muhammad Ahmed
+  type: download
