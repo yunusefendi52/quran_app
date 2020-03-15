@@ -53,22 +53,6 @@ class QuranSettingsTranslationItemStore implements Disposable {
       }
     }
 
-    // {
-    //   var d = quranTranslationFileProvider.onReceiveDataFile.where((t) {
-    //     return t.id == translationData.id;
-    //   }).doOnData((v) {
-    //     appServices.logger.i('Received');
-
-    //     downloadState.add(DownloadStatus.succes);
-    //   }).handleError((e) {
-    //     downloadState.add(DownloadStatus.error);
-    //     downloadStatus = e?.toString();
-    //   }).listen(null);
-    //   disposeFunction.add(() {
-    //     d.cancel();
-    //   });
-    // }
-
     downloadTranslation = Command.parameter((v) async {
       onChangeStatus.add(
         QueueStatusModel()..queueStatus = QueueStatus.downloading,
@@ -78,12 +62,19 @@ class QuranSettingsTranslationItemStore implements Disposable {
         DataFile()
           ..id = translationData.id
           ..url = translationData.uri
-          ..filename = translationData.filename,
+          ..tableName = translationData.tableName,
       );
       var queueStatus = await dataFile.onChangeStatus.skip(1).take(1).first;
       onChangeStatus.add(queueStatus);
       checkTranslationFile.execute();
       await checkTranslationFile.next;
+    });
+
+    removeTranslation = Command.parameter((t) async {
+      await quranTranslationFileProvider.removeTranslation(t.tableName);
+      checkTranslationFile.execute();
+      await checkTranslationFile.next;
+      translationData.isSelected$.add(false);
     });
   }
 
@@ -112,4 +103,6 @@ class QuranSettingsTranslationItemStore implements Disposable {
       v();
     });
   }
+
+  Command<TranslationData> removeTranslation;
 }

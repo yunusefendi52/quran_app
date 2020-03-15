@@ -99,34 +99,6 @@ abstract class _QuranSettingsTranslationsStore extends BaseStore
     registerDispose(() {
       disposeTraslations();
     });
-
-    // QuranSettingsTranslationItemStore transformer(
-    //     TranslationData translationData) {
-    //   var s = QuranSettingsTranslationItemStore(translationData);
-    //   return s;
-    // }
-
-    // sourceListTranslations.observe(
-    //   (f) {
-    //     if (f.type == OperationType.add) {
-    //       var n = f.added.map((v) {
-    //         return transformer(v);
-    //       });
-    //       translations.addAll(n);
-    //     } else if (f.type == OperationType.remove) {
-    //       f.removed.forEach((v) {
-    //         var indexItem = translations.indexWhere(
-    //           (t) => t.translationData == v,
-    //         );
-    //         translations.removeAt(indexItem);
-    //       });
-    //     }
-    //     translations.sort(
-    //       (x, y) => comparisoBuilder.getCompareTo(x, y),
-    //     );
-    //   },
-    //   fireImmediately: true,
-    // );
   }
 
   SettingsItem _settingsItems;

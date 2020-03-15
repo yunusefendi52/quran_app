@@ -1,6 +1,7 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:quran_app/app_widgets/app_icon_button.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/helpers/localized_helpers.dart';
@@ -150,105 +151,20 @@ class _QuranSettingsTranslationsWidgetState
                                         if (!isTranslationFileExists &&
                                             item.translationData.type ==
                                                 TranslationType.download) {
-                                          return ListTile(
-                                            dense: true,
-                                            title: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.stretch,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                content,
-                                                StreamBuilder<QueueStatusModel>(
-                                                  initialData:
-                                                      item.onChangeStatus.value,
-                                                  stream: item.onChangeStatus,
-                                                  builder: (
-                                                    BuildContext context,
-                                                    AsyncSnapshot snapshot,
-                                                  ) {
-                                                    var status = item
-                                                        .onChangeStatus.value;
-
-                                                    return WidgetSelector<
-                                                        QueueStatusModel>(
-                                                      selectedState: status,
-                                                      states: {
-                                                        QueueStatusModel()
-                                                              ..queueStatus =
-                                                                  QueueStatus
-                                                                      .error:
-                                                            Container(
-                                                          child: Text(
-                                                            item
-                                                                    .onChangeStatus
-                                                                    .value
-                                                                    .status ??
-                                                                '',
-                                                            style: TextStyle(
-                                                              fontStyle:
-                                                                  FontStyle
-                                                                      .italic,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      },
-                                                    );
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                            trailing: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                // Download button
-                                                StreamBuilder<bool>(
-                                                  initialData: true,
-                                                  stream: item
-                                                      .checkTranslationFile
-                                                      .isExecuting,
-                                                  builder: (
-                                                    BuildContext context,
-                                                    AsyncSnapshot<bool>
-                                                        snapshot,
-                                                  ) {
-                                                    if (snapshot.data) {
-                                                      return Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 8,
-                                                        ),
-                                                        child: SizedBox(
-                                                          height: 18,
-                                                          width: 18,
-                                                          child:
-                                                              CircularProgressIndicator(),
-                                                        ),
-                                                      );
-                                                    }
-
-                                                    var isTranslationFileExists =
-                                                        item.translationFileExists
-                                                            .value;
-                                                    if (isTranslationFileExists) {
-                                                      return Container();
-                                                    }
-
-                                                    var downloadWidget =
-                                                        InkWell(
-                                                      onTap: () {
-                                                        item.downloadTranslation
-                                                            .executeIf();
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.all(8),
-                                                        child: Icon(
-                                                          Icons.file_download,
-                                                        ),
-                                                      ),
-                                                    );
-                                                    return Container(
-                                                      child: StreamBuilder<
+                                          return Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: ListTile(
+                                                  dense: true,
+                                                  title: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      content,
+                                                      StreamBuilder<
                                                           QueueStatusModel>(
                                                         initialData: item
                                                             .onChangeStatus
@@ -262,63 +178,244 @@ class _QuranSettingsTranslationsWidgetState
                                                         ) {
                                                           var status = item
                                                               .onChangeStatus
-                                                              .value
-                                                              .queueStatus;
-                                                          if (status ==
-                                                              QueueStatus
-                                                                  .downloading) {
-                                                            return Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                horizontal: 8,
-                                                              ),
-                                                              child: SizedBox(
-                                                                height: 18,
-                                                                width: 18,
-                                                                child:
-                                                                    CircularProgressIndicator(),
-                                                              ),
-                                                            );
-                                                          }
+                                                              .value;
 
-                                                          // if (downloadStatus ==
-                                                          //     DownloadStatus
-                                                          //         .error) {
-                                                          //   return Observer(
-                                                          //     builder:
-                                                          //         (BuildContext
-                                                          //             context) {
-                                                          //       return Container(
-                                                          //         child: Text(
-                                                          //           item.downloadStatus ??
-                                                          //               '',
-                                                          //         ),
-                                                          //       );
-                                                          //     },
-                                                          //   );
-                                                          // }
-
-                                                          return downloadWidget;
+                                                          return WidgetSelector<
+                                                              QueueStatusModel>(
+                                                            selectedState:
+                                                                status,
+                                                            states: {
+                                                              QueueStatusModel()
+                                                                    ..queueStatus =
+                                                                        QueueStatus
+                                                                            .error:
+                                                                  Container(
+                                                                child: Text(
+                                                                  item
+                                                                          .onChangeStatus
+                                                                          .value
+                                                                          .status ??
+                                                                      '',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontStyle:
+                                                                        FontStyle
+                                                                            .italic,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            },
+                                                          );
                                                         },
                                                       ),
-                                                    );
-                                                  },
+                                                    ],
+                                                  ),
+                                                  onTap: () {},
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 10,
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    // Download button
+                                                    StreamBuilder<bool>(
+                                                      initialData: true,
+                                                      stream: item
+                                                          .checkTranslationFile
+                                                          .isExecuting,
+                                                      builder: (
+                                                        BuildContext context,
+                                                        AsyncSnapshot<bool>
+                                                            snapshot,
+                                                      ) {
+                                                        if (snapshot.data) {
+                                                          return Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                              horizontal: 8,
+                                                            ),
+                                                            child: SizedBox(
+                                                              height: 18,
+                                                              width: 18,
+                                                              child:
+                                                                  CircularProgressIndicator(),
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        var isTranslationFileExists =
+                                                            item.translationFileExists
+                                                                .value;
+                                                        if (isTranslationFileExists) {
+                                                          return Container();
+                                                        }
+
+                                                        var downloadWidget =
+                                                            AppIconButton(
+                                                          icon: Icon(
+                                                            Icons.file_download,
+                                                          ),
+                                                          onTap: () {
+                                                            item.downloadTranslation
+                                                                .executeIf();
+                                                          },
+                                                        );
+                                                        return Center(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: <Widget>[
+                                                              StreamBuilder<
+                                                                  QueueStatusModel>(
+                                                                initialData: item
+                                                                    .onChangeStatus
+                                                                    .value,
+                                                                stream: item
+                                                                    .onChangeStatus,
+                                                                builder: (
+                                                                  BuildContext
+                                                                      context,
+                                                                  AsyncSnapshot
+                                                                      snapshot,
+                                                                ) {
+                                                                  var status = item
+                                                                      .onChangeStatus
+                                                                      .value
+                                                                      .queueStatus;
+                                                                  if (status ==
+                                                                      QueueStatus
+                                                                          .downloading) {
+                                                                    return Padding(
+                                                                      padding:
+                                                                          EdgeInsets
+                                                                              .symmetric(
+                                                                        horizontal:
+                                                                            8,
+                                                                      ),
+                                                                      child:
+                                                                          SizedBox(
+                                                                        height:
+                                                                            18,
+                                                                        width:
+                                                                            18,
+                                                                        child:
+                                                                            CircularProgressIndicator(),
+                                                                      ),
+                                                                    );
+                                                                  }
+
+                                                                  // if (downloadStatus ==
+                                                                  //     DownloadStatus
+                                                                  //         .error) {
+                                                                  //   return Observer(
+                                                                  //     builder:
+                                                                  //         (BuildContext
+                                                                  //             context) {
+                                                                  //       return Container(
+                                                                  //         child: Text(
+                                                                  //           item.downloadStatus ??
+                                                                  //               '',
+                                                                  //         ),
+                                                                  //       );
+                                                                  //     },
+                                                                  //   );
+                                                                  // }
+
+                                                                  return downloadWidget;
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           );
                                         }
 
-                                        return CheckboxListTile(
-                                          value: item.translationData
-                                              .isSelected$.value,
-                                          onChanged: (bool value) {
-                                            store.translationChanged.executeIf(
-                                              Tuple2(item, value),
-                                            );
-                                          },
-                                          dense: true,
-                                          title: content,
+                                        return Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: ListTile(
+                                                onTap: () {
+                                                  store.translationChanged
+                                                      .executeIf(
+                                                    Tuple2(
+                                                      item,
+                                                      !item.translationData
+                                                          .isSelected$.value,
+                                                    ),
+                                                  );
+                                                },
+                                                dense: true,
+                                                title: content,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 5,
+                                              ),
+                                              child: Center(
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    StreamBuilder<bool>(
+                                                      initialData: item
+                                                          .translationData
+                                                          .isSelected$
+                                                          .value,
+                                                      stream: item
+                                                          .translationData
+                                                          .isSelected$,
+                                                      builder: (
+                                                        BuildContext context,
+                                                        AsyncSnapshot<bool>
+                                                            snapshot,
+                                                      ) {
+                                                        return Checkbox(
+                                                          value: snapshot.data,
+                                                          onChanged: (
+                                                            bool value,
+                                                          ) {
+                                                            item.translationData
+                                                                .isSelected$
+                                                                .add(value);
+                                                          },
+                                                        );
+                                                      },
+                                                    ),
+                                                    if (item.translationData
+                                                            .type ==
+                                                        TranslationType
+                                                            .download)
+                                                      AppIconButton(
+                                                        icon: Icon(
+                                                          Icons.clear,
+                                                        ),
+                                                        onTap: () {
+                                                          item.removeTranslation
+                                                              .executeIf(
+                                                            item.translationData,
+                                                          );
+                                                        },
+                                                      ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         );
                                       },
                                     );

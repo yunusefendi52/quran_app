@@ -22,13 +22,15 @@ import 'quran_provider.dart';
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 // ignore_for_file: invalid_use_of_protected_member
 
+Database _quranDb;
+Database get quranDb => _quranDb;
+
+Database _translationDb;
+Database get translationDb => _translationDb;
+
 class SqliteQuranProvider implements QuranProvider {
   var _assetBundle = sl.get<AssetBundle>();
   var appServices = sl.get<AppServices>();
-
-  Database quranDb;
-
-  Database translationDb;
 
   SqliteQuranProvider({
     AssetBundle assetBundle,
@@ -222,7 +224,7 @@ class SqliteQuranProvider implements QuranProvider {
           buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
           flush: true,
         );
-        quranDb = await openDatabase(localFilePath);
+        _quranDb = await openDatabase(localFilePath);
       }
 
       {
@@ -247,7 +249,7 @@ class SqliteQuranProvider implements QuranProvider {
           flush: true,
         );
         if (translationDb == null) {
-          translationDb = await openDatabase(localFilePath);
+          _translationDb = await openDatabase(localFilePath);
         }
       }
     }

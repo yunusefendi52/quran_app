@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/app_services.dart';
+import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:path/path.dart';
 import 'package:quran_app/services/translationdb.dart';
@@ -11,8 +12,10 @@ import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import 'package:dio/dio.dart';
+import 'package:xml/xml.dart' as xml;
 
 import '../main.dart';
+import 'sqlite_quran_provider.dart';
 
 abstract class QuranTranslationFileProvider {
   Future<bool> translationFileExists(String tableName);
@@ -21,28 +24,24 @@ abstract class QuranTranslationFileProvider {
 
   DataFile getDataFileById(String id);
 
-  // Stream<Tuple2<DataFile, QueueStatus>> get onChangeStatus;
-
-  // void queueDownload(QueueTranslationFile queueTranslationFile);
-
-  // Stream<DataFile> get onReceiveDataFile;
+  Future removeTranslation(String tableName);
 }
 
 class QuranTranslationFileProviderImplementation
     implements QuranTranslationFileProvider {
   var assetBundle = sl.get<AssetBundle>();
   var appServices = sl.get<AppServices>();
-  var translationDb = sl.get<TranslationDb>();
+  var quranProvider = sl.get<QuranProvider>();
   var dio = Dio();
 
   QuranTranslationFileProviderImplementation({
     AssetBundle assetBundle,
     AppServices appServices,
-    TranslationDb translationDb,
+    QuranProvider quranProvider,
   }) {
     this.assetBundle = assetBundle ?? (assetBundle = this.assetBundle);
     this.appServices = appServices ?? (appServices = this.appServices);
-    this.translationDb = translationDb ?? (translationDb = this.translationDb);
+    this.quranProvider = quranProvider ?? (quranProvider = this.quranProvider);
 
     // _onChangeStatus.doOnData((v) {
     //   statuses.removeWhere((t) => t.item1 == v.item1);
@@ -56,54 +55,73 @@ class QuranTranslationFileProviderImplementation
       v._onChangeStatus.add(
         QueueStatusModel()..queueStatus = QueueStatus.downloading,
       );
-    }).flatMap((v) {
+    }).flatMap((dataFile) {
       return Future.microtask(() async {
         try {
-          var quranFolder = getQuranFolder(appServices);
-          var translationsFolder = Directory(join(
-            quranFolder.path,
-            'downloaded_translations',
-          ));
-          var savePath = join(translationsFolder.path, v.filename);
-          print('Save path $savePath');
-          var response = await dio.get<List<int>>(
-            v.url,
-            options: Options(
-              responseType: ResponseType.bytes,
-            ),
-          );
-          var bytes = response.data;
-          print('Downloaded file, length: ${bytes?.fold(0, (x, y) => x + y)}');
-          var file = File(savePath);
-          if (!file.parent.existsSync()) {
-            await file.parent.create();
-          }
-          await file.writeAsBytes(
-            bytes,
-            flush: true,
-          );
+          var raw = await dio.get<String>(dataFile.url,
+              options: Options(
+                responseType: ResponseType.plain,
+              ));
+          var d = xml.parse(raw.data);
+          var suraElements = d.findAllElements('sura');
+          var index = 0;
+          var items = suraElements.expand((f) {
+            var x = f.findAllElements('aya');
+            return x.map((v) {
+              index++;
+              var i = _ItemModel()
+                ..index = index
+                ..sura = int.tryParse(f.getAttribute('index'))
+                ..aya = int.tryParse(v.getAttribute('index'))
+                ..text = v.getAttribute('text');
+              return i;
+            });
+          })?.toList();
+          await removeTranslation(dataFile.tableName);
+          await translationDb.transaction((txn) async {
+            await txn.execute("""
+            CREATE TABLE "${dataFile.tableName}" (
+              "index"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+              "sura"	INTEGER NOT NULL DEFAULT 0,
+              "aya"	INTEGER NOT NULL DEFAULT 0,
+              "text"	TEXT NOT NULL
+            );
+            """);
+            var batch = txn.batch();
+            for (var item in items) {
+              batch.insert(dataFile.tableName, {
+                'index': item.index,
+                'sura': item.sura,
+                'aya': item.aya,
+                'text': item.text,
+              });
+            }
+            await batch.commit(
+              noResult: true,
+            );
+          });
 
-          v._onChangeStatus.add(
+          dataFile._onChangeStatus.add(
             QueueStatusModel()..queueStatus = QueueStatus.downloaded,
           );
-          currentQueued.remove(v);
+          currentQueued.remove(dataFile);
         } catch (e) {
           print(e);
 
-          v._onChangeStatus.add(
+          dataFile._onChangeStatus.add(
             QueueStatusModel()
               ..queueStatus = QueueStatus.error
               ..status = e?.toString(),
           );
         }
 
-        return v;
+        return dataFile;
       }).asStream();
     }).listen(null);
   }
 
   Future<bool> translationFileExists(String tableName) async {
-    var exists = await translationDb.isTranslationTableExists(tableName);
+    var exists = await quranProvider.isTableExists(tableName);
     return exists;
   }
 
@@ -111,6 +129,12 @@ class QuranTranslationFileProviderImplementation
   DataFile queueDownload(DataFile dataFile) {
     downloadSubject.add(dataFile);
     return dataFile;
+  }
+
+  Future removeTranslation(String tableName) async {
+    await translationDb.execute(
+      'DROP TABLE IF EXISTS "${tableName}"',
+    );
   }
 
   var downloadSubject = PublishSubject<DataFile>();
@@ -155,6 +179,13 @@ class QuranTranslationFileProviderImplementation
   // }
 }
 
+class _ItemModel {
+  int index;
+  int sura;
+  int aya;
+  String text;
+}
+
 enum QueueStatus {
   queued,
   downloading,
@@ -176,7 +207,7 @@ class QueueStatusModel {
 class DataFile {
   String id;
   String url;
-  String filename;
+  String tableName;
 
   final _onChangeStatus = BehaviorSubject<QueueStatusModel>();
 

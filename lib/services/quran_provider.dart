@@ -131,6 +131,8 @@ abstract class QuranProvider {
     TranslationData translationData,
   );
 
+  Future<bool> isTableExists(String tableName);
+
   void dispose();
 }
 

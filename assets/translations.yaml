@@ -14,7 +14,7 @@
   type: builtIn
 - id: 83506aba0cfa4d8f9486854e1f83775b
   tableName: es_garcia
-  uri: http://
+  uri: http://tanzil.net/trans/?transID=es.garcia&type=xml
   languageCode: es
   language: Spanish
   name: Garcia
