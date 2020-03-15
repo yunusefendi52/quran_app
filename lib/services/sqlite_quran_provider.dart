@@ -25,23 +25,17 @@ import 'quran_provider.dart';
 class SqliteQuranProvider implements QuranProvider {
   var _assetBundle = sl.get<AssetBundle>();
   var appServices = sl.get<AppServices>();
-  var quranDb = sl.get<QuranDb>();
-  var translationDb = sl.get<TranslationDb>();
 
-  // final _mapDatabase = Map<QuranTextData, Database>();
+  Database quranDb;
 
-  // final _translationMapDatabase = Map<TranslationData, Database>();
+  Database translationDb;
 
   SqliteQuranProvider({
     AssetBundle assetBundle,
     AppServices appServices,
-    QuranDb quranDb,
-    TranslationDb translationDb,
   }) {
     _assetBundle = assetBundle ?? _assetBundle;
     this.appServices = appServices ?? (appServices = this.appServices);
-    this.quranDb = quranDb ?? (quranDb = this.quranDb);
-    this.translationDb = translationDb ?? (translationDb = this.translationDb);
   }
 
   @override
@@ -52,15 +46,13 @@ class SqliteQuranProvider implements QuranProvider {
     List<TranslationData> translations,
   ]) async {
     await initialize(quranTextData);
-    var r = await quranDb
-        .customSelectQuery(
-          "select * from '${quranTextData.tableName}' where [sura] == '$chapter' and [aya] == '$aya'",
-        )
-        .get();
+    var r = await quranDb.rawQuery(
+      "select * from '${quranTextData.tableName}' where [sura] == '$chapter' and [aya] == '$aya'",
+    );
     var ayaData = r.map((m) {
       var aya = Aya((v) {
-        v.indexString = m.data['sura'];
-        v.text = m.data['text'];
+        v.indexString = m['sura'];
+        v.text = m['text'];
       });
       return aya;
     }).first;
@@ -70,16 +62,14 @@ class SqliteQuranProvider implements QuranProvider {
   @override
   Future<List<Aya>> getAyaByChapter(int chapter, QuranTextData quranTextData,
       [List<TranslationData> translations]) async {
-    var r = await quranDb
-        .customSelectQuery(
-          "select * from '${quranTextData.tableName}' where [sura] == '$chapter'",
-        )
-        .get();
+    var r = await quranDb.rawQuery(
+      "select * from '${quranTextData.tableName}' where [sura] == '$chapter'",
+    );
     var listAyaHolder = List<Aya>();
     r.forEach((m) {
       var aya = Aya((v) {
-        v.indexString = m.data['aya']?.toString();
-        v.text = m.data['text'];
+        v.indexString = m['aya']?.toString();
+        v.text = m['text'];
       });
       listAyaHolder.add(aya);
     });
@@ -168,7 +158,10 @@ class SqliteQuranProvider implements QuranProvider {
   // }
 
   Future<bool> isTableExists(String tableName) async {
-    var isExists = await translationDb.isTranslationTableExists(tableName);
+    var isExists = (await translationDb.rawQuery(
+      'SELECT name FROM sqlite_master WHERE type="table" AND name="${tableName}"',
+    ))
+        .isNotEmpty;
     return isExists;
   }
 
@@ -184,16 +177,14 @@ class SqliteQuranProvider implements QuranProvider {
     // var rawQuery = await translationData.rawQuery(
     //   'SELECT * FROM "${translationData.tableName}" where [sura] == $chapter',
     // );
-    var rawQuery = await translationDb
-        .customSelectQuery(
-          'SELECT * FROM "${translationData.tableName}" where [sura] == $chapter',
-        )
-        .get();
+    var rawQuery = await translationDb.rawQuery(
+      'SELECT * FROM "${translationData.tableName}" where [sura] == $chapter',
+    );
     var l = List<Aya>();
     rawQuery.forEach((m) {
       var aya = Aya((v) {
-        v.indexString = m.data['ayah']?.toString();
-        v.text = m.data['text'];
+        v.indexString = m['ayah']?.toString();
+        v.text = m['text'];
         v.translationData = translationData;
       });
       l.add(aya);
@@ -231,6 +222,7 @@ class SqliteQuranProvider implements QuranProvider {
           buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
           flush: true,
         );
+        quranDb = await openDatabase(localFilePath);
       }
 
       {
@@ -254,7 +246,9 @@ class SqliteQuranProvider implements QuranProvider {
           buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
           flush: true,
         );
-        translationDb = sl.get<TranslationDb>();
+        if (translationDb == null) {
+          translationDb = await openDatabase(localFilePath);
+        }
       }
     }
 
@@ -296,11 +290,9 @@ class SqliteQuranProvider implements QuranProvider {
     if (!tableExists) {
       return null;
     }
-    var rawQuery = await translationDb
-        .customSelectQuery(
-          'select * from "${translationData.tableName}" where [sura] == $chapter and [aya] == $aya',
-        )
-        .get();
+    var rawQuery = await translationDb.rawQuery(
+      'select * from "${translationData.tableName}" where [sura] == $chapter and [aya] == $aya',
+    );
     var m = rawQuery.firstWhere(
       (t) => t != null,
       orElse: () => null,
@@ -309,8 +301,8 @@ class SqliteQuranProvider implements QuranProvider {
       throw ArgumentError('This should be not null');
     }
     var i = Aya((v) {
-      v.indexString = m.data['aya']?.toString();
-      v.text = m.data['text'];
+      v.indexString = m['aya']?.toString();
+      v.text = m['text'];
       v.translationData = translationData;
     });
     return i;
