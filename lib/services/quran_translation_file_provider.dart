@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:mobx/mobx.dart';
+import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:path/path.dart';
+import 'package:quran_app/services/translationdb.dart';
 import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
@@ -13,7 +15,7 @@ import 'package:dio/dio.dart';
 import '../main.dart';
 
 abstract class QuranTranslationFileProvider {
-  Future<bool> translationFileExists(String filename);
+  Future<bool> translationFileExists(String tableName);
 
   DataFile queueDownload(DataFile dataFile);
 
@@ -29,12 +31,18 @@ abstract class QuranTranslationFileProvider {
 class QuranTranslationFileProviderImplementation
     implements QuranTranslationFileProvider {
   var assetBundle = sl.get<AssetBundle>();
+  var appServices = sl.get<AppServices>();
+  var translationDb = sl.get<TranslationDb>();
   var dio = Dio();
 
   QuranTranslationFileProviderImplementation({
     AssetBundle assetBundle,
+    AppServices appServices,
+    TranslationDb translationDb,
   }) {
     this.assetBundle = assetBundle ?? (assetBundle = this.assetBundle);
+    this.appServices = appServices ?? (appServices = this.appServices);
+    this.translationDb = translationDb ?? (translationDb = this.translationDb);
 
     // _onChangeStatus.doOnData((v) {
     //   statuses.removeWhere((t) => t.item1 == v.item1);
@@ -51,7 +59,7 @@ class QuranTranslationFileProviderImplementation
     }).flatMap((v) {
       return Future.microtask(() async {
         try {
-          var quranFolder = await getQuranFolder();
+          var quranFolder = getQuranFolder(appServices);
           var translationsFolder = Directory(join(
             quranFolder.path,
             'downloaded_translations',
@@ -94,14 +102,8 @@ class QuranTranslationFileProviderImplementation
     }).listen(null);
   }
 
-  Future<bool> translationFileExists(String filename) async {
-    var quranFolder = await getQuranFolder();
-    var translationsFolder = Directory(join(
-      quranFolder.path,
-      'downloaded_translations',
-    ));
-    var file = File(join(translationsFolder.path, filename));
-    var exists = await file.exists();
+  Future<bool> translationFileExists(String tableName) async {
+    var exists = await translationDb.isTranslationTableExists(tableName);
     return exists;
   }
 

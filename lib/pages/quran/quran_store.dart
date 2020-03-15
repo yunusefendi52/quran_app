@@ -409,18 +409,26 @@ class AyaStore {
 
       var _translation = await Stream.fromIterable(
         translationsData,
-      ).asyncExpand((t) {
-        return DeferStream(() {
-          return quranProvider
-              .getTranslation(chapter.chapterNumber, aya.index, t)
-              .asStream()
-              .map((aya) {
-            return Tuple2(aya, t);
-          });
-        });
-      }).handleError((e) {
-        appServices.logger.e(e ?? '');
-      }).toList();
+      )
+          .asyncExpand((t) {
+            return DeferStream(() {
+              return quranProvider
+                  .getTranslation(chapter.chapterNumber, aya.index, t)
+                  .asStream()
+                  .map((aya) {
+                if (aya == null) {
+                  return null;
+                }
+
+                return Tuple2(aya, t);
+              });
+            });
+          })
+          .handleError((e) {
+            appServices.logger.e(e ?? '');
+          })
+          .where((t) => t != null)
+          .toList();
       if (!translations.hasValue) {
         translations.add(_translation);
       }

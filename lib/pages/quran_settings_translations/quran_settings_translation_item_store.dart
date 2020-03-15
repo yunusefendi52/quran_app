@@ -30,7 +30,7 @@ class QuranSettingsTranslationItemStore implements Disposable {
     checkTranslationFile = RxCommand.createAsyncNoParamNoResult(() async {
       try {
         var exists = await quranTranslationFileProvider.translationFileExists(
-          translationData.filename,
+          translationData.tableName,
         );
         appServices.logger.i('Translation file exists: $exists');
         translationFileExists.add(exists);

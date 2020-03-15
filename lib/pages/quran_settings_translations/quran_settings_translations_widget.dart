@@ -117,7 +117,7 @@ class _QuranSettingsTranslationsWidgetState
                                             CrossAxisAlignment.stretch,
                                         children: <Widget>[
                                           Text(
-                                            translationData.name,
+                                            translationData.language ?? '',
                                             style: TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
@@ -125,6 +125,9 @@ class _QuranSettingsTranslationsWidgetState
                                           ),
                                           SizedBox(
                                             height: 3,
+                                          ),
+                                          Text(
+                                            translationData.name,
                                           ),
                                           Text(
                                             translationData.translator,

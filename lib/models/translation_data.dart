@@ -12,9 +12,13 @@ part 'translation_data.g.dart';
 class TranslationData {
   String id;
 
+  String tableName;
+
   String uri;
 
   String languageCode;
+
+  String language;
 
   String name;
 

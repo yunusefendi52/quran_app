@@ -1,18 +1,22 @@
-- id: 8212a77e-ef9c-4197-bb9f-aefa3b3ba8fe
-  uri: en.sahih.db
+- id: 8034424dac8f44cb997db6b6ddc62147
+  tableName: en_sahih
   languageCode: en
+  language: English
   name: Saheeh International
   translator: Saheeh International
   type: builtIn
-- id: b9d87e27-c12e-4041-8602-97365c796a32
-  uri: id.indonesian.db
+- id: 1f0492c5d1fd42c1950d76ca74ddc0be
+  tableName: id_indonesian
   languageCode: id
+  language: Indonesia
   name: Bahasa Indonesia
   translator: Indonesian Ministry of Religious Affairs
   type: builtIn
 - id: 83506aba0cfa4d8f9486854e1f83775b
+  tableName: es_garcia
   uri: http://
   languageCode: es
+  language: Spanish
   name: Garcia
   translator: Muhammad Isa García
   type: download

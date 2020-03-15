@@ -51,6 +51,7 @@ abstract class _QuranSettingsTranslationsStore extends BaseStore
         SortComparisonBuilder<QuranSettingsTranslationItemStore>();
     comparisoBuilder
       ..ascending((t) => t.translationData.type.index)
+      ..thenByAscending((t) => t.translationData.language)
       ..thenByAscending((t) => t.translationData.name)
       ..thenByAscending((t) => t.translationData.translator);
     getListTranslations = Command(() async {

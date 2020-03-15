@@ -7,6 +7,7 @@ import 'package:built_value/serializer.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/locale.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/models/models.dart';
 import 'package:path/path.dart' as p;
 import 'package:quran_app/models/translation_data.dart';
@@ -133,9 +134,9 @@ abstract class QuranProvider {
   void dispose();
 }
 
-Future<Directory> getQuranFolder() async {
-  var appDocDir = await getApplicationDocumentsDirectory();
-  var quranFolder = Directory(p.join(appDocDir.path, 'q'));
+Directory getQuranFolder(AppServices appServices) {
+  var appDocDir = appServices.applicationDocumentsDirectory;
+  var quranFolder = Directory(p.join(appDocDir, 'q'));
   return quranFolder;
 }
 

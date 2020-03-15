@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:intl/src/locale.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:quran_app/baselib/app_services.dart';
 
 import 'package:quran_app/models/models.dart';
 
 import 'package:quran_app/models/translation_data.dart';
+import 'package:quran_app/services/translationdb.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -16,18 +18,26 @@ import 'package:yaml/yaml.dart';
 import '../main.dart';
 import 'quran_provider.dart';
 
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+// ignore_for_file: invalid_use_of_protected_member
+
 class SqliteQuranProvider implements QuranProvider {
   var _assetBundle = sl.get<AssetBundle>();
+  var appServices = sl.get<AppServices>();
 
   final _mapDatabase = Map<QuranTextData, Database>();
 
-  final _translationMapDatabase = Map<TranslationData, Database>();
+  // final _translationMapDatabase = Map<TranslationData, Database>();
 
-  XmlQuranProvider({
+  SqliteQuranProvider({
     AssetBundle assetBundle,
+    AppServices appServices,
   }) {
     _assetBundle = assetBundle ?? _assetBundle;
+    this.appServices = appServices ?? (appServices = this.appServices);
   }
+
+  TranslationDb translationDb;
 
   @override
   Future<Aya> getAya(
@@ -138,38 +148,45 @@ class SqliteQuranProvider implements QuranProvider {
     return listTranslationData;
   }
 
-  Future<Database> _getDatabaseTranslation(
-    TranslationData translationData,
-  ) async {
-    var quranFolder = await getQuranFolder();
-    var translationsFolder = translationData.type == TranslationType.builtIn
-        ? Directory(join(quranFolder.path, 'translations'))
-        : Directory(join(quranFolder.path, 'downloaded_translations'));
-    if (!_translationMapDatabase.containsKey(translationData)) {
-      var database = await openDatabase(
-        join(translationsFolder.path, translationData.filename),
-      );
-      _translationMapDatabase.putIfAbsent(translationData, () {
-        return database;
-      });
-    }
-    var database = _translationMapDatabase[translationData];
-    return database;
+  // Future<Database> _getDatabaseTranslation() async {
+  //   var quranFolder = getQuranFolder(appServices);
+  //   var translationDbPath = join(
+  //     quranFolder.path,
+  //     'translations.db',
+  //   );
+  //   var database = await openDatabase(
+  //     translationDbPath,
+  //   );
+  //   return database;
+  // }
+
+  Future<bool> isTableExists(String tableName) async {
+    var isExists = await translationDb.isTranslationTableExists(tableName);
+    return isExists;
   }
 
   Future<List<Aya>> getTranslations(
     int chapter,
     TranslationData translationData,
   ) async {
-    var database = await _getDatabaseTranslation(translationData);
-    var rawQuery = await database.rawQuery(
-      'SELECT * FROM "verses" where [sura] == $chapter',
-    );
+    var tableExists = await isTableExists(translationData.tableName);
+    if (!tableExists) {
+      return [];
+    }
+
+    // var rawQuery = await translationData.rawQuery(
+    //   'SELECT * FROM "${translationData.tableName}" where [sura] == $chapter',
+    // );
+    var rawQuery = await translationDb
+        .customSelectQuery(
+          'SELECT * FROM "${translationData.tableName}" where [sura] == $chapter',
+        )
+        .get();
     var l = List<Aya>();
     rawQuery.forEach((m) {
       var aya = Aya((v) {
-        v.indexString = m['ayah']?.toString();
-        v.text = m['text'];
+        v.indexString = m.data['ayah']?.toString();
+        v.text = m.data['text'];
         v.translationData = translationData;
       });
       l.add(aya);
@@ -180,68 +197,62 @@ class SqliteQuranProvider implements QuranProvider {
 
   @override
   Future initialize(QuranTextData quranTextData) async {
-    var quranFolder = await getQuranFolder();
+    var quranFolder = getQuranFolder(appServices);
 
     // Copy db from flutter assets to local store, so library can open the db as path
-    if (!(await quranFolder.exists())) {
-      await quranFolder.create();
-
-      // Copy the quran db
+    // Copy the quran db
+    {
       {
-        {
-          var l = await getListQuranTextData();
-          for (var item in l) {
-            // Get data from assets
-            var p = join('assets', 'quran-data', item.filename);
-            var d = await _assetBundle.load(p);
-            var localFilePath = join(quranFolder.path, item.filename);
-            var localFile = File(localFilePath);
-            final buffer = d.buffer;
-            await localFile.writeAsBytes(
-              buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
-              flush: true,
-            );
-          }
+        var l = await getListQuranTextData();
+        for (var item in l) {
+          // Get data from assets
+          var p = join('assets', 'quran-data', item.filename);
+          var d = await _assetBundle.load(p);
+          var localFilePath = join(quranFolder.path, item.filename);
+          var localFile = File(localFilePath);
+          final buffer = d.buffer;
+          await localFile.writeAsBytes(
+            buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
+            flush: true,
+          );
         }
+      }
 
-        {
-          var l = await getListTranslations();
-          for (var item in l) {
-            // Get data from assets
-            var p = join('assets', 'quran-data', 'translations', item.uri);
-            var d = await _assetBundle.load(p);
-            var translationDirectory = Directory(
-              join(
-                quranFolder.path,
-                'translations',
-              ),
-            );
-            if (!(await translationDirectory.exists())) {
-              await translationDirectory.create();
-            }
-            var localFilePath = join(
-              translationDirectory.path,
-              item.uri,
-            );
-            var localFile = File(localFilePath);
-            final buffer = d.buffer;
-            await localFile.writeAsBytes(
-              buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
-              flush: true,
-            );
-          }
+      {
+        // Get data from assets
+        var translationFilename = 'translations.db';
+        var p = join('assets', 'quran-data', translationFilename);
+        var d = await _assetBundle.load(p);
+        var translationDirectory = Directory(
+          quranFolder.path,
+        );
+        if (!(await translationDirectory.exists())) {
+          await translationDirectory.create();
         }
+        var localFilePath = join(
+          translationDirectory.path,
+          translationFilename,
+        );
+        var localFile = File(localFilePath);
+        final buffer = d.buffer;
+        await localFile.writeAsBytes(
+          buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
+          flush: true,
+        );
+        translationDb = sl.get<TranslationDb>();
       }
     }
 
     {
-      if (!_mapDatabase.containsKey(quranTextData)) {
-        var database = await openDatabase(
-          join(quranFolder.path, quranTextData.filename),
-        );
-        _mapDatabase.putIfAbsent(quranTextData, () {
-          return database;
-        });
+      if (quranTextData != null) {
+        if (!_mapDatabase.containsKey(quranTextData)) {
+          var database = await openDatabase(
+            join(quranFolder.path, quranTextData.filename),
+          );
+          _mapDatabase.putIfAbsent(quranTextData, () {
+            return database;
+          });
+        }
       }
     }
   }
@@ -264,13 +275,15 @@ class SqliteQuranProvider implements QuranProvider {
     int aya,
     TranslationData translationData,
   ) async {
-    var database = await _getDatabaseTranslation(translationData);
-    if (translationData.type == TranslationType.download) {
-      var f = '';
+    var tableExists = await isTableExists(translationData.tableName);
+    if (!tableExists) {
+      return null;
     }
-    var rawQuery = await database.rawQuery(
-      'select * from "verses" where [sura] == $chapter and [ayah] == $aya',
-    );
+    var rawQuery = await translationDb
+        .customSelectQuery(
+          'select * from "${translationData.tableName}" where [sura] == $chapter and [aya] == $aya',
+        )
+        .get();
     var m = rawQuery.firstWhere(
       (t) => t != null,
       orElse: () => null,
@@ -279,8 +292,8 @@ class SqliteQuranProvider implements QuranProvider {
       throw ArgumentError('This should be not null');
     }
     var i = Aya((v) {
-      v.indexString = m['ayah']?.toString();
-      v.text = m['text'];
+      v.indexString = m.data['aya']?.toString();
+      v.text = m.data['text'];
       v.translationData = translationData;
     });
     return i;

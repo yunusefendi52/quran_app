@@ -14,14 +14,14 @@ mixin _$QuranSettingsTranslationsStore
       Atom(name: '_QuranSettingsTranslationsStore.translations');
 
   @override
-  ObservableList<TranslationData> get translations {
+  ObservableList<QuranSettingsTranslationItemStore> get translations {
     _$translationsAtom.context.enforceReadPolicy(_$translationsAtom);
     _$translationsAtom.reportObserved();
     return super.translations;
   }
 
   @override
-  set translations(ObservableList<TranslationData> value) {
+  set translations(ObservableList<QuranSettingsTranslationItemStore> value) {
     _$translationsAtom.context.conditionallyRunInAction(() {
       super.translations = value;
       _$translationsAtom.reportChanged();
