@@ -212,6 +212,9 @@ class SqliteQuranProvider implements QuranProvider {
     }
 
     var quranFolder = getQuranFolder(appServices);
+    if (!quranFolder.existsSync()) {
+      await quranFolder.create();
+    }
 
     // Copy db from flutter assets to local store, so library can open the db as path
     // Copy the quran db
