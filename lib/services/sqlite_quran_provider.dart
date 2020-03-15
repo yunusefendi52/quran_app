@@ -9,6 +9,7 @@ import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/models/models.dart';
 
 import 'package:quran_app/models/translation_data.dart';
+import 'package:quran_app/services/qurandb.dart';
 import 'package:quran_app/services/translationdb.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sqflite/sqflite.dart';
@@ -24,20 +25,24 @@ import 'quran_provider.dart';
 class SqliteQuranProvider implements QuranProvider {
   var _assetBundle = sl.get<AssetBundle>();
   var appServices = sl.get<AppServices>();
+  var quranDb = sl.get<QuranDb>();
+  var translationDb = sl.get<TranslationDb>();
 
-  final _mapDatabase = Map<QuranTextData, Database>();
+  // final _mapDatabase = Map<QuranTextData, Database>();
 
   // final _translationMapDatabase = Map<TranslationData, Database>();
 
   SqliteQuranProvider({
     AssetBundle assetBundle,
     AppServices appServices,
+    QuranDb quranDb,
+    TranslationDb translationDb,
   }) {
     _assetBundle = assetBundle ?? _assetBundle;
     this.appServices = appServices ?? (appServices = this.appServices);
+    this.quranDb = quranDb ?? (quranDb = this.quranDb);
+    this.translationDb = translationDb ?? (translationDb = this.translationDb);
   }
-
-  TranslationDb translationDb;
 
   @override
   Future<Aya> getAya(
@@ -47,14 +52,15 @@ class SqliteQuranProvider implements QuranProvider {
     List<TranslationData> translations,
   ]) async {
     await initialize(quranTextData);
-    var database = _mapDatabase[quranTextData];
-    var r = await database.rawQuery(
-      "select * from quran where [sura] == '$chapter' and [aya] == '$aya'",
-    );
+    var r = await quranDb
+        .customSelectQuery(
+          "select * from '${quranTextData.tableName}' where [sura] == '$chapter' and [aya] == '$aya'",
+        )
+        .get();
     var ayaData = r.map((m) {
       var aya = Aya((v) {
-        v.indexString = m['sura'];
-        v.text = m['text'];
+        v.indexString = m.data['sura'];
+        v.text = m.data['text'];
       });
       return aya;
     }).first;
@@ -64,15 +70,16 @@ class SqliteQuranProvider implements QuranProvider {
   @override
   Future<List<Aya>> getAyaByChapter(int chapter, QuranTextData quranTextData,
       [List<TranslationData> translations]) async {
-    var database = _mapDatabase[quranTextData];
-    var r = await database.rawQuery(
-      "select * from quran where [sura] == '$chapter'",
-    );
+    var r = await quranDb
+        .customSelectQuery(
+          "select * from '${quranTextData.tableName}' where [sura] == '$chapter'",
+        )
+        .get();
     var listAyaHolder = List<Aya>();
     r.forEach((m) {
       var aya = Aya((v) {
-        v.indexString = m['aya'];
-        v.text = m['text'];
+        v.indexString = m.data['aya']?.toString();
+        v.text = m.data['text'];
       });
       listAyaHolder.add(aya);
     });
@@ -124,7 +131,7 @@ class SqliteQuranProvider implements QuranProvider {
     var l = List<QuranTextData>();
     l.add(
       QuranTextData()
-        ..filename = 'quran-uthmani.db'
+        ..tableName = 'quran_uthmani'
         ..name = 'Quran Uthmani',
     );
     return Future.value(l);
@@ -195,27 +202,32 @@ class SqliteQuranProvider implements QuranProvider {
     return l;
   }
 
+  bool isInitialized = false;
+
   @override
   Future initialize(QuranTextData quranTextData) async {
+    if (isInitialized) {
+      appServices.logger.i('Skipped, already initialized');
+      return;
+    }
+
     var quranFolder = getQuranFolder(appServices);
 
     // Copy db from flutter assets to local store, so library can open the db as path
     // Copy the quran db
     {
       {
-        var l = await getListQuranTextData();
-        for (var item in l) {
-          // Get data from assets
-          var p = join('assets', 'quran-data', item.filename);
-          var d = await _assetBundle.load(p);
-          var localFilePath = join(quranFolder.path, item.filename);
-          var localFile = File(localFilePath);
-          final buffer = d.buffer;
-          await localFile.writeAsBytes(
-            buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
-            flush: true,
-          );
-        }
+        // Get data from assets
+        var filename = 'quran.db';
+        var p = join('assets', 'quran-data', filename);
+        var d = await _assetBundle.load(p);
+        var localFilePath = join(quranFolder.path, filename);
+        var localFile = File(localFilePath);
+        final buffer = d.buffer;
+        await localFile.writeAsBytes(
+          buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
+          flush: true,
+        );
       }
 
       {
@@ -244,22 +256,24 @@ class SqliteQuranProvider implements QuranProvider {
     }
 
     {
-      if (quranTextData != null) {
-        if (!_mapDatabase.containsKey(quranTextData)) {
-          var database = await openDatabase(
-            join(quranFolder.path, quranTextData.filename),
-          );
-          _mapDatabase.putIfAbsent(quranTextData, () {
-            return database;
-          });
-        }
-      }
+      // if (quranTextData != null) {
+      //   if (!_mapDatabase.containsKey(quranTextData)) {
+      //     var database = await openDatabase(
+      //       join(quranFolder.path, quranTextData.filename),
+      //     );
+      //     _mapDatabase.putIfAbsent(quranTextData, () {
+      //       return database;
+      //     });
+      //   }
+      // }
     }
+
+    isInitialized = true;
   }
 
   @override
   void dispose() {
-    Stream.fromIterable(_mapDatabase.values)
+    Stream.fromIterable([quranDb])
         .asyncExpand((f) {
           return DeferStream(() {
             return f.close().asStream();

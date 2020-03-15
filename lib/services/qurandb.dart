@@ -9,18 +9,18 @@ import 'package:path/path.dart';
 
 import '../main.dart';
 
-part 'translationdb.g.dart';
+part 'qurandb.g.dart';
 
 @UseMoor()
-class TranslationDb extends _$TranslationDb {
-  TranslationDb() : super(_openConnection());
+class QuranDb extends _$QuranDb {
+  QuranDb() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
 
-  Future<bool> isTranslationTableExists(String name) async {
+  Future<bool> isQuranTableNameExists(String tableName) async {
     var l = await customSelectQuery(
-      'SELECT name FROM sqlite_master WHERE type="table" AND name="${name}"',
+      'SELECT name FROM sqlite_master WHERE type="table" AND name="${tableName}"',
     ).get();
     var isExists = l.isNotEmpty;
     return isExists;
@@ -33,7 +33,7 @@ LazyDatabase _openConnection() {
     var directory = getQuranFolder(appServices);
     var translationDbPath = join(
       directory.path,
-      'translations.db',
+      'quran.db',
     );
     var f = File(translationDbPath);
     return VmDatabase(f);
