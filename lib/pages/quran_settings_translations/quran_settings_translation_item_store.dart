@@ -66,6 +66,9 @@ class QuranSettingsTranslationItemStore implements Disposable {
       );
       var queueStatus = await dataFile.onChangeStatus.skip(1).take(1).first;
       onChangeStatus.add(queueStatus);
+      translationData.isSelected$.add(
+        translationData.isSelected$.value ?? false,
+      );
       checkTranslationFile.execute();
       await checkTranslationFile.next;
     });

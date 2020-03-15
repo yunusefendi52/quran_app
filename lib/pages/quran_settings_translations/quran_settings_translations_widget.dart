@@ -85,6 +85,7 @@ class _QuranSettingsTranslationsWidgetState
                             expanded: ListView.builder(
                               itemCount: store.translations.length,
                               shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (
                                 BuildContext context,
                                 int index,

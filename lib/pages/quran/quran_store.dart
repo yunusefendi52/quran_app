@@ -66,7 +66,7 @@ abstract class _QuranStore extends BaseStore with Store {
         listTranslationData.clear();
         listTranslationData.addAll(_listTranslationData);
 
-        await _quranProvider.initialize(selectedQuranTextData$.value);
+        await _quranProvider.initialize();
 
         var _chapters = await _quranProvider.getChapters(localization.locale);
         chapters.clear();

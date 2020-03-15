@@ -103,7 +103,7 @@ abstract class QuranProvider {
 
   Future<List<TranslationData>> getListTranslations();
 
-  Future initialize(QuranTextData quranTextData);
+  Future initialize();
 
   Future<List<Chapters>> getChapters(Locale locale);
 

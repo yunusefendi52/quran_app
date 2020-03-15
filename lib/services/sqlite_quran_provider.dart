@@ -47,7 +47,7 @@ class SqliteQuranProvider implements QuranProvider {
     QuranTextData quranTextData, [
     List<TranslationData> translations,
   ]) async {
-    await initialize(quranTextData);
+    await initialize();
     var r = await quranDb.rawQuery(
       "select * from '${quranTextData.tableName}' where [sura] == '$chapter' and [aya] == '$aya'",
     );
@@ -198,7 +198,7 @@ class SqliteQuranProvider implements QuranProvider {
   bool isInitialized = false;
 
   @override
-  Future initialize(QuranTextData quranTextData) async {
+  Future initialize() async {
     if (isInitialized) {
       appServices.logger.i('Skipped, already initialized');
       return;
@@ -219,11 +219,13 @@ class SqliteQuranProvider implements QuranProvider {
         var d = await _assetBundle.load(p);
         var localFilePath = join(quranFolder.path, filename);
         var localFile = File(localFilePath);
-        final buffer = d.buffer;
-        await localFile.writeAsBytes(
-          buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
-          flush: true,
-        );
+        if (!localFile.existsSync()) {
+          final buffer = d.buffer;
+          await localFile.writeAsBytes(
+            buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
+            flush: true,
+          );
+        }
         _quranDb = await openDatabase(localFilePath);
       }
 
@@ -243,11 +245,13 @@ class SqliteQuranProvider implements QuranProvider {
           translationFilename,
         );
         var localFile = File(localFilePath);
-        final buffer = d.buffer;
-        await localFile.writeAsBytes(
-          buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
-          flush: true,
-        );
+        if (!localFile.existsSync()) {
+          final buffer = d.buffer;
+          await localFile.writeAsBytes(
+            buffer.asUint8List(d.offsetInBytes, d.lengthInBytes),
+            flush: true,
+          );
+        }
         if (translationDb == null) {
           _translationDb = await openDatabase(localFilePath);
         }
