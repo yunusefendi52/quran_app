@@ -44,7 +44,7 @@ abstract class _MainStore extends BaseStore with Store {
     ]).asyncExpand((_) {
       return getCurrentTheme.executeIf().asStream();
     }).listen(null));
-
+    
     registerDispose(() {
       ds.dispose();
       ds = null;

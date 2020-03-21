@@ -1,0 +1,17 @@
+AppName: Quran App
+home_widget.sura: Surah
+home_widget.juz: Juz
+quran_navigator_widget.pick_sura: Pilih Surah
+quran_navigator_widget.pick_aya: Pilih Ayat
+quran_settings_translations.translations: Terjemahan
+quran_settings.title: Pengaturan
+quran_settings_fontsizes.arabic_fontsize: Ukuran huruf arab
+quran_settings_fontsizes.translation_fontsize: Ukuran huruf terjemahan
+quran_settings_theme.title: Tema
+home_tab_juz.juz: Juz
+bookmarks.title: Bookmarks
+bookmarks.no_bookmarks: Anda belum menambahkan bookmarks
+bookmarks.add_to_bookmark: Tambah bookmark
+bookmarks.remove_bookmark: Hapus bookmark
+quran_settings_app_widget.title: Pengaturan App
+quran_settings_app_widget.language: Bahasa App

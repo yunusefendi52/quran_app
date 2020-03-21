@@ -4,6 +4,7 @@ import 'package:quran_app/baselib/base_widgetparameter_mixin.dart';
 import 'package:quran_app/pages/splash/splash_widget.dart';
 import 'package:quran_app/routes/routes.dart';
 import 'package:quran_app/services/theme_provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'main_store.dart';
 

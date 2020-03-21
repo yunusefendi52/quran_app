@@ -33,7 +33,10 @@ abstract class _SplashStore extends BaseStore with Store {
       await _quranProvider.initialize();
 
       // Load localization
-      await _localizationService.loadFromBundle(Locale.parse('en-US'));
+      var language = await _localizationService.getSavedLanguage();
+      await _localizationService.loadFromBundle(
+        language.locale,
+      );
 
       await _appServices.navigatorState.pushNamedAndRemoveUntil(
         '/home',
