@@ -27,6 +27,6 @@ jobs:
       uses: ncipollo/release-action@v1
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/release*'
       with:
-        artifacts: "build/app/outputs/apk/debug/app-release.apk"
+        artifacts: "build/app/outputs/apk/debug/com.yunus.quran_app.apk"
         token: ${{ secrets.GITHUB_TOKEN }}
         
