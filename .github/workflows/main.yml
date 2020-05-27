@@ -10,6 +10,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: set environment variables
+      uses: allenevans/set-env@v1.0.0
+      with:
+        KEYSTORE_FILE: 'KEYSTORE'
+
     - uses: actions/setup-java@v1
       with:
         java-version: '12.x'
@@ -19,9 +24,7 @@ jobs:
         flutter-version: '1.17.1'
     - run: flutter pub get
     # - run: flutter test
-    - run: |
-        echo "::set-env name=KEYSTORE::1"
-        flutter build apk
+    - run: flutter build apk
 
     - name: Rename apk
       shell: pwsh
@@ -43,5 +46,5 @@ jobs:
         appName: yunus.efendin97/quran_app
         token: ${{secrets.APPCENTER_TOKEN}}
         group: Public
-        file: "build/app/outputs/apk/release/com.yunus.quran_app.apk"
+        file: ${SIGNED_RELEASE_FILE}
         
