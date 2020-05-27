@@ -6,7 +6,7 @@ Quran app built with Flutter
 
 ### Features:
 - Support dark and ligth theme
-- Multiple translation
+- Multiple translations
 - Bookmark ayat
 - And some basic features
 
