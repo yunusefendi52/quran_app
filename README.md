@@ -1,16 +1,31 @@
 # quran_app
 
-A new Flutter project.
+[![Download APK](https://img.shields.io/badge/Download%20APK-App%20Center-GREEN.svg)](https://install.appcenter.ms/users/yunus.efendin97/apps/quran_app/distribution_groups/public)
 
-## Getting Started
+Quran app built with Flutter
 
-This project is a starting point for a Flutter application.
+### Features:
+- Support dark and ligth theme
+- Multiple translation
+- Bookmark ayat
+- And some basic features
 
-A few resources to get you started if this is your first Flutter project:
+There is still so much to improve (playing audio, ayat of the day, etc) if you want to contribute whether it's a feature or a bug you can send a Pull Request, maybe I can check it out
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Screenshot (Dark theme)
+<p float="left">
+  <img src="screenshots/Screenshot_2020-05-27-20-23-36-351_com.yunus.quran_app.png" width="200" />
+  <img src="screenshots/Screenshot_2020-05-27-20-23-43-527_com.yunus.quran_app.png" width="200" /> 
+  <img src="screenshots/Screenshot_2020-05-27-20-23-54-591_com.yunus.quran_app.png" width="200" />
+  <img src="screenshots/Screenshot_2020-05-27-20-24-01-308_com.yunus.quran_app.png" width="200" />
+  <img src="screenshots/Screenshot_2020-05-27-20-24-09-414_com.yunus.quran_app.png" width="200" />
+</p>
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Screenshot (Light theme)
+<p float="left">
+  <img src="screenshots/Screenshot_2020-05-27-20-24-23-497_com.yunus.quran_app.png" width="200" />
+  <img src="screenshots/Screenshot_2020-05-27-20-24-28-043_com.yunus.quran_app.png" width="200" /> 
+  <img src="screenshots/Screenshot_2020-05-27-20-24-33-849_com.yunus.quran_app.png" width="200" />
+  <img src="screenshots/Screenshot_2020-05-27-20-24-38-538_com.yunus.quran_app.png" width="200" />
+  <img src="screenshots/Screenshot_2020-05-27-20-24-44-403_com.yunus.quran_app.png" width="200" />
+</p>
