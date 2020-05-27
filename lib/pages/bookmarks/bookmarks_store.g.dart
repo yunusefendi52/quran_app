@@ -11,7 +11,8 @@ part of 'bookmarks_store.dart';
 mixin _$BookmarksStore on _BookmarksStore, Store {
   @override
   String toString() {
-    final string = '';
-    return '{$string}';
+    return '''
+
+    ''';
   }
 }

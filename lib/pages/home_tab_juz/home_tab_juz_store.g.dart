@@ -11,7 +11,8 @@ part of 'home_tab_juz_store.dart';
 mixin _$HomeTabJuzStore on _HomeTabJuzStore, Store {
   @override
   String toString() {
-    final string = '';
-    return '{$string}';
+    return '''
+
+    ''';
   }
 }

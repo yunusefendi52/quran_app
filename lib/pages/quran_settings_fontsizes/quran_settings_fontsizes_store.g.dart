@@ -11,7 +11,8 @@ part of 'quran_settings_fontsizes_store.dart';
 mixin _$QuranSettingsFontsizesStore on _QuranSettingsFontsizesStore, Store {
   @override
   String toString() {
-    final string = '';
-    return '{$string}';
+    return '''
+
+    ''';
   }
 }

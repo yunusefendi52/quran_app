@@ -95,8 +95,10 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
                                 child: Text(
                                   '${item.chapterNumber}. ${item.nameSimple}',
                                   style: TextStyle(
-                                    color:
-                                        Theme.of(context).textTheme.body1.color,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText2
+                                        .color,
                                   ),
                                 ),
                               );
@@ -155,7 +157,7 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .textTheme
-                                          .body1
+                                          .bodyText2
                                           .color,
                                     ),
                                   ),
@@ -237,7 +239,7 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
     //                                     style: TextStyle(
     //                                       color: Theme.of(context)
     //                                           .textTheme
-    //                                           .body1
+    //                                           .bodyText2
     //                                           .color,
     //                                     ),
     //                                   ),
@@ -297,7 +299,7 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
     //                                       style: TextStyle(
     //                                         color: Theme.of(context)
     //                                             .textTheme
-    //                                             .body1
+    //                                             .bodyText2
     //                                             .color,
     //                                       ),
     //                                     ),

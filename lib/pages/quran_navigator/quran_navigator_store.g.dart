@@ -13,17 +13,15 @@ mixin _$QuranNavigatorStore on _QuranNavigatorStore, Store {
 
   @override
   ObservableList<Chapters> get chapters {
-    _$chaptersAtom.context.enforceReadPolicy(_$chaptersAtom);
-    _$chaptersAtom.reportObserved();
+    _$chaptersAtom.reportRead();
     return super.chapters;
   }
 
   @override
   set chapters(ObservableList<Chapters> value) {
-    _$chaptersAtom.context.conditionallyRunInAction(() {
+    _$chaptersAtom.reportWrite(value, super.chapters, () {
       super.chapters = value;
-      _$chaptersAtom.reportChanged();
-    }, _$chaptersAtom, name: '${_$chaptersAtom.name}_set');
+    });
   }
 
   final _$initialSelectedChapterAtom =
@@ -31,59 +29,55 @@ mixin _$QuranNavigatorStore on _QuranNavigatorStore, Store {
 
   @override
   Chapters get initialSelectedChapter {
-    _$initialSelectedChapterAtom.context
-        .enforceReadPolicy(_$initialSelectedChapterAtom);
-    _$initialSelectedChapterAtom.reportObserved();
+    _$initialSelectedChapterAtom.reportRead();
     return super.initialSelectedChapter;
   }
 
   @override
   set initialSelectedChapter(Chapters value) {
-    _$initialSelectedChapterAtom.context.conditionallyRunInAction(() {
+    _$initialSelectedChapterAtom
+        .reportWrite(value, super.initialSelectedChapter, () {
       super.initialSelectedChapter = value;
-      _$initialSelectedChapterAtom.reportChanged();
-    }, _$initialSelectedChapterAtom,
-        name: '${_$initialSelectedChapterAtom.name}_set');
+    });
   }
 
   final _$listAyaAtom = Atom(name: '_QuranNavigatorStore.listAya');
 
   @override
   ObservableList<int> get listAya {
-    _$listAyaAtom.context.enforceReadPolicy(_$listAyaAtom);
-    _$listAyaAtom.reportObserved();
+    _$listAyaAtom.reportRead();
     return super.listAya;
   }
 
   @override
   set listAya(ObservableList<int> value) {
-    _$listAyaAtom.context.conditionallyRunInAction(() {
+    _$listAyaAtom.reportWrite(value, super.listAya, () {
       super.listAya = value;
-      _$listAyaAtom.reportChanged();
-    }, _$listAyaAtom, name: '${_$listAyaAtom.name}_set');
+    });
   }
 
   final _$selectedAyaAtom = Atom(name: '_QuranNavigatorStore.selectedAya');
 
   @override
   int get selectedAya {
-    _$selectedAyaAtom.context.enforceReadPolicy(_$selectedAyaAtom);
-    _$selectedAyaAtom.reportObserved();
+    _$selectedAyaAtom.reportRead();
     return super.selectedAya;
   }
 
   @override
   set selectedAya(int value) {
-    _$selectedAyaAtom.context.conditionallyRunInAction(() {
+    _$selectedAyaAtom.reportWrite(value, super.selectedAya, () {
       super.selectedAya = value;
-      _$selectedAyaAtom.reportChanged();
-    }, _$selectedAyaAtom, name: '${_$selectedAyaAtom.name}_set');
+    });
   }
 
   @override
   String toString() {
-    final string =
-        'chapters: ${chapters.toString()},initialSelectedChapter: ${initialSelectedChapter.toString()},listAya: ${listAya.toString()},selectedAya: ${selectedAya.toString()}';
-    return '{$string}';
+    return '''
+chapters: ${chapters},
+initialSelectedChapter: ${initialSelectedChapter},
+listAya: ${listAya},
+selectedAya: ${selectedAya}
+    ''';
   }
 }

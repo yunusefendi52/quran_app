@@ -13,40 +13,37 @@ mixin _$HomeTabSurahStore on _HomeTabSurahStore, Store {
 
   @override
   ObservableList<Chapters> get chapters {
-    _$chaptersAtom.context.enforceReadPolicy(_$chaptersAtom);
-    _$chaptersAtom.reportObserved();
+    _$chaptersAtom.reportRead();
     return super.chapters;
   }
 
   @override
   set chapters(ObservableList<Chapters> value) {
-    _$chaptersAtom.context.conditionallyRunInAction(() {
+    _$chaptersAtom.reportWrite(value, super.chapters, () {
       super.chapters = value;
-      _$chaptersAtom.reportChanged();
-    }, _$chaptersAtom, name: '${_$chaptersAtom.name}_set');
+    });
   }
 
   final _$stateAtom = Atom(name: '_HomeTabSurahStore.state');
 
   @override
   DataState get state {
-    _$stateAtom.context.enforceReadPolicy(_$stateAtom);
-    _$stateAtom.reportObserved();
+    _$stateAtom.reportRead();
     return super.state;
   }
 
   @override
   set state(DataState value) {
-    _$stateAtom.context.conditionallyRunInAction(() {
+    _$stateAtom.reportWrite(value, super.state, () {
       super.state = value;
-      _$stateAtom.reportChanged();
-    }, _$stateAtom, name: '${_$stateAtom.name}_set');
+    });
   }
 
   @override
   String toString() {
-    final string =
-        'chapters: ${chapters.toString()},state: ${state.toString()}';
-    return '{$string}';
+    return '''
+chapters: ${chapters},
+state: ${state}
+    ''';
   }
 }

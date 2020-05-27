@@ -26,7 +26,7 @@ class _QuranSettingsWidgetState extends State<QuranSettingsWidget>
         title: Text(
           store.localization.getByKey('quran_settings.title'),
           style: TextStyle(
-            color: Theme.of(context).textTheme.body1.color,
+            color: Theme.of(context).textTheme.bodyText2.color,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),

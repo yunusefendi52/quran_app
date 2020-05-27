@@ -13,47 +13,46 @@ mixin _$QuranStore on _QuranStore, Store {
 
   @override
   ObservableList<AyaStore> get listAya => (_$listAyaComputed ??=
-          Computed<ObservableList<AyaStore>>(() => super.listAya))
+          Computed<ObservableList<AyaStore>>(() => super.listAya,
+              name: '_QuranStore.listAya'))
       .value;
 
   final _$sourceListAyaAtom = Atom(name: '_QuranStore.sourceListAya');
 
   @override
   ObservableList<Aya> get sourceListAya {
-    _$sourceListAyaAtom.context.enforceReadPolicy(_$sourceListAyaAtom);
-    _$sourceListAyaAtom.reportObserved();
+    _$sourceListAyaAtom.reportRead();
     return super.sourceListAya;
   }
 
   @override
   set sourceListAya(ObservableList<Aya> value) {
-    _$sourceListAyaAtom.context.conditionallyRunInAction(() {
+    _$sourceListAyaAtom.reportWrite(value, super.sourceListAya, () {
       super.sourceListAya = value;
-      _$sourceListAyaAtom.reportChanged();
-    }, _$sourceListAyaAtom, name: '${_$sourceListAyaAtom.name}_set');
+    });
   }
 
   final _$chaptersAtom = Atom(name: '_QuranStore.chapters');
 
   @override
   ObservableList<Chapters> get chapters {
-    _$chaptersAtom.context.enforceReadPolicy(_$chaptersAtom);
-    _$chaptersAtom.reportObserved();
+    _$chaptersAtom.reportRead();
     return super.chapters;
   }
 
   @override
   set chapters(ObservableList<Chapters> value) {
-    _$chaptersAtom.context.conditionallyRunInAction(() {
+    _$chaptersAtom.reportWrite(value, super.chapters, () {
       super.chapters = value;
-      _$chaptersAtom.reportChanged();
-    }, _$chaptersAtom, name: '${_$chaptersAtom.name}_set');
+    });
   }
 
   @override
   String toString() {
-    final string =
-        'sourceListAya: ${sourceListAya.toString()},chapters: ${chapters.toString()},listAya: ${listAya.toString()}';
-    return '{$string}';
+    return '''
+sourceListAya: ${sourceListAya},
+chapters: ${chapters},
+listAya: ${listAya}
+    ''';
   }
 }

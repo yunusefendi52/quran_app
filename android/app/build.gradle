@@ -52,14 +52,14 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             if (System.getenv('KEYSTORE') != null) {
                 signingConfig null
+                
+                applicationVariants.all { variant ->
+                    variant.outputs.all { output ->
+                        output.outputFileName = "app-release.apk"
+                    }
+                }
             } else {
                 signingConfig signingConfigs.debug
-            }
-
-            applicationVariants.all { variant ->
-                variant.outputs.all { output ->
-                    output.outputFileName = "app-release.apk"
-                }
             }
         }
     }

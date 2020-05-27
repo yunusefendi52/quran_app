@@ -31,7 +31,7 @@ class _BookmarksWidgetState extends State<BookmarksWidget>
             'bookmarks.title',
           ),
           style: TextStyle(
-            color: Theme.of(context).textTheme.body1.color,
+            color: Theme.of(context).textTheme.bodyText2.color,
           ),
         ),
         backgroundColor: Colors.transparent,

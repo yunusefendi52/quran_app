@@ -14,7 +14,8 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: 1.17.1
 
 dependencies:
   flutter:
@@ -26,8 +27,8 @@ dependencies:
   logger: ^0.7.0+2
   rxdart: ^0.23.1
   rx_command: ^5.0.2
-  mobx: ^1.0.0
-  flutter_mobx: ^1.0.0
+  mobx: ^1.2.1
+  flutter_mobx: ^1.1.0
   material_design_icons_flutter: ^3.0.3289
   intl: ^0.16.0
   font_awesome_flutter: ^8.2.0
@@ -54,7 +55,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^1.7.2
-  mobx_codegen: ^1.0.0
+  mobx_codegen: ^1.1.0
   built_value_generator: ^7.0.9
   json_serializable: ^3.2.5
   moor_generator: ^2.4.0

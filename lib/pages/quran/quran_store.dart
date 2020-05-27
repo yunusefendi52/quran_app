@@ -178,11 +178,27 @@ abstract class _QuranStore extends BaseStore with Store {
       }).listen(null));
 
       listTranslationData.observe(
-        (t) {
-          if (t.type == OperationType.add) {
-            var l = t.added.length;
+        (change) {
+          // if (t.type == OperationType.add) {
+          //   var l = t.added.length;
+          //   for (var i = 0; i < l; i++) {
+          //     var v = t.added[i];
+          //     var d = v.isSelected$
+          //         .distinct(
+          //       (t1, t2) => t1 == t2,
+          //     )
+          //         .doOnData((v) {
+          //       getAyaRefresh$.add(null);
+          //     }).listen(null);
+          //     ds.add(d);
+          //   }
+          // }
+          for (var item in change.rangeChanges) {
+            final addedValues =
+                item.newValues.map((f) => f as TranslationData).toList();
+            var l = addedValues.length;
             for (var i = 0; i < l; i++) {
-              var v = t.added[i];
+              var v = addedValues[i];
               var d = v.isSelected$
                   .distinct(
                 (t1, t2) => t1 == t2,

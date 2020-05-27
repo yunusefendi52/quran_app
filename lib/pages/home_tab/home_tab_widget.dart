@@ -100,9 +100,9 @@ class _HomeTabWidgetState extends State<HomeTabWidget>
                       tabBarIndicatorSize: TabBarIndicatorSize.tab,
                     ),
                     labelColor:
-                        Theme.of(context).accentTextTheme.display1.color,
+                        Theme.of(context).accentTextTheme.headline4.color,
                     unselectedLabelColor:
-                        Theme.of(context).textTheme.display1.color,
+                        Theme.of(context).textTheme.headline4.color,
                     tabs: <Widget>[
                       Tab(
                         text: store.localization.getByKey('home_widget.sura'),

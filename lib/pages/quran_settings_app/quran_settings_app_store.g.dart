@@ -11,7 +11,8 @@ part of 'quran_settings_app_store.dart';
 mixin _$QuranSettingsAppStore on _QuranSettingsAppStore, Store {
   @override
   String toString() {
-    final string = '';
-    return '{$string}';
+    return '''
+
+    ''';
   }
 }

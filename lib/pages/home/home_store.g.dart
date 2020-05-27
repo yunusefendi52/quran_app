@@ -11,7 +11,8 @@ part of 'home_store.dart';
 mixin _$HomeStore on _HomeStore, Store {
   @override
   String toString() {
-    final string = '';
-    return '{$string}';
+    return '''
+
+    ''';
   }
 }

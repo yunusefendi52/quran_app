@@ -15,22 +15,21 @@ mixin _$QuranSettingsTranslationsStore
 
   @override
   ObservableList<QuranSettingsTranslationItemStore> get translations {
-    _$translationsAtom.context.enforceReadPolicy(_$translationsAtom);
-    _$translationsAtom.reportObserved();
+    _$translationsAtom.reportRead();
     return super.translations;
   }
 
   @override
   set translations(ObservableList<QuranSettingsTranslationItemStore> value) {
-    _$translationsAtom.context.conditionallyRunInAction(() {
+    _$translationsAtom.reportWrite(value, super.translations, () {
       super.translations = value;
-      _$translationsAtom.reportChanged();
-    }, _$translationsAtom, name: '${_$translationsAtom.name}_set');
+    });
   }
 
   @override
   String toString() {
-    final string = 'translations: ${translations.toString()}';
-    return '{$string}';
+    return '''
+translations: ${translations}
+    ''';
   }
 }
