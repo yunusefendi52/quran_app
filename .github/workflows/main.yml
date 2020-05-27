@@ -48,5 +48,5 @@ jobs:
         appName: yunus.efendin97/quran_app
         token: ${{secrets.APPCENTER_TOKEN}}
         group: Public
-        file: ${SIGNED_RELEASE_FILE}
+        file: ${{ env.SIGNED_RELEASE_FILE }}
         
