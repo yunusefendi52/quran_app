@@ -1,4 +1,7 @@
-on: push
+on:
+  push:
+    tags:
+      - v*
 name: Build and Release apk
 jobs:
   build:
@@ -24,6 +27,7 @@ jobs:
 
     - name: Upload apk to App Center
       uses: wzieba/AppCenter-Github-Action@v1.0.0
+      if: startsWith(github.ref, 'refs/tags/v')
       with:
         appName: yunus.efendin97/quran_app
         token: ${{secrets.APPCENTER_TOKEN}}
