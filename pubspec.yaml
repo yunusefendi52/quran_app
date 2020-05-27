@@ -50,6 +50,7 @@ dependencies:
   draggable_scrollbar: ^0.0.4
   yaml: ^2.2.0
   dio: ^3.0.9
+  flutter_launcher_icons: ^0.7.5
   
 dev_dependencies:
   flutter_test:
@@ -100,3 +101,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/quran-solid.png"
