@@ -53,7 +53,7 @@ class SqliteQuranProvider implements QuranProvider {
     );
     var ayaData = r.map((m) {
       var aya = Aya((v) {
-        v.indexString = m['sura'];
+        v.indexString = m['sura']?.toString();
         v.text = m['text'];
       });
       return aya;
