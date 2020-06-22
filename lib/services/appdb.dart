@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:moor/moor.dart';
-import 'package:moor_ffi/moor_ffi.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import 'database/shared.dart';
 
 part 'appdb.g.dart';
 
@@ -13,18 +9,10 @@ part 'appdb.g.dart';
   },
 )
 class AppDb extends _$AppDb {
-  AppDb() : super(_openConnection());
+  AppDb() : super(initializeAppDb());
 
   @override
   int get schemaVersion => 1;
-}
-
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'appdb.sqlite'));
-    return VmDatabase(file);
-  });
 }
 
 extension QuranBookmarkExtension on QuranBookmark {
