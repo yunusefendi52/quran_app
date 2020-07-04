@@ -18,6 +18,11 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: '12.x'
+    
+    - name: Install ubuntu package
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get install libsqlite3-dev
         
     - uses: subosito/flutter-action@v1
       with:
