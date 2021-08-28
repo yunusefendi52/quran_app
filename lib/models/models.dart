@@ -1,3 +1,4 @@
+// @dart=2.9
 library surah;
 
 import 'dart:convert';

@@ -1,32 +1,19 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'translation_data.dart';
+part of 'theme_provider.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TranslationData _$TranslationDataFromJson(Map<String, dynamic> json) =>
-    TranslationData()
-      ..id = json['id'] as String?
-      ..tableName = json['tableName'] as String?
-      ..uri = json['uri'] as String?
-      ..languageCode = json['languageCode'] as String?
-      ..language = json['language'] as String?
-      ..name = json['name'] as String?
-      ..translator = json['translator'] as String?
-      ..type = _$enumDecodeNullable(_$TranslationTypeEnumMap, json['type']);
+ThemeItem _$ThemeItemFromJson(Map<String, dynamic> json) => ThemeItem(
+      name: json['name'] as String?,
+      themeType: _$enumDecodeNullable(_$ThemeTypeEnumMap, json['themeType']),
+    );
 
-Map<String, dynamic> _$TranslationDataToJson(TranslationData instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'tableName': instance.tableName,
-      'uri': instance.uri,
-      'languageCode': instance.languageCode,
-      'language': instance.language,
+Map<String, dynamic> _$ThemeItemToJson(ThemeItem instance) => <String, dynamic>{
       'name': instance.name,
-      'translator': instance.translator,
-      'type': _$TranslationTypeEnumMap[instance.type],
+      'themeType': _$ThemeTypeEnumMap[instance.themeType],
     };
 
 K _$enumDecode<K, V>(
@@ -66,7 +53,7 @@ K? _$enumDecodeNullable<K, V>(
   return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
 }
 
-const _$TranslationTypeEnumMap = {
-  TranslationType.builtIn: 'builtIn',
-  TranslationType.download: 'download',
+const _$ThemeTypeEnumMap = {
+  ThemeType.Light: 'Light',
+  ThemeType.Night: 'Night',
 };

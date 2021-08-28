@@ -6,27 +6,25 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'translation_data.g.dart';
 
-@JsonSerializable(
-  nullable: true,
-)
+@JsonSerializable()
 class TranslationData {
-  String id;
+  String? id;
 
-  String tableName;
+  String? tableName;
 
-  String uri;
+  String? uri;
 
-  String languageCode;
+  String? languageCode;
 
-  String language;
+  String? language;
 
-  String name;
+  String? name;
 
-  String translator;
+  String? translator;
 
-  TranslationType type;
+  TranslationType? type;
 
-  String get filename {
+  String? get filename {
     return type == TranslationType.builtIn ? uri : '$id.$languageCode.db';
   }
 

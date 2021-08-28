@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:moor/moor.dart';

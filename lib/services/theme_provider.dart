@@ -3,6 +3,8 @@ import 'package:rxdart/rxdart.dart';
 
 import '../main.dart';
 
+part 'theme_provider.g.dart';
+
 enum ThemeType {
   Light,
   Night,
@@ -10,8 +12,8 @@ enum ThemeType {
 
 @JsonSerializable()
 class ThemeItem {
-  final String name;
-  final ThemeType themeType;
+  final String? name;
+  final ThemeType? themeType;
 
   ThemeItem({
     this.name,
@@ -36,14 +38,14 @@ class ThemeProviderImplementation {
     var themeInt = await rxPrefs.getInt('theme');
     var themes = await getThemes();
     var theme = themes.firstWhere(
-      (t) => t.themeType.index == themeInt,
+      (t) => t.themeType!.index == themeInt,
       orElse: () => themes.first,
     );
     return theme;
   }
 
   Future setTheme(ThemeItem themeItem) async {
-    await rxPrefs.setInt('theme', themeItem.themeType.index);
+    await rxPrefs.setInt('theme', themeItem.themeType!.index);
     _themeChanged.add(themeItem);
   }
 

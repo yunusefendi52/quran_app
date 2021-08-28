@@ -1,4 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// @dart=2.9
 
 part of surah;
 
@@ -70,7 +71,7 @@ class _$ChapterDataSerializer implements StructuredSerializer<ChapterData> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'chapters':
           result.chapters.replace(serializers.deserialize(value,
@@ -95,71 +96,79 @@ class _$ChaptersSerializer implements StructuredSerializer<Chapters> {
   Iterable<Object> serialize(Serializers serializers, Chapters object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[];
-    if (object.id != null) {
+    Object value;
+    value = object.id;
+    if (value != null) {
       result
         ..add('id')
-        ..add(serializers.serialize(object.id,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.chapterNumber != null) {
+    value = object.chapterNumber;
+    if (value != null) {
       result
         ..add('chapter_number')
-        ..add(serializers.serialize(object.chapterNumber,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.bismillahPre != null) {
+    value = object.bismillahPre;
+    if (value != null) {
       result
         ..add('bismillah_pre')
-        ..add(serializers.serialize(object.bismillahPre,
-            specifiedType: const FullType(bool)));
+        ..add(
+            serializers.serialize(value, specifiedType: const FullType(bool)));
     }
-    if (object.revelationOrder != null) {
+    value = object.revelationOrder;
+    if (value != null) {
       result
         ..add('revelation_order')
-        ..add(serializers.serialize(object.revelationOrder,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.revelationPlace != null) {
+    value = object.revelationPlace;
+    if (value != null) {
       result
         ..add('revelation_place')
-        ..add(serializers.serialize(object.revelationPlace,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.nameComplex != null) {
+    value = object.nameComplex;
+    if (value != null) {
       result
         ..add('name_complex')
-        ..add(serializers.serialize(object.nameComplex,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.nameArabic != null) {
+    value = object.nameArabic;
+    if (value != null) {
       result
         ..add('name_arabic')
-        ..add(serializers.serialize(object.nameArabic,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.nameSimple != null) {
+    value = object.nameSimple;
+    if (value != null) {
       result
         ..add('name_simple')
-        ..add(serializers.serialize(object.nameSimple,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.versesCount != null) {
+    value = object.versesCount;
+    if (value != null) {
       result
         ..add('verses_count')
-        ..add(serializers.serialize(object.versesCount,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.pages != null) {
+    value = object.pages;
+    if (value != null) {
       result
         ..add('pages')
-        ..add(serializers.serialize(object.pages,
+        ..add(serializers.serialize(value,
             specifiedType:
                 const FullType(BuiltList, const [const FullType(int)])));
     }
-    if (object.translatedName != null) {
+    value = object.translatedName;
+    if (value != null) {
       result
         ..add('translated_name')
-        ..add(serializers.serialize(object.translatedName,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(TranslatedName)));
     }
     return result;
@@ -174,7 +183,7 @@ class _$ChaptersSerializer implements StructuredSerializer<Chapters> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'id':
           result.id = serializers.deserialize(value,
@@ -240,16 +249,19 @@ class _$TranslatedNameSerializer
   Iterable<Object> serialize(Serializers serializers, TranslatedName object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[];
-    if (object.languageName != null) {
+    Object value;
+    value = object.languageName;
+    if (value != null) {
       result
         ..add('languageName')
-        ..add(serializers.serialize(object.languageName,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
-    if (object.name != null) {
+    value = object.name;
+    if (value != null) {
       result
         ..add('name')
-        ..add(serializers.serialize(object.name,
+        ..add(serializers.serialize(value,
             specifiedType: const FullType(String)));
     }
     return result;
@@ -265,7 +277,7 @@ class _$TranslatedNameSerializer
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'languageName':
           result.languageName = serializers.deserialize(value,
@@ -310,7 +322,7 @@ class _$RootJuzItemSerializer implements StructuredSerializer<RootJuzItem> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'juzs':
           result.juzs.replace(serializers.deserialize(value,
@@ -358,7 +370,7 @@ class _$JuzItemSerializer implements StructuredSerializer<JuzItem> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'id':
           result.id = serializers.deserialize(value,
@@ -395,23 +407,24 @@ class _$VerseMappingJuzItemSerializer
       Serializers serializers, VerseMappingJuzItem object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[];
-    if (object.surah != null) {
+    Object value;
+    value = object.surah;
+    if (value != null) {
       result
         ..add('surah')
-        ..add(serializers.serialize(object.surah,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.startAya != null) {
+    value = object.startAya;
+    if (value != null) {
       result
         ..add('startAya')
-        ..add(serializers.serialize(object.startAya,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
-    if (object.endAya != null) {
+    value = object.endAya;
+    if (value != null) {
       result
         ..add('endAya')
-        ..add(serializers.serialize(object.endAya,
-            specifiedType: const FullType(int)));
+        ..add(serializers.serialize(value, specifiedType: const FullType(int)));
     }
     return result;
   }
@@ -426,7 +439,7 @@ class _$VerseMappingJuzItemSerializer
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'surah':
           result.surah = serializers.deserialize(value,
@@ -455,9 +468,7 @@ class _$ChapterData extends ChapterData {
       (new ChapterDataBuilder()..update(updates)).build();
 
   _$ChapterData._({this.chapters}) : super._() {
-    if (chapters == null) {
-      throw new BuiltValueNullFieldError('ChapterData', 'chapters');
-    }
+    BuiltValueNullFieldError.checkNotNull(chapters, 'ChapterData', 'chapters');
   }
 
   @override
@@ -497,8 +508,9 @@ class ChapterDataBuilder implements Builder<ChapterData, ChapterDataBuilder> {
   ChapterDataBuilder();
 
   ChapterDataBuilder get _$this {
-    if (_$v != null) {
-      _chapters = _$v.chapters?.toBuilder();
+    final $v = _$v;
+    if ($v != null) {
+      _chapters = $v.chapters.toBuilder();
       _$v = null;
     }
     return this;
@@ -506,9 +518,7 @@ class ChapterDataBuilder implements Builder<ChapterData, ChapterDataBuilder> {
 
   @override
   void replace(ChapterData other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$ChapterData;
   }
 
@@ -699,18 +709,19 @@ class ChaptersBuilder implements Builder<Chapters, ChaptersBuilder> {
   ChaptersBuilder();
 
   ChaptersBuilder get _$this {
-    if (_$v != null) {
-      _id = _$v.id;
-      _chapterNumber = _$v.chapterNumber;
-      _bismillahPre = _$v.bismillahPre;
-      _revelationOrder = _$v.revelationOrder;
-      _revelationPlace = _$v.revelationPlace;
-      _nameComplex = _$v.nameComplex;
-      _nameArabic = _$v.nameArabic;
-      _nameSimple = _$v.nameSimple;
-      _versesCount = _$v.versesCount;
-      _pages = _$v.pages?.toBuilder();
-      _translatedName = _$v.translatedName?.toBuilder();
+    final $v = _$v;
+    if ($v != null) {
+      _id = $v.id;
+      _chapterNumber = $v.chapterNumber;
+      _bismillahPre = $v.bismillahPre;
+      _revelationOrder = $v.revelationOrder;
+      _revelationPlace = $v.revelationPlace;
+      _nameComplex = $v.nameComplex;
+      _nameArabic = $v.nameArabic;
+      _nameSimple = $v.nameSimple;
+      _versesCount = $v.versesCount;
+      _pages = $v.pages?.toBuilder();
+      _translatedName = $v.translatedName?.toBuilder();
       _$v = null;
     }
     return this;
@@ -718,9 +729,7 @@ class ChaptersBuilder implements Builder<Chapters, ChaptersBuilder> {
 
   @override
   void replace(Chapters other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$Chapters;
   }
 
@@ -820,9 +829,10 @@ class TranslatedNameBuilder
   TranslatedNameBuilder();
 
   TranslatedNameBuilder get _$this {
-    if (_$v != null) {
-      _languageName = _$v.languageName;
-      _name = _$v.name;
+    final $v = _$v;
+    if ($v != null) {
+      _languageName = $v.languageName;
+      _name = $v.name;
       _$v = null;
     }
     return this;
@@ -830,9 +840,7 @@ class TranslatedNameBuilder
 
   @override
   void replace(TranslatedName other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$TranslatedName;
   }
 
@@ -858,9 +866,7 @@ class _$RootJuzItem extends RootJuzItem {
       (new RootJuzItemBuilder()..update(updates)).build();
 
   _$RootJuzItem._({this.juzs}) : super._() {
-    if (juzs == null) {
-      throw new BuiltValueNullFieldError('RootJuzItem', 'juzs');
-    }
+    BuiltValueNullFieldError.checkNotNull(juzs, 'RootJuzItem', 'juzs');
   }
 
   @override
@@ -898,8 +904,9 @@ class RootJuzItemBuilder implements Builder<RootJuzItem, RootJuzItemBuilder> {
   RootJuzItemBuilder();
 
   RootJuzItemBuilder get _$this {
-    if (_$v != null) {
-      _juzs = _$v.juzs?.toBuilder();
+    final $v = _$v;
+    if ($v != null) {
+      _juzs = $v.juzs.toBuilder();
       _$v = null;
     }
     return this;
@@ -907,9 +914,7 @@ class RootJuzItemBuilder implements Builder<RootJuzItem, RootJuzItemBuilder> {
 
   @override
   void replace(RootJuzItem other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$RootJuzItem;
   }
 
@@ -957,15 +962,10 @@ class _$JuzItem extends JuzItem {
   _$JuzItem._(
       {this.id, this.juzNumber, this.verseMapping, this.chapters, this.listAya})
       : super._() {
-    if (id == null) {
-      throw new BuiltValueNullFieldError('JuzItem', 'id');
-    }
-    if (juzNumber == null) {
-      throw new BuiltValueNullFieldError('JuzItem', 'juzNumber');
-    }
-    if (verseMapping == null) {
-      throw new BuiltValueNullFieldError('JuzItem', 'verseMapping');
-    }
+    BuiltValueNullFieldError.checkNotNull(id, 'JuzItem', 'id');
+    BuiltValueNullFieldError.checkNotNull(juzNumber, 'JuzItem', 'juzNumber');
+    BuiltValueNullFieldError.checkNotNull(
+        verseMapping, 'JuzItem', 'verseMapping');
   }
 
   @override
@@ -1036,12 +1036,13 @@ class JuzItemBuilder implements Builder<JuzItem, JuzItemBuilder> {
   JuzItemBuilder();
 
   JuzItemBuilder get _$this {
-    if (_$v != null) {
-      _id = _$v.id;
-      _juzNumber = _$v.juzNumber;
-      _verseMapping = _$v.verseMapping?.toBuilder();
-      _chapters = _$v.chapters?.toBuilder();
-      _listAya = _$v.listAya?.toBuilder();
+    final $v = _$v;
+    if ($v != null) {
+      _id = $v.id;
+      _juzNumber = $v.juzNumber;
+      _verseMapping = $v.verseMapping.toBuilder();
+      _chapters = $v.chapters?.toBuilder();
+      _listAya = $v.listAya?.toBuilder();
       _$v = null;
     }
     return this;
@@ -1049,9 +1050,7 @@ class JuzItemBuilder implements Builder<JuzItem, JuzItemBuilder> {
 
   @override
   void replace(JuzItem other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$JuzItem;
   }
 
@@ -1066,8 +1065,9 @@ class JuzItemBuilder implements Builder<JuzItem, JuzItemBuilder> {
     try {
       _$result = _$v ??
           new _$JuzItem._(
-              id: id,
-              juzNumber: juzNumber,
+              id: BuiltValueNullFieldError.checkNotNull(id, 'JuzItem', 'id'),
+              juzNumber: BuiltValueNullFieldError.checkNotNull(
+                  juzNumber, 'JuzItem', 'juzNumber'),
               verseMapping: verseMapping.build(),
               chapters: _chapters?.build(),
               listAya: _listAya?.build());
@@ -1158,10 +1158,11 @@ class VerseMappingJuzItemBuilder
   VerseMappingJuzItemBuilder();
 
   VerseMappingJuzItemBuilder get _$this {
-    if (_$v != null) {
-      _surah = _$v.surah;
-      _startAya = _$v.startAya;
-      _endAya = _$v.endAya;
+    final $v = _$v;
+    if ($v != null) {
+      _surah = $v.surah;
+      _startAya = $v.startAya;
+      _endAya = $v.endAya;
       _$v = null;
     }
     return this;
@@ -1169,9 +1170,7 @@ class VerseMappingJuzItemBuilder
 
   @override
   void replace(VerseMappingJuzItem other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$VerseMappingJuzItem;
   }
 
@@ -1190,4 +1189,4 @@ class VerseMappingJuzItemBuilder
   }
 }
 
-// ignore_for_file: always_put_control_body_on_new_line,always_specify_types,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new
+// ignore_for_file: always_put_control_body_on_new_line,always_specify_types,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,deprecated_member_use_from_same_package,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new

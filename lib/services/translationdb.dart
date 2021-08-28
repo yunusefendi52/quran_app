@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:moor/moor.dart';
-import 'package:moor_ffi/database.dart';
-import 'package:moor_ffi/moor_ffi.dart';
+import 'package:moor/ffi.dart';
 import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import 'package:path/path.dart';
