@@ -1,8 +1,7 @@
-import 'package:mobx/mobx.dart';
+// @dart=2.11
 import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/baselib/command.dart';
 import 'package:quran_app/baselib/disposable.dart';
-import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/services/quran_translation_file_provider.dart';
 import 'package:rx_command/rx_command.dart';

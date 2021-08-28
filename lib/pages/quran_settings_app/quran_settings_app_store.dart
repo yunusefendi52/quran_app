@@ -1,22 +1,11 @@
-import 'dart:async';
-
-import 'package:flutter/foundation.dart';
+// @dart=2.11
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/baselib/base_store.dart';
-import 'package:quran_app/baselib/command.dart';
 import 'package:quran_app/baselib/localization_service.dart';
-import 'package:quran_app/baselib/widgets.dart';
-import 'package:quran_app/models/models.dart';
-import 'package:quran_app/models/translation_data.dart';
-import 'package:quran_app/services/quran_provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tuple/tuple.dart';
-import '../../extensions/settings_extension.dart';
-
 import '../../main.dart';
 import '../quran_settings/quran_settings_store.dart';
-import '../../models/setting_ids.dart';
 
 part 'quran_settings_app_store.g.dart';
 
@@ -30,7 +19,6 @@ abstract class _QuranSettingsAppStore extends BaseStore
   var appServices = sl.get<AppServices>();
 
   _QuranSettingsAppStore({
-    @required Map<Type, Object> parameter,
     ILocalizationService localizationService,
     AppServices appServices,
   }) {

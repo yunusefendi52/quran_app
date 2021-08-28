@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'package:flutter/services.dart';
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/app_services.dart';

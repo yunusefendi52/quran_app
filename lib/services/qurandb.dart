@@ -18,7 +18,7 @@ class QuranDb extends _$QuranDb {
   int get schemaVersion => 1;
 
   Future<bool> isQuranTableNameExists(String tableName) async {
-    var l = await customSelectQuery(
+    var l = await customSelect(
       'SELECT name FROM sqlite_master WHERE type="table" AND name="${tableName}"',
     ).get();
     var isExists = l.isNotEmpty;

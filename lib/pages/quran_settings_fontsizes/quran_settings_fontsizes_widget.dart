@@ -1,14 +1,8 @@
+// @dart=2.11
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
-import 'package:quran_app/baselib/widgets.dart';
-import 'package:quran_app/helpers/localized_helpers.dart';
-import 'package:quran_app/models/models.dart';
 import 'package:quran_app/pages/quran_settings_fontsizes/quran_settings_fontsizes_store.dart';
-import 'package:quran_app/services/quran_provider.dart';
-import 'package:tuple/tuple.dart';
-import '../quran_settings/quran_settings_store.dart';
 
 class QuranSettingsFontSizesWidget extends StatefulWidget {
   final QuranSettingsFontsizesStore store;

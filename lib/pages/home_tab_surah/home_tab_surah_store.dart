@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+// @dart=2.11
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/baselib/base_store.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 
 import 'base_store.dart';
-import 'base_widgetparameter_mixin.dart';
 
 mixin BaseStateMixin<TStore extends BaseStore, T extends StatefulWidget>
     on State<T> {
@@ -9,7 +8,7 @@ mixin BaseStateMixin<TStore extends BaseStore, T extends StatefulWidget>
 
   @override
   void dispose() {
-    store?.dispose();
+    store.dispose();
 
     super.dispose();
   }

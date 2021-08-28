@@ -25,8 +25,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   logger: ^0.7.0+2
-  rxdart: ^0.23.1
-  rx_command: ^5.0.2
+  rxdart: ^0.27.1
+  rx_command: ^6.0.1
   mobx: ^2.0.4
   flutter_mobx: ^2.0.2
   material_design_icons_flutter: ^3.0.3289
@@ -36,13 +36,13 @@ dependencies:
   built_collection: ^5.1.0
   built_value: ^8.1.2
   shimmer: ^1.0.1
-  flutter_widgets: ^0.1.11
+  scrollable_positioned_list: ^0.1.10
   xml2json: ^5.3.1
-  tuple: ^1.0.3
-  rx_shared_preferences: ^1.1.1+1
+  tuple: ^2.0.0
+  rx_shared_preferences: ^2.0.7
   expandable: ^4.1.2
   sqflite: ^1.2.1
-  path_provider: ^1.6.5
+  path_provider: ^2.0.2
   json_annotation: ^4.1.0
   moor: ^4.5.0
   sqlite3_flutter_libs: ^0.5.0

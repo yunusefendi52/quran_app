@@ -1,17 +1,14 @@
-// @dart=2.9
+// @dart=2.11
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:intl/src/locale.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:quran_app/baselib/app_services.dart';
 
 import 'package:quran_app/models/models.dart';
 
 import 'package:quran_app/models/translation_data.dart';
-import 'package:quran_app/services/qurandb.dart';
-import 'package:quran_app/services/translationdb.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -68,7 +65,7 @@ class SqliteQuranProvider implements QuranProvider {
     var r = await quranDb.rawQuery(
       "select * from '${quranTextData.tableName}' where [sura] == '$chapter'",
     );
-    var listAyaHolder = List<Aya>();
+    List<Aya> listAyaHolder = [];
     r.forEach((m) {
       var aya = Aya((v) {
         v.indexString = m['aya']?.toString();
@@ -77,7 +74,7 @@ class SqliteQuranProvider implements QuranProvider {
       listAyaHolder.add(aya);
     });
 
-    var listAya = List<Aya>();
+    List<Aya> listAya = [];
     if (translations?.isNotEmpty == true) {
       listAya = listAyaHolder;
       // for (var item in listAyaHolder) {
@@ -121,7 +118,7 @@ class SqliteQuranProvider implements QuranProvider {
 
   @override
   Future<List<QuranTextData>> getListQuranTextData() {
-    var l = List<QuranTextData>();
+    final List<QuranTextData> l = [];
     l.add(
       QuranTextData()
         ..tableName = 'quran_uthmani'
@@ -183,7 +180,7 @@ class SqliteQuranProvider implements QuranProvider {
     var rawQuery = await translationDb.rawQuery(
       'SELECT * FROM "${translationData.tableName}" where [sura] == $chapter',
     );
-    var l = List<Aya>();
+    final List<Aya> l = [];
     rawQuery.forEach((m) {
       var aya = Aya((v) {
         v.indexString = m['ayah']?.toString();

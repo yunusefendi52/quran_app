@@ -1,9 +1,8 @@
-import 'package:intl/locale.dart';
+// @dart=2.11
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/command.dart';
 import 'package:quran_app/services/quran_provider.dart';
 import '../../baselib/localization_service.dart';
-import 'package:rx_command/rx_command.dart';
 
 import '../../baselib/app_services.dart';
 import '../../baselib/base_store.dart';

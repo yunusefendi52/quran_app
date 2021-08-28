@@ -8,14 +8,14 @@ part of 'translation_data.dart';
 
 TranslationData _$TranslationDataFromJson(Map<String, dynamic> json) =>
     TranslationData()
-      ..id = json['id'] as String?
-      ..tableName = json['tableName'] as String?
-      ..uri = json['uri'] as String?
-      ..languageCode = json['languageCode'] as String?
-      ..language = json['language'] as String?
-      ..name = json['name'] as String?
-      ..translator = json['translator'] as String?
-      ..type = _$enumDecodeNullable(_$TranslationTypeEnumMap, json['type']);
+      ..id = json['id'] as String
+      ..tableName = json['tableName'] as String
+      ..uri = json['uri'] as String
+      ..languageCode = json['languageCode'] as String
+      ..language = json['language'] as String
+      ..name = json['name'] as String
+      ..translator = json['translator'] as String
+      ..type = _$enumDecode(_$TranslationTypeEnumMap, json['type']);
 
 Map<String, dynamic> _$TranslationDataToJson(TranslationData instance) =>
     <String, dynamic>{
@@ -53,17 +53,6 @@ K _$enumDecode<K, V>(
       return MapEntry(unknownValue, enumValues.values.first);
     },
   ).key;
-}
-
-K? _$enumDecodeNullable<K, V>(
-  Map<K, V> enumValues,
-  dynamic source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
 }
 
 const _$TranslationTypeEnumMap = {

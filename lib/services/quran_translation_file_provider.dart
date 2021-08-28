@@ -1,19 +1,10 @@
-// @dart=2.9
-import 'dart:collection';
-import 'dart:io';
-
+// @dart=2.11
 import 'package:flutter/services.dart';
-import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/app_services.dart';
-import 'package:quran_app/models/translation_data.dart';
 import 'package:quran_app/services/quran_provider.dart';
-import 'package:path/path.dart';
-import 'package:quran_app/services/translationdb.dart';
-import 'package:rx_command/rx_command.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:tuple/tuple.dart';
 import 'package:dio/dio.dart';
-import 'package:xml/xml.dart' as xml;
+import 'package:xml/xml.dart';
 
 import '../main.dart';
 import 'sqlite_quran_provider.dart';
@@ -63,7 +54,7 @@ class QuranTranslationFileProviderImplementation
               options: Options(
                 responseType: ResponseType.plain,
               ));
-          var d = xml.parse(raw.data);
+          var d = XmlDocument.parse(raw.data);
           var suraElements = d.findAllElements('sura');
           var index = 0;
           var items = suraElements.expand((f) {
@@ -140,7 +131,7 @@ class QuranTranslationFileProviderImplementation
 
   var downloadSubject = PublishSubject<DataFile>();
 
-  var currentQueued = List<DataFile>();
+  List<DataFile> currentQueued = [];
 
   DataFile getDataFileById(String id) {
     var item = currentQueued.firstWhere(

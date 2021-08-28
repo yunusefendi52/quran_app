@@ -1,3 +1,4 @@
+// @dart=2.11
 class LocalizedHelpers {
   static final isoLangs = {
     "ab": {"name": "Abkhaz", "nativeName": "аҧсуа"},

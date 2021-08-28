@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 
 import '../main.dart';
 
@@ -12,13 +13,16 @@ enum ThemeType {
 
 @JsonSerializable()
 class ThemeItem {
-  final String? name;
-  final ThemeType? themeType;
+  late String name;
+  late ThemeType themeType;
 
   ThemeItem({
-    this.name,
-    this.themeType,
-  });
+    String name = '',
+    ThemeType? themeType,
+  }) {
+    this.name = name;
+    this.themeType = themeType!;
+  }
 
   operator ==(other) {
     return other is ThemeItem && other.themeType == themeType;
@@ -38,14 +42,14 @@ class ThemeProviderImplementation {
     var themeInt = await rxPrefs.getInt('theme');
     var themes = await getThemes();
     var theme = themes.firstWhere(
-      (t) => t.themeType!.index == themeInt,
+      (t) => t.themeType.index == themeInt,
       orElse: () => themes.first,
     );
     return theme;
   }
 
   Future setTheme(ThemeItem themeItem) async {
-    await rxPrefs.setInt('theme', themeItem.themeType!.index);
+    await rxPrefs.setInt('theme', themeItem.themeType.index);
     _themeChanged.add(themeItem);
   }
 

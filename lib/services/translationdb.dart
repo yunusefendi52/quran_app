@@ -18,7 +18,7 @@ class TranslationDb extends _$TranslationDb {
   int get schemaVersion => 1;
 
   Future<bool> isTranslationTableExists(String name) async {
-    var l = await customSelectQuery(
+    var l = await customSelect(
       'SELECT name FROM sqlite_master WHERE type="table" AND name="${name}"',
     ).get();
     var isExists = l.isNotEmpty;

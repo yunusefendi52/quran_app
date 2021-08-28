@@ -1,6 +1,6 @@
+// @dart=2.11
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quran_app/app_widgets/shimmer_loading.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/baselib/widgets.dart';

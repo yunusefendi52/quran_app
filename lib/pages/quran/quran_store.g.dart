@@ -1,4 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// @dart=2.11
 
 part of 'quran_store.dart';
 
@@ -9,14 +10,6 @@ part of 'quran_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$QuranStore on _QuranStore, Store {
-  Computed<ObservableList<AyaStore>>? _$listAyaComputed;
-
-  @override
-  ObservableList<AyaStore> get listAya => (_$listAyaComputed ??=
-          Computed<ObservableList<AyaStore>>(() => super.listAya,
-              name: '_QuranStore.listAya'))
-      .value;
-
   final _$sourceListAyaAtom = Atom(name: '_QuranStore.sourceListAya');
 
   @override
@@ -51,8 +44,7 @@ mixin _$QuranStore on _QuranStore, Store {
   String toString() {
     return '''
 sourceListAya: ${sourceListAya},
-chapters: ${chapters},
-listAya: ${listAya}
+chapters: ${chapters}
     ''';
   }
 }

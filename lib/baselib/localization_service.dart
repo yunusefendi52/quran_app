@@ -1,9 +1,10 @@
+// @dart=2.11
 import 'package:flutter/services.dart';
 import 'package:intl/locale.dart';
-import 'dart:convert';
 import 'package:path/path.dart' as p;
 import 'package:rxdart/rxdart.dart';
 import 'package:yaml/yaml.dart';
+import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 
 import '../main.dart';
 
@@ -46,7 +47,7 @@ class LocalizationService extends ILocalizationService {
         .then(
       (v) {
         _onLanguageChanged.add(language);
-        return Future.value(v);
+        return Future.value(true);
       },
     );
   }

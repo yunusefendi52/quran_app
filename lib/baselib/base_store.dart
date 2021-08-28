@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'disposable.dart';
 
 class BaseStore extends Disposable {

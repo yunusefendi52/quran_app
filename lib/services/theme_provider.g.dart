@@ -7,7 +7,7 @@ part of 'theme_provider.dart';
 // **************************************************************************
 
 ThemeItem _$ThemeItemFromJson(Map<String, dynamic> json) => ThemeItem(
-      name: json['name'] as String?,
+      name: json['name'] as String? ?? '',
       themeType: _$enumDecodeNullable(_$ThemeTypeEnumMap, json['themeType']),
     );
 
