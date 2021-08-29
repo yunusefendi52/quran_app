@@ -4,6 +4,12 @@
 
 Quran app built with Flutter
 
+### How to build from source
+You can use global flutter commands as usual, or you can install `fvm`:
+- Install [fvm](https://fvm.app/docs/getting_started/installation)
+- Install specific flutter version with `fvm install theversion`, see pubspec.yaml to see the flutter version
+- Run any flutter commands with `fvm flutter ...` instead of `flutter ...`
+
 ### Features:
 - Support dark and ligth theme
 - Multiple translations
