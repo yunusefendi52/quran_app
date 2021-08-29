@@ -29,7 +29,7 @@ class _MainWidgetState extends State<MainWidget>
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<ThemeItem>(
-      initialData: store.currentTheme$.value,
+      initialData: store.currentTheme$.valueOrNull,
       stream: store.currentTheme$,
       builder: (
         BuildContext context,

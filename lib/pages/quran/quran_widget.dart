@@ -79,7 +79,7 @@ class _QuranWidgetState extends State<QuranWidget>
             child: Row(
               children: <Widget>[
                 StreamBuilder<Chapters>(
-                  initialData: store.selectedChapter$.value,
+                  initialData: store.selectedChapter$.valueOrNull,
                   stream: store.selectedChapter$,
                   builder:
                       (BuildContext context, AsyncSnapshot<Chapters> snapshot) {

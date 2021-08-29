@@ -40,7 +40,7 @@ class _HomeTabJuzWidgetState extends State<HomeTabJuzWidget>
 
     return Scaffold(
       body: StreamBuilder<DataState>(
-        initialData: store.state$.value,
+        initialData: store.state$.valueOrNull,
         stream: store.state$,
         builder: (
           BuildContext context,

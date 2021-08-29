@@ -119,7 +119,7 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
                       ),
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       store.pickSura.executeIf();
                     },
@@ -180,7 +180,7 @@ class QuranNavigatorWidgetState extends State<QuranNavigatorWidget>
                       ),
                     ),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: () {
                       store.pickAya.executeIf();
                     },
