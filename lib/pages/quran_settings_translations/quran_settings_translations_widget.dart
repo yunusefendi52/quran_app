@@ -385,9 +385,14 @@ class _QuranSettingsTranslationsWidgetState
                                                           onChanged: (
                                                             bool value,
                                                           ) {
-                                                            item.translationData
-                                                                .isSelected$
-                                                                .add(value);
+                                                            store
+                                                                .translationChanged
+                                                                .executeIf(
+                                                              Tuple2(
+                                                                item,
+                                                                value,
+                                                              ),
+                                                            );
                                                           },
                                                         );
                                                       },
