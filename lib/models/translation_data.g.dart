@@ -6,17 +6,16 @@ part of 'translation_data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-TranslationData _$TranslationDataFromJson(Map<String, dynamic> json) {
-  return TranslationData()
-    ..id = json['id'] as String
-    ..tableName = json['tableName'] as String
-    ..uri = json['uri'] as String
-    ..languageCode = json['languageCode'] as String
-    ..language = json['language'] as String
-    ..name = json['name'] as String
-    ..translator = json['translator'] as String
-    ..type = _$enumDecodeNullable(_$TranslationTypeEnumMap, json['type']);
-}
+TranslationData _$TranslationDataFromJson(Map<String, dynamic> json) =>
+    TranslationData()
+      ..id = json['id'] as String
+      ..tableName = json['tableName'] as String
+      ..uri = json['uri'] as String
+      ..languageCode = json['languageCode'] as String
+      ..language = json['language'] as String
+      ..name = json['name'] as String
+      ..translator = json['translator'] as String
+      ..type = _$enumDecode(_$TranslationTypeEnumMap, json['type']);
 
 Map<String, dynamic> _$TranslationDataToJson(TranslationData instance) =>
     <String, dynamic>{
@@ -30,36 +29,30 @@ Map<String, dynamic> _$TranslationDataToJson(TranslationData instance) =>
       'type': _$TranslationTypeEnumMap[instance.type],
     };
 
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
 }) {
   if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
   }
 
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
 }
 
 const _$TranslationTypeEnumMap = {

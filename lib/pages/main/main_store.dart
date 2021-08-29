@@ -1,11 +1,9 @@
-import 'package:flutter/widgets.dart';
+// @dart=2.11
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/command.dart';
 import 'package:quran_app/baselib/localization_service.dart';
-import 'package:quran_app/pages/home/home_widget.dart';
-import 'package:quran_app/pages/splash/splash_widget.dart';
 import 'package:quran_app/services/theme_provider.dart';
 import 'package:rxdart/rxdart.dart';
 

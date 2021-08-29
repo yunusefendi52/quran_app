@@ -1,36 +1,36 @@
+// @dart=2.11
 import 'package:flutter/material.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/baselib/base_widgetparameter_mixin.dart';
-import 'package:quran_app/pages/splash/splash_widget.dart';
 import 'package:quran_app/routes/routes.dart';
 import 'package:quran_app/services/theme_provider.dart';
-import 'package:rxdart/rxdart.dart';
 
 import 'main_store.dart';
 
 class MainWidget extends StatefulWidget {
-  MainWidget({Key key}) : super(key: key);
+  final MainStore mainStore;
+  MainWidget({
+    @required this.mainStore,
+    Key key,
+  }) : super(key: key);
 
   _MainWidgetState createState() => _MainWidgetState();
 }
 
-class _MainWidgetState extends State<MainWidget>
-    with BaseStateMixin<MainStore, MainWidget> {
-  final _store = MainStore();
-  @override
-  MainStore get store => _store;
-
+class _MainWidgetState extends State<MainWidget>  {
   @override
   void initState() {
     super.initState();
 
+    final store = widget.mainStore;
     store.currentThemeRefresher$.add(null);
   }
 
   @override
   Widget build(BuildContext context) {
+    final store = widget.mainStore;
     return StreamBuilder<ThemeItem>(
-      initialData: store.currentTheme$.value,
+      initialData: store.currentTheme$.valueOrNull,
       stream: store.currentTheme$,
       builder: (
         BuildContext context,

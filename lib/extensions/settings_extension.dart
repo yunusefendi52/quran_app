@@ -3,8 +3,9 @@ import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 import '../main.dart';
 
 extension SettingsExtensions on RxSharedPreferences {
-  Future<bool> setArabicFontSize(double value) {
-    return rxPrefs.setDouble('arabicFontSize', value);
+  Future<bool> setArabicFontSize(double value) async {
+    await rxPrefs.setDouble('arabicFontSize', value);
+    return true;
   }
 
   Future<double> getArabicFontSize() async {
@@ -15,8 +16,9 @@ extension SettingsExtensions on RxSharedPreferences {
     return f;
   }
 
-  Future<bool> setTranslationFontSize(double value) {
-    return rxPrefs.setDouble('TranslationFontSize', value);
+  Future<bool> setTranslationFontSize(double value) async {
+    await rxPrefs.setDouble('TranslationFontSize', value);
+    return true;
   }
 
   Future<double> getTranslationFontSize() async {

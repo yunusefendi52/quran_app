@@ -1,12 +1,10 @@
+// @dart=2.11
 library surah;
 
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
-import 'package:built_value/serializer.dart';
-import 'package:built_collection/built_collection.dart';
-import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
 import 'package:quran_app/services/quran_provider.dart';
@@ -170,7 +168,7 @@ abstract class JuzItem implements Built<JuzItem, JuzItemBuilder> {
 
   static BuiltList<VerseMappingJuzItem> getVerseMappingJuzItem(
       BuiltMap<String, String> verseMapping) {
-    final list = List<VerseMappingJuzItem>();
+    final List<VerseMappingJuzItem> list = [];
     verseMapping.forEach((t1, t2) {
       list.add(VerseMappingJuzItem((v) {
         v.surah = int.parse(t1);

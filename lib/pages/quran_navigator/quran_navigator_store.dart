@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
-import 'package:intl/locale.dart';
+// @dart=2.11
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/app_services.dart';
 import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/command.dart';
-import 'package:quran_app/baselib/interaction.dart';
 import 'package:quran_app/baselib/localization_service.dart';
 import 'package:quran_app/models/models.dart';
 import 'package:quran_app/services/quran_provider.dart';

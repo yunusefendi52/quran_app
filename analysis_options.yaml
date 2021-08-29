@@ -1,3 +1,6 @@
 linter:
   rules:
     # - close_sinks # not reliable enough https://github.com/flutter/flutter/blob/6a337a76dda033098decc14fe0f8d0c497ad8ee1/analysis_options.yaml#L95
+analyzer:
+  errors:
+    import_of_legacy_library_into_null_safe: ignore

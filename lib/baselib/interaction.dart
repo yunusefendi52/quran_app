@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'disposable.dart';
 
 typedef InteractionGetter<T1, T2> = Future<T1> Function(T2 value);

@@ -1,4 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// @dart=2.11
 
 part of 'quran_provider.dart';
 
@@ -44,7 +45,7 @@ class _$SuraSerializer implements StructuredSerializer<Sura> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'index':
           result.index = serializers.deserialize(value,
@@ -96,7 +97,7 @@ class _$AyaSerializer implements StructuredSerializer<Aya> {
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'index':
           result.indexString = serializers.deserialize(value,
@@ -145,7 +146,7 @@ class _$AyaTranslationSerializer
     while (iterator.moveNext()) {
       final key = iterator.current as String;
       iterator.moveNext();
-      final dynamic value = iterator.current;
+      final Object value = iterator.current;
       switch (key) {
         case 'languageCode':
           result.languageCode = serializers.deserialize(value,
@@ -174,15 +175,9 @@ class _$Sura extends Sura {
       (new SuraBuilder()..update(updates)).build();
 
   _$Sura._({this.index, this.name, this.aya}) : super._() {
-    if (index == null) {
-      throw new BuiltValueNullFieldError('Sura', 'index');
-    }
-    if (name == null) {
-      throw new BuiltValueNullFieldError('Sura', 'name');
-    }
-    if (aya == null) {
-      throw new BuiltValueNullFieldError('Sura', 'aya');
-    }
+    BuiltValueNullFieldError.checkNotNull(index, 'Sura', 'index');
+    BuiltValueNullFieldError.checkNotNull(name, 'Sura', 'name');
+    BuiltValueNullFieldError.checkNotNull(aya, 'Sura', 'aya');
   }
 
   @override
@@ -234,10 +229,11 @@ class SuraBuilder implements Builder<Sura, SuraBuilder> {
   SuraBuilder();
 
   SuraBuilder get _$this {
-    if (_$v != null) {
-      _index = _$v.index;
-      _name = _$v.name;
-      _aya = _$v.aya?.toBuilder();
+    final $v = _$v;
+    if ($v != null) {
+      _index = $v.index;
+      _name = $v.name;
+      _aya = $v.aya.toBuilder();
       _$v = null;
     }
     return this;
@@ -245,9 +241,7 @@ class SuraBuilder implements Builder<Sura, SuraBuilder> {
 
   @override
   void replace(Sura other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$Sura;
   }
 
@@ -260,8 +254,12 @@ class SuraBuilder implements Builder<Sura, SuraBuilder> {
   _$Sura build() {
     _$Sura _$result;
     try {
-      _$result =
-          _$v ?? new _$Sura._(index: index, name: name, aya: aya.build());
+      _$result = _$v ??
+          new _$Sura._(
+              index:
+                  BuiltValueNullFieldError.checkNotNull(index, 'Sura', 'index'),
+              name: BuiltValueNullFieldError.checkNotNull(name, 'Sura', 'name'),
+              aya: aya.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -294,12 +292,8 @@ class _$Aya extends Aya {
   _$Aya._(
       {this.indexString, this.text, this.translationData, this.translations})
       : super._() {
-    if (indexString == null) {
-      throw new BuiltValueNullFieldError('Aya', 'indexString');
-    }
-    if (text == null) {
-      throw new BuiltValueNullFieldError('Aya', 'text');
-    }
+    BuiltValueNullFieldError.checkNotNull(indexString, 'Aya', 'indexString');
+    BuiltValueNullFieldError.checkNotNull(text, 'Aya', 'text');
   }
 
   @override
@@ -363,11 +357,12 @@ class AyaBuilder implements Builder<Aya, AyaBuilder> {
   AyaBuilder();
 
   AyaBuilder get _$this {
-    if (_$v != null) {
-      _indexString = _$v.indexString;
-      _text = _$v.text;
-      _translationData = _$v.translationData;
-      _translations = _$v.translations?.toBuilder();
+    final $v = _$v;
+    if ($v != null) {
+      _indexString = $v.indexString;
+      _text = $v.text;
+      _translationData = $v.translationData;
+      _translations = $v.translations?.toBuilder();
       _$v = null;
     }
     return this;
@@ -375,9 +370,7 @@ class AyaBuilder implements Builder<Aya, AyaBuilder> {
 
   @override
   void replace(Aya other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$Aya;
   }
 
@@ -392,8 +385,9 @@ class AyaBuilder implements Builder<Aya, AyaBuilder> {
     try {
       _$result = _$v ??
           new _$Aya._(
-              indexString: indexString,
-              text: text,
+              indexString: BuiltValueNullFieldError.checkNotNull(
+                  indexString, 'Aya', 'indexString'),
+              text: BuiltValueNullFieldError.checkNotNull(text, 'Aya', 'text'),
               translationData: translationData,
               translations: _translations?.build());
     } catch (_) {
@@ -422,12 +416,10 @@ class _$AyaTranslation extends AyaTranslation {
       (new AyaTranslationBuilder()..update(updates)).build();
 
   _$AyaTranslation._({this.languageCode, this.translation}) : super._() {
-    if (languageCode == null) {
-      throw new BuiltValueNullFieldError('AyaTranslation', 'languageCode');
-    }
-    if (translation == null) {
-      throw new BuiltValueNullFieldError('AyaTranslation', 'translation');
-    }
+    BuiltValueNullFieldError.checkNotNull(
+        languageCode, 'AyaTranslation', 'languageCode');
+    BuiltValueNullFieldError.checkNotNull(
+        translation, 'AyaTranslation', 'translation');
   }
 
   @override
@@ -475,9 +467,10 @@ class AyaTranslationBuilder
   AyaTranslationBuilder();
 
   AyaTranslationBuilder get _$this {
-    if (_$v != null) {
-      _languageCode = _$v.languageCode;
-      _translation = _$v.translation;
+    final $v = _$v;
+    if ($v != null) {
+      _languageCode = $v.languageCode;
+      _translation = $v.translation;
       _$v = null;
     }
     return this;
@@ -485,9 +478,7 @@ class AyaTranslationBuilder
 
   @override
   void replace(AyaTranslation other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
+    ArgumentError.checkNotNull(other, 'other');
     _$v = other as _$AyaTranslation;
   }
 
@@ -500,10 +491,13 @@ class AyaTranslationBuilder
   _$AyaTranslation build() {
     final _$result = _$v ??
         new _$AyaTranslation._(
-            languageCode: languageCode, translation: translation);
+            languageCode: BuiltValueNullFieldError.checkNotNull(
+                languageCode, 'AyaTranslation', 'languageCode'),
+            translation: BuiltValueNullFieldError.checkNotNull(
+                translation, 'AyaTranslation', 'translation'));
     replace(_$result);
     return _$result;
   }
 }
 
-// ignore_for_file: always_put_control_body_on_new_line,always_specify_types,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new
+// ignore_for_file: always_put_control_body_on_new_line,always_specify_types,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,deprecated_member_use_from_same_package,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new

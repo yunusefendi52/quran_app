@@ -1,19 +1,14 @@
+// @dart=2.11
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:quran_app/app_widgets/app_icon_button.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/baselib/widgets.dart';
-import 'package:quran_app/helpers/localized_helpers.dart';
-import 'package:quran_app/models/models.dart';
 import 'package:quran_app/models/translation_data.dart';
-import 'package:quran_app/services/quran_provider.dart';
 import 'package:quran_app/services/quran_translation_file_provider.dart';
 import 'package:tuple/tuple.dart';
-import 'quran_settings_translation_item_store.dart';
 import 'quran_settings_translations_store.dart';
-import '../quran_settings/quran_settings_store.dart';
-import 'package:rxdart/rxdart.dart';
 
 class QuranSettingsTranslationsWidget extends StatefulWidget {
   final QuranSettingsTranslationsStore store;
@@ -390,9 +385,14 @@ class _QuranSettingsTranslationsWidgetState
                                                           onChanged: (
                                                             bool value,
                                                           ) {
-                                                            item.translationData
-                                                                .isSelected$
-                                                                .add(value);
+                                                            store
+                                                                .translationChanged
+                                                                .executeIf(
+                                                              Tuple2(
+                                                                item,
+                                                                value,
+                                                              ),
+                                                            );
                                                           },
                                                         );
                                                       },

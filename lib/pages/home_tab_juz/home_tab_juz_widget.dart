@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:quran_app/app_widgets/shimmer_loading.dart';
@@ -39,7 +40,7 @@ class _HomeTabJuzWidgetState extends State<HomeTabJuzWidget>
 
     return Scaffold(
       body: StreamBuilder<DataState>(
-        initialData: store.state$.value,
+        initialData: store.state$.valueOrNull,
         stream: store.state$,
         builder: (
           BuildContext context,

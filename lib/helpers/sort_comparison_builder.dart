@@ -1,6 +1,4 @@
-import 'dart:collection';
-
-import 'package:flutter/foundation.dart';
+// @dart=2.11
 import 'package:quiver/collection.dart';
 
 /// <summary>

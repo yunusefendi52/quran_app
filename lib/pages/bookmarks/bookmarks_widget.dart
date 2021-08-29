@@ -1,6 +1,6 @@
+// @dart=2.11
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:quran_app/app_widgets/shimmer_loading.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/baselib/widgets.dart';
@@ -39,7 +39,7 @@ class _BookmarksWidgetState extends State<BookmarksWidget>
       ),
       body: Container(
         child: StreamBuilder<DataState>(
-          initialData: store.bookmarkState.value,
+          initialData: store.bookmarkState.valueOrNull,
           stream: store.bookmarkState,
           builder: (
             BuildContext context,
@@ -50,13 +50,13 @@ class _BookmarksWidgetState extends State<BookmarksWidget>
               states: {
                 DataState.success: Container(
                   child: StreamBuilder<List<QuranBookmark>>(
-                    initialData: store.bookmarks.value,
+                    initialData: store.bookmarks.valueOrNull,
                     stream: store.bookmarks,
                     builder: (
                       BuildContext context,
                       AsyncSnapshot snapshot,
                     ) {
-                      if (store.bookmarks.value.isEmpty) {
+                      if (store.bookmarks.valueOrNull == null || store.bookmarks.valueOrNull.isEmpty) {
                         return Container(
                           child: Center(
                             child: Column(

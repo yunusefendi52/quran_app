@@ -3,65 +3,66 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
-  - moor_ffi (0.0.1):
-    - Flutter
   - path_provider (0.0.1):
     - Flutter
-  - path_provider_macos (0.0.1):
-    - Flutter
   - shared_preferences (0.0.1):
-    - Flutter
-  - shared_preferences_macos (0.0.1):
-    - Flutter
-  - shared_preferences_web (0.0.1):
     - Flutter
   - sqflite (0.0.1):
     - Flutter
     - FMDB (~> 2.7.2)
+  - sqlite3 (3.35.5):
+    - sqlite3/common (= 3.35.5)
+  - sqlite3/common (3.35.5)
+  - sqlite3/fts5 (3.35.5):
+    - sqlite3/common
+  - sqlite3/json1 (3.35.5):
+    - sqlite3/common
+  - sqlite3/perf-threadsafe (3.35.5):
+    - sqlite3/common
+  - sqlite3/rtree (3.35.5):
+    - sqlite3/common
+  - sqlite3_flutter_libs (0.0.1):
+    - Flutter
+    - sqlite3 (~> 3.35.4)
+    - sqlite3/fts5
+    - sqlite3/json1
+    - sqlite3/perf-threadsafe
+    - sqlite3/rtree
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - moor_ffi (from `.symlinks/plugins/moor_ffi/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
-  - path_provider_macos (from `.symlinks/plugins/path_provider_macos/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
-  - shared_preferences_macos (from `.symlinks/plugins/shared_preferences_macos/ios`)
-  - shared_preferences_web (from `.symlinks/plugins/shared_preferences_web/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - FMDB
+  trunk:
+    - sqlite3
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  moor_ffi:
-    :path: ".symlinks/plugins/moor_ffi/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
-  path_provider_macos:
-    :path: ".symlinks/plugins/path_provider_macos/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
-  shared_preferences_macos:
-    :path: ".symlinks/plugins/shared_preferences_macos/ios"
-  shared_preferences_web:
-    :path: ".symlinks/plugins/shared_preferences_web/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
+  sqlite3_flutter_libs:
+    :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  moor_ffi: d66c9470c18e9cb333423bbcb493c105c6c774c6
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
-  path_provider_macos: f760a3c5b04357c380e2fddb6f9db6f3015897e0
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
-  shared_preferences_macos: f3f29b71ccbb56bf40c9dd6396c9acf15e214087
-  shared_preferences_web: 141cce0c3ed1a1c5bf2a0e44f52d31eeb66e5ea9
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
+  sqlite3: 75da32fd4e3574f6c38566a9f0114cfe792c8db5
+  sqlite3_flutter_libs: aedb7b6ba191f9a052dcef77691cf5d37437431c
 
-PODFILE CHECKSUM: 1b66dae606f75376c5f2135a8290850eeb09ae83
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.10.1

@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/base_store.dart';
@@ -37,9 +38,7 @@ abstract class _QuranSettingsStore extends BaseStore with Store {
         localizationService ?? (localizationService = this.localization);
     {
       {
-        final store = QuranSettingsAppStore(
-          parameter: parameter,
-        );
+        final store = QuranSettingsAppStore();
         items.add(
           Tuple2(
             QuranSettingsAppWidget(
@@ -89,5 +88,5 @@ abstract class _QuranSettingsStore extends BaseStore with Store {
     }
   }
 
-  var items = List<Tuple2<Widget, QuranSettingsStoreProvider>>();
+  List<Tuple2<Widget, QuranSettingsStoreProvider>> items = [];
 }

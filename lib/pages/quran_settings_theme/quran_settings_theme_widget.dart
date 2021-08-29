@@ -1,16 +1,9 @@
+// @dart=2.11
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
-import 'package:quran_app/baselib/widgets.dart';
-import 'package:quran_app/helpers/localized_helpers.dart';
-import 'package:quran_app/models/models.dart';
-import 'package:quran_app/services/quran_provider.dart';
 import 'package:quran_app/services/theme_provider.dart';
-import 'package:tuple/tuple.dart';
 import 'quran_settings_theme_store.dart';
-import '../quran_settings/quran_settings_store.dart';
-import 'package:rxdart/rxdart.dart';
 
 class QuranSettingsThemeWidget extends StatefulWidget {
   final QuranSettingsThemeStore store;
@@ -63,7 +56,7 @@ class _QuranSettingsThemeWidgetState extends State<QuranSettingsThemeWidget>
                       ),
                     ),
                     expanded: StreamBuilder<List<ThemeItem>>(
-                      initialData: store.themes$.value,
+                      initialData: store.themes$.valueOrNull,
                       stream: store.themes$,
                       builder: (
                         BuildContext context,
@@ -72,7 +65,7 @@ class _QuranSettingsThemeWidgetState extends State<QuranSettingsThemeWidget>
                         final themes = snapshot.data;
 
                         return StreamBuilder<ThemeItem>(
-                          initialData: store.currentTheme$.value,
+                          initialData: store.currentTheme$.valueOrNull,
                           stream: store.currentTheme$,
                           builder: (
                             BuildContext context,

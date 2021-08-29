@@ -1,7 +1,8 @@
+// @dart=2.11
 import 'package:animator/animator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_widgets/flutter_widgets.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:quran_app/app_widgets/shimmer_loading.dart';
 import 'package:quran_app/baselib/base_state_mixin.dart';
 import 'package:quran_app/baselib/base_widgetparameter_mixin.dart';
@@ -69,6 +70,8 @@ class _QuranWidgetState extends State<QuranWidget>
 
     return Scaffold(
       appBar: AppBar(
+        leading:
+            (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         title: InkWell(
           onTap: () {
             store.pickQuranNavigator.executeIf();
@@ -78,7 +81,7 @@ class _QuranWidgetState extends State<QuranWidget>
             child: Row(
               children: <Widget>[
                 StreamBuilder<Chapters>(
-                  initialData: store.selectedChapter$.value,
+                  initialData: store.selectedChapter$.valueOrNull,
                   stream: store.selectedChapter$,
                   builder:
                       (BuildContext context, AsyncSnapshot<Chapters> snapshot) {
@@ -383,7 +386,7 @@ class _QuranWidgetState extends State<QuranWidget>
                                                                         TranslationData>>>(
                                                               initialData: item
                                                                   .translations
-                                                                  .value,
+                                                                  .valueOrNull,
                                                               stream: item
                                                                   .translations
                                                                   .delay(

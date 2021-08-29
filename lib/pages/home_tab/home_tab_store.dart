@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'package:mobx/mobx.dart';
 import 'package:quran_app/baselib/base_store.dart';
 import 'package:quran_app/baselib/localization_service.dart';

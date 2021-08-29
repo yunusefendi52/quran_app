@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'package:mobx/mobx.dart';
 import 'package:moor/moor.dart';
 import 'package:quran_app/baselib/app_services.dart';
@@ -9,7 +10,6 @@ import 'package:quran_app/baselib/widgets.dart';
 import 'package:quran_app/models/models.dart';
 import 'package:quran_app/models/setting_ids.dart';
 import 'package:quran_app/models/translation_data.dart';
-import 'package:quran_app/pages/quran_navigator/quran_navigator_store.dart';
 import 'package:quran_app/pages/quran_settings_fontsizes/quran_settings_fontsizes_store.dart';
 import 'package:quran_app/services/appdb.dart';
 import 'package:quran_app/services/bookmarks_provider.dart';
@@ -19,6 +19,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 import '../quran_settings_translations/quran_settings_translations_store.dart';
 import '../../extensions/settings_extension.dart';
+import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 
 import '../../main.dart';
 
@@ -109,9 +110,9 @@ abstract class _QuranStore extends BaseStore with Store {
             .map((t) {
               var isSelected = selectedTranslationIds.firstWhere(
                     (v) => v == t.id,
-                    orElse: () => null,
+                    orElse: () => '',
                   ) !=
-                  null;
+                  '';
               if (!t.isSelected$.hasValue) {
                 t.isSelected$.add(isSelected);
               }
@@ -195,7 +196,7 @@ abstract class _QuranStore extends BaseStore with Store {
           // }
           for (var item in change.rangeChanges) {
             final addedValues =
-                item.newValues.map((f) => f as TranslationData).toList();
+                item.newValues.map((f) => f).toList();
             var l = addedValues.length;
             for (var i = 0; i < l; i++) {
               var v = addedValues[i];
@@ -335,16 +336,18 @@ abstract class _QuranStore extends BaseStore with Store {
   @observable
   ObservableList<Aya> sourceListAya = ObservableList();
 
-  @computed
-  ObservableList<AyaStore> get listAya {
-    return ObservableList.of(sourceListAya.map((f) {
-      return AyaStore(
-        selectedChapter$.value,
-        f,
-        selectedListTranslationData,
-      );
-    }));
-  }
+  Computed<ObservableList<AyaStore>> _listAyaComputed;
+
+  ObservableList<AyaStore> get listAya =>
+      (_listAyaComputed ??= Computed<ObservableList<AyaStore>>(
+              () => ObservableList.of(sourceListAya.map((f) {
+                    return AyaStore(
+                      selectedChapter$.value,
+                      f,
+                      selectedListTranslationData,
+                    );
+                  }))))
+          .value;
 
   BehaviorSubject<Aya> initialSelectedAya$ = BehaviorSubject(
     sync: true,
@@ -356,13 +359,13 @@ abstract class _QuranStore extends BaseStore with Store {
     ),
   );
 
-  var listQuranTextData = List<QuranTextData>();
+  List<QuranTextData> listQuranTextData = [];
 
   var selectedQuranTextData$ = BehaviorSubject<QuranTextData>(
     sync: true,
   );
 
-  var selectedListTranslationData = List<TranslationData>();
+  List<TranslationData> selectedListTranslationData = [];
 
   var listTranslationData = ObservableList<TranslationData>();
 

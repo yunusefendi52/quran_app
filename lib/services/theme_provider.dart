@@ -1,7 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 
 import '../main.dart';
+
+part 'theme_provider.g.dart';
 
 enum ThemeType {
   Light,
@@ -10,13 +13,16 @@ enum ThemeType {
 
 @JsonSerializable()
 class ThemeItem {
-  final String name;
-  final ThemeType themeType;
+  late String name;
+  late ThemeType themeType;
 
   ThemeItem({
-    this.name,
-    this.themeType,
-  });
+    String name = '',
+    ThemeType? themeType,
+  }) {
+    this.name = name;
+    this.themeType = themeType!;
+  }
 
   operator ==(other) {
     return other is ThemeItem && other.themeType == themeType;

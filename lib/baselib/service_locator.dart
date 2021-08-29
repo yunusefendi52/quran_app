@@ -1,3 +1,4 @@
+// @dart=2.11
 class ServiceLocator {
   var _providers = Map<String, Map<Type, _ServiceLocatorProvider<Object>>>();
 

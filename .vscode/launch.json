@@ -8,7 +8,10 @@
             "name": "Flutter",
             "request": "launch",
             "type": "dart",
-            "program": "lib/main.dart"
+            "program": "lib/main.dart",
+            "args": [
+                "--no-sound-null-safety"
+            ]
         },
         {
             "name": "Flutter profile mode",

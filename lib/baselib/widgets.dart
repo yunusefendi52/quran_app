@@ -1,3 +1,4 @@
+// @dart=2.11
 import 'package:flutter/widgets.dart';
 
 class WidgetSelector<T> extends StatelessWidget {
