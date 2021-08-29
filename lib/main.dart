@@ -1,5 +1,9 @@
+// @dart=2.11
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:quran_app/baselib/base_widgetparameter_mixin.dart';
+import 'package:quran_app/pages/main/main_store.dart';
+import 'package:quran_app/routes/routes.dart';
 import 'package:quran_app/services/quran_translation_file_provider.dart';
 import 'package:quran_app/services/theme_provider.dart';
 import 'package:rx_shared_preferences/rx_shared_preferences.dart';
@@ -62,12 +66,56 @@ void main() {
 }
 
 class MainApp extends StatelessWidget {
+  final store = MainStore();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.light(),
-      builder: (context, child) {
-        return MainWidget();
+    final themeMapping = {
+      ThemeItem(
+        themeType: ThemeType.Light,
+      ): ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      ThemeItem(
+        themeType: ThemeType.Night,
+      ): ThemeData.dark()
+    };
+    return StreamBuilder<ThemeItem>(
+      initialData: store.currentTheme$.valueOrNull,
+      stream: store.currentTheme$,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<ThemeItem> snapshot,
+      ) {
+        var themeData = themeMapping[snapshot.data] ??
+            ThemeData(
+              primarySwatch: Colors.blue,
+            );
+
+        return MaterialApp(
+          title: 'Quran App',
+          theme: themeData,
+          onGenerateRoute: (s) {
+            var widgetBuilder = Routes.routes[s.name];
+            return MaterialPageRoute(
+              builder: (BuildContext context) {
+                var widget = widgetBuilder(context);
+                if (widget is BaseWidgetParameterMixin) {
+                  var baseWidgetParameterMixin = widget;
+                  if (s.arguments != null) {
+                    baseWidgetParameterMixin.parameter.addAll(
+                      Map.from(
+                        s.arguments,
+                      ),
+                    );
+                  }
+                }
+                return widget;
+              },
+            );
+          },
+          navigatorKey: store.appServices.navigatorStateKey,
+        );
       },
     );
   }

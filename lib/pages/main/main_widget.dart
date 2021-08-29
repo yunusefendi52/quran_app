@@ -8,26 +8,27 @@ import 'package:quran_app/services/theme_provider.dart';
 import 'main_store.dart';
 
 class MainWidget extends StatefulWidget {
-  MainWidget({Key key}) : super(key: key);
+  final MainStore mainStore;
+  MainWidget({
+    @required this.mainStore,
+    Key key,
+  }) : super(key: key);
 
   _MainWidgetState createState() => _MainWidgetState();
 }
 
-class _MainWidgetState extends State<MainWidget>
-    with BaseStateMixin<MainStore, MainWidget> {
-  final _store = MainStore();
-  @override
-  MainStore get store => _store;
-
+class _MainWidgetState extends State<MainWidget>  {
   @override
   void initState() {
     super.initState();
 
+    final store = widget.mainStore;
     store.currentThemeRefresher$.add(null);
   }
 
   @override
   Widget build(BuildContext context) {
+    final store = widget.mainStore;
     return StreamBuilder<ThemeItem>(
       initialData: store.currentTheme$.valueOrNull,
       stream: store.currentTheme$,

@@ -70,6 +70,8 @@ class _QuranWidgetState extends State<QuranWidget>
 
     return Scaffold(
       appBar: AppBar(
+        leading:
+            (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         title: InkWell(
           onTap: () {
             store.pickQuranNavigator.executeIf();
@@ -384,7 +386,7 @@ class _QuranWidgetState extends State<QuranWidget>
                                                                         TranslationData>>>(
                                                               initialData: item
                                                                   .translations
-                                                                  .value,
+                                                                  .valueOrNull,
                                                               stream: item
                                                                   .translations
                                                                   .delay(
